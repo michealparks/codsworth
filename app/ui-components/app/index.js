@@ -2,7 +2,7 @@ import React             from 'react'
 import BubblesBackground from '../backgrounds/bubbles/index'
 import DateTimeWidget    from '../widget-datetime/index'
 import SearchWidget      from '../widget-search/index'
-import IconsWidget       from '../widget-icons/index'
+import WebsitesWidget    from '../widget-websites/index'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -15,7 +15,7 @@ export default class App extends React.Component {
         <BubblesBackground />
         <DateTimeWidget />
         <SearchWidget />
-        <IconsWidget />
+        <WebsitesWidget />
       </div>
     )
   }

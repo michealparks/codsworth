@@ -1,0 +1,53 @@
+#widget-websites
+  width: 400px
+  margin: 20px auto
+  display: flex
+  
+.widget-websites-website
+  margin-right: 10px
+
+.widget-websites-icon
+  width: 60px
+  height: 60px
+  
+btnSize = 60px
+lineWidth = 2px
+midpoint = btnSize/2 - lineWidth/2
+#widget-websites-btn-add
+  position: relative
+  width: btnSize
+  height: btnSize
+  border: 0
+  background-color: transparent
+  
+#widget-websites-btn-add-vertline
+#widget-websites-btn-add-horizline
+  position: absolute
+  background-color: #fff
+  
+  width: 10px
+  height: 10px
+  left: 25px
+  top: 25px
+  border-radius: 100%
+  transition: 200ms
+  
+#widget-websites-btn-add:hover
+  
+  #widget-websites-btn-add-vertline
+  #widget-websites-btn-add-horizline
+    border-radius: 0
+  
+  iconSize = btnSize - 30px
+  #widget-websites-btn-add-vertline
+    left: midpoint
+    top: 15px
+    height: iconSize
+    width: lineWidth
+    
+  #widget-websites-btn-add-horizline
+    left: 15px
+    top: midpoint
+    height: lineWidth
+    width: iconSize
+    

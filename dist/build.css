@@ -2,6 +2,11 @@ body {
   margin: 0;
 }
 
+#app {
+  font-family: Open Sans;
+  color: #fff;
+}
+
 
 #widget-datetime {
   width: 400px;
@@ -43,9 +48,70 @@ body {
   color: #555;
 }
 
-#app {
-  font-family: Open Sans;
-  color: #fff;
+#widget-websites {
+  width: 400px;
+  margin: 20px auto;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.widget-websites-website {
+  margin-right: 10px;
+}
+.widget-websites-icon {
+  width: 60px;
+  height: 60px;
+}
+#widget-websites-btn-add {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  background-color: transparent;
+}
+#widget-websites-btn-add-vertline,
+#widget-websites-btn-add-horizline {
+  position: absolute;
+  background-color: #fff;
+  width: 10px;
+  height: 10px;
+  left: 25px;
+  top: 25px;
+  border-radius: 100%;
+  transition: 200ms;
+}
+#widget-websites-btn-add:hover #widget-websites-btn-add-vertline,
+#widget-websites-btn-add:hover #widget-websites-btn-add-horizline {
+  border-radius: 0;
+}
+#widget-websites-btn-add:hover #widget-websites-btn-add-vertline {
+  left: 29px;
+  top: 15px;
+  height: 30px;
+  width: 2px;
+}
+#widget-websites-btn-add:hover #widget-websites-btn-add-horizline {
+  left: 15px;
+  top: 29px;
+  height: 2px;
+  width: 30px;
+}
+
+#lightbox {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+}
+#lightbox-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 300px;
+  height: 200px;
+  background-color: #fff;
 }
 
 #background-bubbles {
@@ -69,1216 +135,1216 @@ body {
   animation-iteration-count: infinite;
 }
 .background-bubbles-bubble:nth-child(0) {
-  width: 97px;
-  height: 97px;
-  left: 71vw;
-  top: 50vh;
-  background-color: #eb8787;
-  opacity: 0;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14220ms;
-  animation-duration: 14220ms;
-}
-.background-bubbles-bubble:nth-child(1) {
-  width: 66px;
-  height: 66px;
-  left: 1vw;
-  top: 67vh;
-  background-color: #eb8987;
-  opacity: 0.4;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15142ms;
-  animation-duration: 15142ms;
-}
-.background-bubbles-bubble:nth-child(2) {
-  width: 95px;
-  height: 95px;
-  left: 33vw;
-  top: 93vh;
-  background-color: #eb8787;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15885ms;
-  animation-duration: 15885ms;
-}
-.background-bubbles-bubble:nth-child(3) {
-  width: 87px;
-  height: 87px;
-  left: 38vw;
-  top: 82vh;
-  background-color: #eb8c87;
-  opacity: 0.1;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15073ms;
-  animation-duration: 15073ms;
-}
-.background-bubbles-bubble:nth-child(4) {
-  width: 96px;
-  height: 96px;
-  left: 23vw;
-  top: 66vh;
-  background-color: #eb8987;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15918ms;
-  animation-duration: 15918ms;
-}
-.background-bubbles-bubble:nth-child(5) {
   width: 57px;
   height: 57px;
-  left: 48vw;
-  top: 24vh;
-  background-color: #eb9487;
-  opacity: 0.2;
+  left: 49vw;
+  top: 14vh;
+  background-color: #eb8787;
+  opacity: 0.4;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15986ms;
+  animation-duration: 15986ms;
+}
+.background-bubbles-bubble:nth-child(1) {
+  width: 30px;
+  height: 30px;
+  left: 95vw;
+  top: 17vh;
+  background-color: #eb8a87;
+  opacity: 0.4;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14770ms;
-  animation-duration: 14770ms;
+  -webkit-animation-duration: 14255ms;
+  animation-duration: 14255ms;
 }
-.background-bubbles-bubble:nth-child(6) {
-  width: 23px;
-  height: 23px;
-  left: 97vw;
-  top: 70vh;
-  background-color: #eb9687;
-  opacity: 0.1;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14200ms;
-  animation-duration: 14200ms;
-}
-.background-bubbles-bubble:nth-child(7) {
-  width: 35px;
-  height: 35px;
-  left: 94vw;
-  top: 15vh;
-  background-color: #eb8f87;
-  opacity: 0.1;
+.background-bubbles-bubble:nth-child(2) {
+  width: 6px;
+  height: 6px;
+  left: 27vw;
+  top: 91vh;
+  background-color: #eb8c87;
+  opacity: 0.4;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14629ms;
-  animation-duration: 14629ms;
+  -webkit-animation-duration: 15344ms;
+  animation-duration: 15344ms;
 }
-.background-bubbles-bubble:nth-child(8) {
-  width: 25px;
-  height: 25px;
-  left: 67vw;
-  top: 63vh;
-  background-color: #eb9b87;
+.background-bubbles-bubble:nth-child(3) {
+  width: 6px;
+  height: 6px;
+  left: 12vw;
+  top: 40vh;
+  background-color: #eb8e87;
   opacity: 0.4;
   -webkit-animation-name: move2, pulse;
   animation-name: move2, pulse;
-  -webkit-animation-duration: 15628ms;
-  animation-duration: 15628ms;
+  -webkit-animation-duration: 14292ms;
+  animation-duration: 14292ms;
 }
-.background-bubbles-bubble:nth-child(9) {
-  width: 56px;
-  height: 56px;
-  left: 26vw;
-  top: 40vh;
-  background-color: #eba387;
-  opacity: 0.4;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15843ms;
-  animation-duration: 15843ms;
-}
-.background-bubbles-bubble:nth-child(10) {
-  width: 98px;
-  height: 98px;
-  left: 33vw;
-  top: 11vh;
-  background-color: #eba587;
-  opacity: 0.3;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15702ms;
-  animation-duration: 15702ms;
-}
-.background-bubbles-bubble:nth-child(11) {
-  width: 92px;
-  height: 92px;
-  left: 53vw;
-  top: 66vh;
-  background-color: #eba887;
-  opacity: 0.1;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14892ms;
-  animation-duration: 14892ms;
-}
-.background-bubbles-bubble:nth-child(12) {
-  width: 35px;
-  height: 35px;
-  left: 84vw;
-  top: 55vh;
-  background-color: #eba787;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15028ms;
-  animation-duration: 15028ms;
-}
-.background-bubbles-bubble:nth-child(13) {
-  width: 30px;
-  height: 30px;
-  left: 62vw;
-  top: 83vh;
-  background-color: #ebad87;
-  opacity: 0.3;
+.background-bubbles-bubble:nth-child(4) {
+  width: 48px;
+  height: 48px;
+  left: 83vw;
+  top: 19vh;
+  background-color: #eb9187;
+  opacity: 0;
   -webkit-animation-name: move0, pulse;
   animation-name: move0, pulse;
-  -webkit-animation-duration: 14302ms;
-  animation-duration: 14302ms;
+  -webkit-animation-duration: 15411ms;
+  animation-duration: 15411ms;
 }
-.background-bubbles-bubble:nth-child(14) {
-  width: 62px;
-  height: 62px;
-  left: 77vw;
-  top: 84vh;
-  background-color: #eb8e87;
+.background-bubbles-bubble:nth-child(5) {
+  width: 40px;
+  height: 40px;
+  left: 53vw;
+  top: 97vh;
+  background-color: #eb9187;
   opacity: 0.2;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14981ms;
+  animation-duration: 14981ms;
+}
+.background-bubbles-bubble:nth-child(6) {
+  width: 82px;
+  height: 82px;
+  left: 70vw;
+  top: 26vh;
+  background-color: #eb8c87;
+  opacity: 0.4;
   -webkit-animation-name: move3, pulse;
   animation-name: move3, pulse;
-  -webkit-animation-duration: 14139ms;
-  animation-duration: 14139ms;
+  -webkit-animation-duration: 15359ms;
+  animation-duration: 15359ms;
 }
-.background-bubbles-bubble:nth-child(15) {
-  width: 7px;
-  height: 7px;
-  left: 19vw;
-  top: 72vh;
-  background-color: #eba087;
+.background-bubbles-bubble:nth-child(7) {
+  width: 40px;
+  height: 40px;
+  left: 10vw;
+  top: 22vh;
+  background-color: #eb8e87;
+  opacity: 0.1;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14695ms;
+  animation-duration: 14695ms;
+}
+.background-bubbles-bubble:nth-child(8) {
+  width: 67px;
+  height: 67px;
+  left: 35vw;
+  top: 9vh;
+  background-color: #eb9e87;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15974ms;
+  animation-duration: 15974ms;
+}
+.background-bubbles-bubble:nth-child(9) {
+  width: 68px;
+  height: 68px;
+  left: 41vw;
+  top: 65vh;
+  background-color: #eb9487;
   opacity: 0;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14114ms;
-  animation-duration: 14114ms;
+  -webkit-animation-duration: 15290ms;
+  animation-duration: 15290ms;
 }
-.background-bubbles-bubble:nth-child(16) {
-  width: 13px;
-  height: 13px;
-  left: 55vw;
-  top: 49vh;
-  background-color: #eba287;
+.background-bubbles-bubble:nth-child(10) {
+  width: 65px;
+  height: 65px;
+  left: 91vw;
+  top: 60vh;
+  background-color: #eb8f87;
   opacity: 0.4;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14112ms;
-  animation-duration: 14112ms;
-}
-.background-bubbles-bubble:nth-child(17) {
-  width: 30px;
-  height: 30px;
-  left: 21vw;
-  top: 71vh;
-  background-color: #eba887;
-  opacity: 0.3;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14115ms;
-  animation-duration: 14115ms;
-}
-.background-bubbles-bubble:nth-child(18) {
-  width: 81px;
-  height: 81px;
-  left: 38vw;
-  top: 80vh;
-  background-color: #ebb487;
-  opacity: 0.4;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14521ms;
-  animation-duration: 14521ms;
-}
-.background-bubbles-bubble:nth-child(19) {
-  width: 6px;
-  height: 6px;
-  left: 18vw;
-  top: 74vh;
-  background-color: #ebc187;
-  opacity: 0.1;
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 15811ms;
-  animation-duration: 15811ms;
+  -webkit-animation-duration: 14578ms;
+  animation-duration: 14578ms;
 }
-.background-bubbles-bubble:nth-child(20) {
-  width: 42px;
-  height: 42px;
-  left: 7vw;
-  top: 65vh;
-  background-color: #eb9b87;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15220ms;
-  animation-duration: 15220ms;
+.background-bubbles-bubble:nth-child(11) {
+  width: 46px;
+  height: 46px;
+  left: 21vw;
+  top: 4vh;
+  background-color: #eb9187;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14440ms;
+  animation-duration: 14440ms;
 }
-.background-bubbles-bubble:nth-child(21) {
-  width: 53px;
-  height: 53px;
-  left: 32vw;
-  top: 47vh;
-  background-color: #eb9487;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15072ms;
-  animation-duration: 15072ms;
+.background-bubbles-bubble:nth-child(12) {
+  width: 43px;
+  height: 43px;
+  left: 69vw;
+  top: 83vh;
+  background-color: #eb9387;
+  opacity: 0.4;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15975ms;
+  animation-duration: 15975ms;
 }
-.background-bubbles-bubble:nth-child(22) {
-  width: 68px;
-  height: 68px;
-  left: 40vw;
-  top: 27vh;
-  background-color: #ebd087;
-  opacity: 0.1;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15236ms;
-  animation-duration: 15236ms;
-}
-.background-bubbles-bubble:nth-child(23) {
-  width: 53px;
-  height: 53px;
-  left: 83vw;
-  top: 81vh;
-  background-color: #ebb787;
+.background-bubbles-bubble:nth-child(13) {
+  width: 75px;
+  height: 75px;
+  left: 61vw;
+  top: 88vh;
+  background-color: #eba287;
   opacity: 0.1;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 15086ms;
-  animation-duration: 15086ms;
+  -webkit-animation-duration: 15766ms;
+  animation-duration: 15766ms;
 }
-.background-bubbles-bubble:nth-child(24) {
+.background-bubbles-bubble:nth-child(14) {
+  width: 58px;
+  height: 58px;
+  left: 11vw;
+  top: 48vh;
+  background-color: #eb9e87;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14919ms;
+  animation-duration: 14919ms;
+}
+.background-bubbles-bubble:nth-child(15) {
   width: 40px;
   height: 40px;
   left: 93vw;
-  top: 55vh;
-  background-color: #ebd787;
-  opacity: 0.3;
+  top: 14vh;
+  background-color: #ebb787;
+  opacity: 0.2;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14291ms;
+  animation-duration: 14291ms;
+}
+.background-bubbles-bubble:nth-child(16) {
+  width: 49px;
+  height: 49px;
+  left: 76vw;
+  top: 63vh;
+  background-color: #ebb287;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14198ms;
+  animation-duration: 14198ms;
+}
+.background-bubbles-bubble:nth-child(17) {
+  width: 61px;
+  height: 61px;
+  left: 19vw;
+  top: 62vh;
+  background-color: #ebc087;
+  opacity: 0.1;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15128ms;
+  animation-duration: 15128ms;
+}
+.background-bubbles-bubble:nth-child(18) {
+  width: 34px;
+  height: 34px;
+  left: 35vw;
+  top: 85vh;
+  background-color: #eba587;
+  opacity: 0.1;
   -webkit-animation-name: move3, pulse;
   animation-name: move3, pulse;
-  -webkit-animation-duration: 15994ms;
-  animation-duration: 15994ms;
+  -webkit-animation-duration: 15951ms;
+  animation-duration: 15951ms;
+}
+.background-bubbles-bubble:nth-child(19) {
+  width: 68px;
+  height: 68px;
+  left: 30vw;
+  top: 92vh;
+  background-color: #eb8a87;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14466ms;
+  animation-duration: 14466ms;
+}
+.background-bubbles-bubble:nth-child(20) {
+  width: 47px;
+  height: 47px;
+  left: 85vw;
+  top: 43vh;
+  background-color: #eba887;
+  opacity: 0.4;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14150ms;
+  animation-duration: 14150ms;
+}
+.background-bubbles-bubble:nth-child(21) {
+  width: 57px;
+  height: 57px;
+  left: 60vw;
+  top: 62vh;
+  background-color: #eb8e87;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15287ms;
+  animation-duration: 15287ms;
+}
+.background-bubbles-bubble:nth-child(22) {
+  width: 3px;
+  height: 3px;
+  left: 32vw;
+  top: 53vh;
+  background-color: #ebad87;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15355ms;
+  animation-duration: 15355ms;
+}
+.background-bubbles-bubble:nth-child(23) {
+  width: 2px;
+  height: 2px;
+  left: 17vw;
+  top: 38vh;
+  background-color: #ebb487;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15076ms;
+  animation-duration: 15076ms;
+}
+.background-bubbles-bubble:nth-child(24) {
+  width: 27px;
+  height: 27px;
+  left: 29vw;
+  top: 90vh;
+  background-color: #eb9b87;
+  opacity: 0;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15465ms;
+  animation-duration: 15465ms;
 }
 .background-bubbles-bubble:nth-child(25) {
-  width: 44px;
-  height: 44px;
-  left: 4vw;
-  top: 13vh;
-  background-color: #eb9887;
+  width: 97px;
+  height: 97px;
+  left: 76vw;
+  top: 17vh;
+  background-color: #ebc187;
   opacity: 0.2;
   -webkit-animation-name: move2, pulse;
   animation-name: move2, pulse;
-  -webkit-animation-duration: 15008ms;
-  animation-duration: 15008ms;
+  -webkit-animation-duration: 14314ms;
+  animation-duration: 14314ms;
 }
 .background-bubbles-bubble:nth-child(26) {
+  width: 64px;
+  height: 64px;
+  left: 37vw;
+  top: 72vh;
+  background-color: #ebda87;
+  opacity: 0.3;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14731ms;
+  animation-duration: 14731ms;
+}
+.background-bubbles-bubble:nth-child(27) {
+  width: 59px;
+  height: 59px;
+  left: 68vw;
+  top: 53vh;
+  background-color: #eb9687;
+  opacity: 0.2;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15255ms;
+  animation-duration: 15255ms;
+}
+.background-bubbles-bubble:nth-child(28) {
+  width: 89px;
+  height: 89px;
+  left: 94vw;
+  top: 66vh;
+  background-color: #ebac87;
+  opacity: 0.2;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14052ms;
+  animation-duration: 14052ms;
+}
+.background-bubbles-bubble:nth-child(29) {
+  width: 2px;
+  height: 2px;
+  left: 5vw;
+  top: 19vh;
+  background-color: #eb8c87;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15647ms;
+  animation-duration: 15647ms;
+}
+.background-bubbles-bubble:nth-child(30) {
+  width: 48px;
+  height: 48px;
+  left: 63vw;
+  top: 70vh;
+  background-color: #ebcd87;
+  opacity: 0.1;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15243ms;
+  animation-duration: 15243ms;
+}
+.background-bubbles-bubble:nth-child(31) {
+  width: 86px;
+  height: 86px;
+  left: 60vw;
+  top: 8vh;
+  background-color: #ebc687;
+  opacity: 0;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14962ms;
+  animation-duration: 14962ms;
+}
+.background-bubbles-bubble:nth-child(32) {
+  width: 84px;
+  height: 84px;
+  left: 4vw;
+  top: 98vh;
+  background-color: #ebd487;
+  opacity: 0.3;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15362ms;
+  animation-duration: 15362ms;
+}
+.background-bubbles-bubble:nth-child(33) {
+  width: 94px;
+  height: 94px;
+  left: 21vw;
+  top: 3vh;
+  background-color: #eba087;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14163ms;
+  animation-duration: 14163ms;
+}
+.background-bubbles-bubble:nth-child(34) {
+  width: 79px;
+  height: 79px;
+  left: 65vw;
+  top: 62vh;
+  background-color: #ebca87;
+  opacity: 0.4;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14966ms;
+  animation-duration: 14966ms;
+}
+.background-bubbles-bubble:nth-child(35) {
+  width: 52px;
+  height: 52px;
+  left: 24vw;
+  top: 36vh;
+  background-color: #e9eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14584ms;
+  animation-duration: 14584ms;
+}
+.background-bubbles-bubble:nth-child(36) {
+  width: 66px;
+  height: 66px;
+  left: 49vw;
+  top: 25vh;
+  background-color: #ebad87;
+  opacity: 0.3;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14163ms;
+  animation-duration: 14163ms;
+}
+.background-bubbles-bubble:nth-child(37) {
+  width: 20px;
+  height: 20px;
+  left: 81vw;
+  top: 18vh;
+  background-color: #eba387;
+  opacity: 0;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15706ms;
+  animation-duration: 15706ms;
+}
+.background-bubbles-bubble:nth-child(38) {
+  width: 48px;
+  height: 48px;
+  left: 2vw;
+  top: 92vh;
+  background-color: #eb8f87;
+  opacity: 0.2;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14508ms;
+  animation-duration: 14508ms;
+}
+.background-bubbles-bubble:nth-child(39) {
+  width: 66px;
+  height: 66px;
+  left: 52vw;
+  top: 49vh;
+  background-color: #ebb787;
+  opacity: 0.3;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15280ms;
+  animation-duration: 15280ms;
+}
+.background-bubbles-bubble:nth-child(40) {
+  width: 65px;
+  height: 65px;
+  left: 5vw;
+  top: 50vh;
+  background-color: #eb9687;
+  opacity: 0;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15940ms;
+  animation-duration: 15940ms;
+}
+.background-bubbles-bubble:nth-child(41) {
+  width: 37px;
+  height: 37px;
+  left: 29vw;
+  top: 67vh;
+  background-color: #e1eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14474ms;
+  animation-duration: 14474ms;
+}
+.background-bubbles-bubble:nth-child(42) {
+  width: 67px;
+  height: 67px;
+  left: 5vw;
+  top: 80vh;
+  background-color: #ebca87;
+  opacity: 0.3;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14107ms;
+  animation-duration: 14107ms;
+}
+.background-bubbles-bubble:nth-child(43) {
+  width: 65px;
+  height: 65px;
+  left: 56vw;
+  top: 33vh;
+  background-color: #ebcb87;
+  opacity: 0.4;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14042ms;
+  animation-duration: 14042ms;
+}
+.background-bubbles-bubble:nth-child(44) {
+  width: 87px;
+  height: 87px;
+  left: 17vw;
+  top: 37vh;
+  background-color: #ebda87;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14249ms;
+  animation-duration: 14249ms;
+}
+.background-bubbles-bubble:nth-child(45) {
+  width: 16px;
+  height: 16px;
+  left: 95vw;
+  top: 77vh;
+  background-color: #ebc187;
+  opacity: 0.2;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14460ms;
+  animation-duration: 14460ms;
+}
+.background-bubbles-bubble:nth-child(46) {
+  width: 56px;
+  height: 56px;
+  left: 62vw;
+  top: 31vh;
+  background-color: #ebb287;
+  opacity: 0.2;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15305ms;
+  animation-duration: 15305ms;
+}
+.background-bubbles-bubble:nth-child(47) {
+  width: 28px;
+  height: 28px;
+  left: 89vw;
+  top: 97vh;
+  background-color: #deeb87;
+  opacity: 0.4;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15771ms;
+  animation-duration: 15771ms;
+}
+.background-bubbles-bubble:nth-child(48) {
+  width: 60px;
+  height: 60px;
+  left: 16vw;
+  top: 95vh;
+  background-color: #ebe187;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15610ms;
+  animation-duration: 15610ms;
+}
+.background-bubbles-bubble:nth-child(49) {
+  width: 59px;
+  height: 59px;
+  left: 15vw;
+  top: 45vh;
+  background-color: #eba287;
+  opacity: 0.3;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14230ms;
+  animation-duration: 14230ms;
+}
+.background-bubbles-bubble:nth-child(50) {
+  width: 46px;
+  height: 46px;
+  left: 35vw;
+  top: 68vh;
+  background-color: #c3eb87;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14343ms;
+  animation-duration: 14343ms;
+}
+.background-bubbles-bubble:nth-child(51) {
+  width: 83px;
+  height: 83px;
+  left: 27vw;
+  top: 42vh;
+  background-color: #a7eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14711ms;
+  animation-duration: 14711ms;
+}
+.background-bubbles-bubble:nth-child(52) {
+  width: 56px;
+  height: 56px;
+  left: 80vw;
+  top: 45vh;
+  background-color: #eb9887;
+  opacity: 0.2;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15002ms;
+  animation-duration: 15002ms;
+}
+.background-bubbles-bubble:nth-child(53) {
+  width: 8px;
+  height: 8px;
+  left: 91vw;
+  top: 76vh;
+  background-color: #d0eb87;
+  opacity: 0;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14690ms;
+  animation-duration: 14690ms;
+}
+.background-bubbles-bubble:nth-child(54) {
+  width: 27px;
+  height: 27px;
+  left: 96vw;
+  top: 20vh;
+  background-color: #b2eb87;
+  opacity: 0.1;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14665ms;
+  animation-duration: 14665ms;
+}
+.background-bubbles-bubble:nth-child(55) {
+  width: 85px;
+  height: 85px;
+  left: 36vw;
+  top: 29vh;
+  background-color: #ebb987;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14529ms;
+  animation-duration: 14529ms;
+}
+.background-bubbles-bubble:nth-child(56) {
+  width: 62px;
+  height: 62px;
+  left: 43vw;
+  top: 67vh;
+  background-color: #ebad87;
+  opacity: 0.2;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14919ms;
+  animation-duration: 14919ms;
+}
+.background-bubbles-bubble:nth-child(57) {
+  width: 98px;
+  height: 98px;
+  left: 22vw;
+  top: 95vh;
+  background-color: #ebe887;
+  opacity: 0.4;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15477ms;
+  animation-duration: 15477ms;
+}
+.background-bubbles-bubble:nth-child(58) {
+  width: 41px;
+  height: 41px;
+  left: 75vw;
+  top: 38vh;
+  background-color: #a0eb87;
+  opacity: 0.2;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14190ms;
+  animation-duration: 14190ms;
+}
+.background-bubbles-bubble:nth-child(59) {
+  width: 98px;
+  height: 98px;
+  left: 68vw;
+  top: 4vh;
+  background-color: #ebda87;
+  opacity: 0.2;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14046ms;
+  animation-duration: 14046ms;
+}
+.background-bubbles-bubble:nth-child(60) {
+  width: 70px;
+  height: 70px;
+  left: 59vw;
+  top: 59vh;
+  background-color: #ebd487;
+  opacity: 0.2;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14579ms;
+  animation-duration: 14579ms;
+}
+.background-bubbles-bubble:nth-child(61) {
+  width: 24px;
+  height: 24px;
+  left: 73vw;
+  top: 70vh;
+  background-color: #eb9e87;
+  opacity: 0.4;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15489ms;
+  animation-duration: 15489ms;
+}
+.background-bubbles-bubble:nth-child(62) {
+  width: 52px;
+  height: 52px;
+  left: 47vw;
+  top: 42vh;
+  background-color: #e9eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14445ms;
+  animation-duration: 14445ms;
+}
+.background-bubbles-bubble:nth-child(63) {
+  width: 36px;
+  height: 36px;
+  left: 99vw;
+  top: 7vh;
+  background-color: #9deb87;
+  opacity: 0.3;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14748ms;
+  animation-duration: 14748ms;
+}
+.background-bubbles-bubble:nth-child(64) {
+  width: 4px;
+  height: 4px;
+  left: 16vw;
+  top: 96vh;
+  background-color: #e1eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14450ms;
+  animation-duration: 14450ms;
+}
+.background-bubbles-bubble:nth-child(65) {
+  width: 39px;
+  height: 39px;
+  left: 28vw;
+  top: 29vh;
+  background-color: #beeb87;
+  opacity: 0.4;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15796ms;
+  animation-duration: 15796ms;
+}
+.background-bubbles-bubble:nth-child(66) {
+  width: 31px;
+  height: 31px;
+  left: 32vw;
+  top: 52vh;
+  background-color: #adeb87;
+  opacity: 0.1;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15781ms;
+  animation-duration: 15781ms;
+}
+.background-bubbles-bubble:nth-child(67) {
+  width: 29px;
+  height: 29px;
+  left: 20vw;
+  top: 81vh;
+  background-color: #ebd087;
+  opacity: 0.1;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15990ms;
+  animation-duration: 15990ms;
+}
+.background-bubbles-bubble:nth-child(68) {
+  width: 85px;
+  height: 85px;
+  left: 32vw;
+  top: 73vh;
+  background-color: #caeb87;
+  opacity: 0.1;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15467ms;
+  animation-duration: 15467ms;
+}
+.background-bubbles-bubble:nth-child(69) {
+  width: 7px;
+  height: 7px;
+  left: 10vw;
+  top: 47vh;
+  background-color: #cdeb87;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15283ms;
+  animation-duration: 15283ms;
+}
+.background-bubbles-bubble:nth-child(70) {
+  width: 73px;
+  height: 73px;
+  left: 65vw;
+  top: 46vh;
+  background-color: #eb9b87;
+  opacity: 0.4;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14868ms;
+  animation-duration: 14868ms;
+}
+.background-bubbles-bubble:nth-child(71) {
+  width: 15px;
+  height: 15px;
+  left: 77vw;
+  top: 0vh;
+  background-color: #ebe987;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14387ms;
+  animation-duration: 14387ms;
+}
+.background-bubbles-bubble:nth-child(72) {
+  width: 52px;
+  height: 52px;
+  left: 23vw;
+  top: 89vh;
+  background-color: #b7eb87;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14656ms;
+  animation-duration: 14656ms;
+}
+.background-bubbles-bubble:nth-child(73) {
+  width: 69px;
+  height: 69px;
+  left: 83vw;
+  top: 4vh;
+  background-color: #87eba0;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14558ms;
+  animation-duration: 14558ms;
+}
+.background-bubbles-bubble:nth-child(74) {
+  width: 47px;
+  height: 47px;
+  left: 63vw;
+  top: 57vh;
+  background-color: #c3eb87;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15527ms;
+  animation-duration: 15527ms;
+}
+.background-bubbles-bubble:nth-child(75) {
   width: 24px;
   height: 24px;
   left: 92vw;
   top: 90vh;
-  background-color: #ebcb87;
-  opacity: 0;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14435ms;
-  animation-duration: 14435ms;
+  background-color: #d4eb87;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14538ms;
+  animation-duration: 14538ms;
 }
-.background-bubbles-bubble:nth-child(27) {
-  width: 9px;
-  height: 9px;
-  left: 65vw;
-  top: 4vh;
-  background-color: #eb8c87;
+.background-bubbles-bubble:nth-child(76) {
+  width: 90px;
+  height: 90px;
+  left: 30vw;
+  top: 92vh;
+  background-color: #ebaa87;
   opacity: 0.2;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14667ms;
-  animation-duration: 14667ms;
+  -webkit-animation-duration: 15690ms;
+  animation-duration: 15690ms;
 }
-.background-bubbles-bubble:nth-child(28) {
-  width: 26px;
-  height: 26px;
-  left: 88vw;
-  top: 6vh;
-  background-color: #eba887;
-  opacity: 0.4;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14548ms;
-  animation-duration: 14548ms;
+.background-bubbles-bubble:nth-child(77) {
+  width: 5px;
+  height: 5px;
+  left: 47vw;
+  top: 61vh;
+  background-color: #87eba3;
+  opacity: 0.2;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14052ms;
+  animation-duration: 14052ms;
 }
-.background-bubbles-bubble:nth-child(29) {
-  width: 55px;
-  height: 55px;
-  left: 77vw;
-  top: 90vh;
-  background-color: #eb9b87;
-  opacity: 0.4;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15077ms;
-  animation-duration: 15077ms;
-}
-.background-bubbles-bubble:nth-child(30) {
+.background-bubbles-bubble:nth-child(78) {
   width: 73px;
   height: 73px;
-  left: 97vw;
-  top: 60vh;
-  background-color: #eba587;
-  opacity: 0;
+  left: 16vw;
+  top: 7vh;
+  background-color: #ebe487;
+  opacity: 0.4;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 15327ms;
-  animation-duration: 15327ms;
+  -webkit-animation-duration: 14878ms;
+  animation-duration: 14878ms;
 }
-.background-bubbles-bubble:nth-child(31) {
-  width: 75px;
-  height: 75px;
-  left: 42vw;
-  top: 65vh;
-  background-color: #eba587;
-  opacity: 0.2;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14639ms;
-  animation-duration: 14639ms;
-}
-.background-bubbles-bubble:nth-child(32) {
-  width: 90px;
-  height: 90px;
-  left: 25vw;
-  top: 15vh;
-  background-color: #ebbc87;
-  opacity: 0;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14964ms;
-  animation-duration: 14964ms;
-}
-.background-bubbles-bubble:nth-child(33) {
-  width: 54px;
-  height: 54px;
-  left: 43vw;
-  top: 12vh;
-  background-color: #eba587;
-  opacity: 0.3;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15679ms;
-  animation-duration: 15679ms;
-}
-.background-bubbles-bubble:nth-child(34) {
-  width: 64px;
-  height: 64px;
-  left: 42vw;
-  top: 16vh;
-  background-color: #ebeb87;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14349ms;
-  animation-duration: 14349ms;
-}
-.background-bubbles-bubble:nth-child(35) {
-  width: 40px;
-  height: 40px;
-  left: 26vw;
-  top: 9vh;
-  background-color: #eb9b87;
-  opacity: 0.1;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14335ms;
-  animation-duration: 14335ms;
-}
-.background-bubbles-bubble:nth-child(36) {
-  width: 42px;
-  height: 42px;
+.background-bubbles-bubble:nth-child(79) {
+  width: 25px;
+  height: 25px;
   left: 91vw;
-  top: 58vh;
-  background-color: #deeb87;
-  opacity: 0.4;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15381ms;
-  animation-duration: 15381ms;
-}
-.background-bubbles-bubble:nth-child(37) {
-  width: 6px;
-  height: 6px;
-  left: 43vw;
-  top: 92vh;
-  background-color: #eba787;
-  opacity: 0.2;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15402ms;
-  animation-duration: 15402ms;
-}
-.background-bubbles-bubble:nth-child(38) {
-  width: 34px;
-  height: 34px;
-  left: 56vw;
-  top: 10vh;
-  background-color: #ebb687;
-  opacity: 0;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14080ms;
-  animation-duration: 14080ms;
-}
-.background-bubbles-bubble:nth-child(39) {
-  width: 81px;
-  height: 81px;
-  left: 5vw;
-  top: 49vh;
-  background-color: #ebaa87;
-  opacity: 0.3;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15061ms;
-  animation-duration: 15061ms;
-}
-.background-bubbles-bubble:nth-child(40) {
-  width: 24px;
-  height: 24px;
-  left: 75vw;
-  top: 51vh;
-  background-color: #ebd587;
-  opacity: 0.1;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15336ms;
-  animation-duration: 15336ms;
-}
-.background-bubbles-bubble:nth-child(41) {
-  width: 75px;
-  height: 75px;
-  left: 97vw;
-  top: 89vh;
-  background-color: #eb9487;
-  opacity: 0.1;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15270ms;
-  animation-duration: 15270ms;
-}
-.background-bubbles-bubble:nth-child(42) {
-  width: 76px;
-  height: 76px;
-  left: 49vw;
-  top: 52vh;
-  background-color: #eb9987;
-  opacity: 0.3;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15054ms;
-  animation-duration: 15054ms;
-}
-.background-bubbles-bubble:nth-child(43) {
-  width: 90px;
-  height: 90px;
-  left: 14vw;
-  top: 74vh;
-  background-color: #eba087;
-  opacity: 0.3;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15604ms;
-  animation-duration: 15604ms;
-}
-.background-bubbles-bubble:nth-child(44) {
-  width: 71px;
-  height: 71px;
-  left: 56vw;
-  top: 78vh;
+  top: 75vh;
   background-color: #eb9687;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15177ms;
-  animation-duration: 15177ms;
-}
-.background-bubbles-bubble:nth-child(45) {
-  width: 35px;
-  height: 35px;
-  left: 50vw;
-  top: 83vh;
-  background-color: #ebc087;
-  opacity: 0.4;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14152ms;
-  animation-duration: 14152ms;
-}
-.background-bubbles-bubble:nth-child(46) {
-  width: 15px;
-  height: 15px;
-  left: 52vw;
-  top: 79vh;
-  background-color: #cdeb87;
-  opacity: 0.2;
+  opacity: 0.3;
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
   -webkit-animation-duration: 15264ms;
   animation-duration: 15264ms;
 }
-.background-bubbles-bubble:nth-child(47) {
-  width: 23px;
-  height: 23px;
-  left: 61vw;
-  top: 31vh;
-  background-color: #ebcf87;
-  opacity: 0.2;
+.background-bubbles-bubble:nth-child(80) {
+  width: 38px;
+  height: 38px;
+  left: 69vw;
+  top: 20vh;
+  background-color: #eb9887;
+  opacity: 0.3;
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 14551ms;
-  animation-duration: 14551ms;
+  -webkit-animation-duration: 15323ms;
+  animation-duration: 15323ms;
 }
-.background-bubbles-bubble:nth-child(48) {
+.background-bubbles-bubble:nth-child(81) {
   width: 53px;
   height: 53px;
-  left: 4vw;
-  top: 74vh;
-  background-color: #ebac87;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
+  left: 99vw;
+  top: 42vh;
+  background-color: #87eb8a;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15260ms;
+  animation-duration: 15260ms;
+}
+.background-bubbles-bubble:nth-child(82) {
+  width: 7px;
+  height: 7px;
+  left: 41vw;
+  top: 1vh;
+  background-color: #87ebca;
+  opacity: 0.3;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
   -webkit-animation-duration: 15142ms;
   animation-duration: 15142ms;
 }
-.background-bubbles-bubble:nth-child(49) {
-  width: 79px;
-  height: 79px;
-  left: 15vw;
-  top: 72vh;
-  background-color: #ebe187;
-  opacity: 0.4;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15721ms;
-  animation-duration: 15721ms;
-}
-.background-bubbles-bubble:nth-child(50) {
-  width: 79px;
-  height: 79px;
-  left: 64vw;
-  top: 31vh;
-  background-color: #ebd987;
-  opacity: 0.2;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14335ms;
-  animation-duration: 14335ms;
-}
-.background-bubbles-bubble:nth-child(51) {
-  width: 28px;
-  height: 28px;
-  left: 34vw;
-  top: 44vh;
-  background-color: #ebb987;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14995ms;
-  animation-duration: 14995ms;
-}
-.background-bubbles-bubble:nth-child(52) {
-  width: 72px;
-  height: 72px;
-  left: 86vw;
-  top: 30vh;
-  background-color: #ebb187;
-  opacity: 0.3;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15356ms;
-  animation-duration: 15356ms;
-}
-.background-bubbles-bubble:nth-child(53) {
-  width: 66px;
-  height: 66px;
-  left: 79vw;
-  top: 40vh;
-  background-color: #ebd787;
-  opacity: 0.2;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15802ms;
-  animation-duration: 15802ms;
-}
-.background-bubbles-bubble:nth-child(54) {
-  width: 4px;
-  height: 4px;
-  left: 1vw;
-  top: 90vh;
-  background-color: #eb8987;
-  opacity: 0.1;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15163ms;
-  animation-duration: 15163ms;
-}
-.background-bubbles-bubble:nth-child(55) {
-  width: 90px;
-  height: 90px;
-  left: 0vw;
-  top: 93vh;
-  background-color: #eba887;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14483ms;
-  animation-duration: 14483ms;
-}
-.background-bubbles-bubble:nth-child(56) {
-  width: 68px;
-  height: 68px;
-  left: 91vw;
-  top: 49vh;
-  background-color: #eba087;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15484ms;
-  animation-duration: 15484ms;
-}
-.background-bubbles-bubble:nth-child(57) {
-  width: 94px;
-  height: 94px;
-  left: 98vw;
-  top: 5vh;
-  background-color: #eb8987;
-  opacity: 0.1;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15905ms;
-  animation-duration: 15905ms;
-}
-.background-bubbles-bubble:nth-child(58) {
-  width: 8px;
-  height: 8px;
-  left: 88vw;
-  top: 49vh;
-  background-color: #d9eb87;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14382ms;
-  animation-duration: 14382ms;
-}
-.background-bubbles-bubble:nth-child(59) {
-  width: 48px;
-  height: 48px;
-  left: 8vw;
-  top: 92vh;
-  background-color: #eb9b87;
-  opacity: 0.2;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14238ms;
-  animation-duration: 14238ms;
-}
-.background-bubbles-bubble:nth-child(60) {
-  width: 46px;
-  height: 46px;
-  left: 38vw;
-  top: 53vh;
-  background-color: #eb8e87;
-  opacity: 0;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15553ms;
-  animation-duration: 15553ms;
-}
-.background-bubbles-bubble:nth-child(61) {
-  width: 65px;
-  height: 65px;
-  left: 98vw;
-  top: 57vh;
-  background-color: #eb9487;
-  opacity: 0.3;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15968ms;
-  animation-duration: 15968ms;
-}
-.background-bubbles-bubble:nth-child(62) {
-  width: 18px;
-  height: 18px;
-  left: 82vw;
-  top: 36vh;
-  background-color: #87eb8e;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15649ms;
-  animation-duration: 15649ms;
-}
-.background-bubbles-bubble:nth-child(63) {
-  width: 91px;
-  height: 91px;
-  left: 73vw;
-  top: 25vh;
-  background-color: #ebc687;
-  opacity: 0.2;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15072ms;
-  animation-duration: 15072ms;
-}
-.background-bubbles-bubble:nth-child(64) {
-  width: 18px;
-  height: 18px;
-  left: 53vw;
-  top: 70vh;
-  background-color: #ebb787;
-  opacity: 0.2;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15262ms;
-  animation-duration: 15262ms;
-}
-.background-bubbles-bubble:nth-child(65) {
-  width: 39px;
-  height: 39px;
-  left: 27vw;
-  top: 94vh;
-  background-color: #d9eb87;
-  opacity: 0.2;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15032ms;
-  animation-duration: 15032ms;
-}
-.background-bubbles-bubble:nth-child(66) {
-  width: 1px;
-  height: 1px;
-  left: 37vw;
-  top: 25vh;
-  background-color: #dfeb87;
-  opacity: 0.3;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15448ms;
-  animation-duration: 15448ms;
-}
-.background-bubbles-bubble:nth-child(67) {
-  width: 44px;
-  height: 44px;
-  left: 13vw;
-  top: 54vh;
-  background-color: #e6eb87;
-  opacity: 0.4;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14018ms;
-  animation-duration: 14018ms;
-}
-.background-bubbles-bubble:nth-child(68) {
-  width: 34px;
-  height: 34px;
-  left: 84vw;
-  top: 84vh;
-  background-color: #ebad87;
-  opacity: 0.4;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14260ms;
-  animation-duration: 14260ms;
-}
-.background-bubbles-bubble:nth-child(69) {
-  width: 12px;
-  height: 12px;
-  left: 21vw;
-  top: 3vh;
-  background-color: #c6eb87;
-  opacity: 0;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14251ms;
-  animation-duration: 14251ms;
-}
-.background-bubbles-bubble:nth-child(70) {
-  width: 76px;
-  height: 76px;
-  left: 44vw;
-  top: 6vh;
-  background-color: #d7eb87;
-  opacity: 0.3;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14236ms;
-  animation-duration: 14236ms;
-}
-.background-bubbles-bubble:nth-child(71) {
-  width: 15px;
-  height: 15px;
-  left: 92vw;
-  top: 38vh;
-  background-color: #ebdc87;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14816ms;
-  animation-duration: 14816ms;
-}
-.background-bubbles-bubble:nth-child(72) {
-  width: 87px;
-  height: 87px;
-  left: 10vw;
-  top: 31vh;
-  background-color: #ebc887;
-  opacity: 0.1;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14575ms;
-  animation-duration: 14575ms;
-}
-.background-bubbles-bubble:nth-child(73) {
-  width: 91px;
-  height: 91px;
-  left: 80vw;
-  top: 83vh;
-  background-color: #87eb8a;
-  opacity: 0.1;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14651ms;
-  animation-duration: 14651ms;
-}
-.background-bubbles-bubble:nth-child(74) {
-  width: 8px;
-  height: 8px;
-  left: 61vw;
-  top: 6vh;
-  background-color: #ebc587;
-  opacity: 0.4;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15383ms;
-  animation-duration: 15383ms;
-}
-.background-bubbles-bubble:nth-child(75) {
+.background-bubbles-bubble:nth-child(83) {
   width: 32px;
   height: 32px;
-  left: 59vw;
-  top: 84vh;
-  background-color: #eb9887;
-  opacity: 0.4;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14396ms;
-  animation-duration: 14396ms;
-}
-.background-bubbles-bubble:nth-child(76) {
-  width: 29px;
-  height: 29px;
-  left: 46vw;
-  top: 72vh;
-  background-color: #ebcb87;
+  left: 71vw;
+  top: 74vh;
+  background-color: #eb9e87;
   opacity: 0.2;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15811ms;
-  animation-duration: 15811ms;
-}
-.background-bubbles-bubble:nth-child(77) {
-  width: 72px;
-  height: 72px;
-  left: 12vw;
-  top: 24vh;
-  background-color: #afeb87;
-  opacity: 0.3;
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 14328ms;
-  animation-duration: 14328ms;
-}
-.background-bubbles-bubble:nth-child(78) {
-  width: 60px;
-  height: 60px;
-  left: 3vw;
-  top: 59vh;
-  background-color: #ebc687;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14480ms;
-  animation-duration: 14480ms;
-}
-.background-bubbles-bubble:nth-child(79) {
-  width: 0px;
-  height: 0px;
-  left: 36vw;
-  top: 82vh;
-  background-color: #cdeb87;
-  opacity: 0.1;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15956ms;
-  animation-duration: 15956ms;
-}
-.background-bubbles-bubble:nth-child(80) {
-  width: 84px;
-  height: 84px;
-  left: 8vw;
-  top: 83vh;
-  background-color: #87ebb7;
-  opacity: 0.1;
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15951ms;
-  animation-duration: 15951ms;
-}
-.background-bubbles-bubble:nth-child(81) {
-  width: 9px;
-  height: 9px;
-  left: 57vw;
-  top: 0vh;
-  background-color: #ebd087;
-  opacity: 0.3;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14706ms;
-  animation-duration: 14706ms;
-}
-.background-bubbles-bubble:nth-child(82) {
-  width: 36px;
-  height: 36px;
-  left: 98vw;
-  top: 92vh;
-  background-color: #ebbb87;
-  opacity: 0.4;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14467ms;
-  animation-duration: 14467ms;
-}
-.background-bubbles-bubble:nth-child(83) {
-  width: 98px;
-  height: 98px;
-  left: 58vw;
-  top: 12vh;
-  background-color: #d5eb87;
-  opacity: 0.1;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14197ms;
-  animation-duration: 14197ms;
+  -webkit-animation-duration: 15627ms;
+  animation-duration: 15627ms;
 }
 .background-bubbles-bubble:nth-child(84) {
   width: 6px;
   height: 6px;
-  left: 66vw;
-  top: 0vh;
-  background-color: #eb9d87;
-  opacity: 0.3;
+  left: 43vw;
+  top: 57vh;
+  background-color: #87ebc8;
+  opacity: 0;
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 14546ms;
-  animation-duration: 14546ms;
+  -webkit-animation-duration: 14953ms;
+  animation-duration: 14953ms;
 }
 .background-bubbles-bubble:nth-child(85) {
-  width: 61px;
-  height: 61px;
-  left: 5vw;
-  top: 66vh;
-  background-color: #87eb99;
-  opacity: 0.2;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14345ms;
-  animation-duration: 14345ms;
+  width: 79px;
+  height: 79px;
+  left: 21vw;
+  top: 39vh;
+  background-color: #a7eb87;
+  opacity: 0.4;
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15003ms;
+  animation-duration: 15003ms;
 }
 .background-bubbles-bubble:nth-child(86) {
-  width: 75px;
-  height: 75px;
-  left: 71vw;
-  top: 26vh;
-  background-color: #87ebbb;
-  opacity: 0.3;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14507ms;
-  animation-duration: 14507ms;
-}
-.background-bubbles-bubble:nth-child(87) {
-  width: 13px;
-  height: 13px;
-  left: 87vw;
-  top: 31vh;
-  background-color: #ebd587;
-  opacity: 0.4;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15777ms;
-  animation-duration: 15777ms;
-}
-.background-bubbles-bubble:nth-child(88) {
-  width: 0px;
-  height: 0px;
-  left: 63vw;
-  top: 66vh;
-  background-color: #eb9187;
-  opacity: 0.3;
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14709ms;
-  animation-duration: 14709ms;
-}
-.background-bubbles-bubble:nth-child(89) {
-  width: 23px;
-  height: 23px;
-  left: 95vw;
+  width: 72px;
+  height: 72px;
+  left: 83vw;
   top: 33vh;
-  background-color: #87ebc8;
-  opacity: 0.3;
+  background-color: #91eb87;
+  opacity: 0.4;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14684ms;
-  animation-duration: 14684ms;
+  -webkit-animation-duration: 15683ms;
+  animation-duration: 15683ms;
 }
-.background-bubbles-bubble:nth-child(90) {
-  width: 2px;
-  height: 2px;
-  left: 27vw;
-  top: 4vh;
-  background-color: #87eba0;
+.background-bubbles-bubble:nth-child(87) {
+  width: 50px;
+  height: 50px;
+  left: 84vw;
+  top: 55vh;
+  background-color: #dfeb87;
+  opacity: 0.1;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14875ms;
+  animation-duration: 14875ms;
+}
+.background-bubbles-bubble:nth-child(88) {
+  width: 90px;
+  height: 90px;
+  left: 1vw;
+  top: 55vh;
+  background-color: #87ebb1;
+  opacity: 0;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15807ms;
+  animation-duration: 15807ms;
+}
+.background-bubbles-bubble:nth-child(89) {
+  width: 62px;
+  height: 62px;
+  left: 15vw;
+  top: 83vh;
+  background-color: #87eb8e;
   opacity: 0.3;
   -webkit-animation-name: move2, pulse;
   animation-name: move2, pulse;
-  -webkit-animation-duration: 14993ms;
-  animation-duration: 14993ms;
+  -webkit-animation-duration: 15821ms;
+  animation-duration: 15821ms;
+}
+.background-bubbles-bubble:nth-child(90) {
+  width: 1px;
+  height: 1px;
+  left: 22vw;
+  top: 95vh;
+  background-color: #87eba7;
+  opacity: 0.4;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14779ms;
+  animation-duration: 14779ms;
 }
 .background-bubbles-bubble:nth-child(91) {
-  width: 74px;
-  height: 74px;
-  left: 26vw;
-  top: 62vh;
-  background-color: #aaeb87;
-  opacity: 0.1;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14578ms;
-  animation-duration: 14578ms;
+  width: 49px;
+  height: 49px;
+  left: 11vw;
+  top: 8vh;
+  background-color: #87e9eb;
+  opacity: 0.2;
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14419ms;
+  animation-duration: 14419ms;
 }
 .background-bubbles-bubble:nth-child(92) {
-  width: 83px;
-  height: 83px;
-  left: 35vw;
-  top: 20vh;
-  background-color: #cfeb87;
-  opacity: 0.1;
+  width: 100px;
+  height: 100px;
+  left: 89vw;
+  top: 58vh;
+  background-color: #87eb96;
+  opacity: 0;
   -webkit-animation-name: move0, pulse;
   animation-name: move0, pulse;
-  -webkit-animation-duration: 14302ms;
-  animation-duration: 14302ms;
+  -webkit-animation-duration: 15900ms;
+  animation-duration: 15900ms;
 }
 .background-bubbles-bubble:nth-child(93) {
-  width: 56px;
-  height: 56px;
-  left: 79vw;
-  top: 81vh;
-  background-color: #eba387;
-  opacity: 0;
+  width: 46px;
+  height: 46px;
+  left: 38vw;
+  top: 59vh;
+  background-color: #eba287;
+  opacity: 0.4;
   -webkit-animation-name: move3, pulse;
   animation-name: move3, pulse;
-  -webkit-animation-duration: 15289ms;
-  animation-duration: 15289ms;
+  -webkit-animation-duration: 14590ms;
+  animation-duration: 14590ms;
 }
 .background-bubbles-bubble:nth-child(94) {
-  width: 18px;
-  height: 18px;
-  left: 54vw;
-  top: 61vh;
-  background-color: #89eb87;
-  opacity: 0;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14193ms;
-  animation-duration: 14193ms;
-}
-.background-bubbles-bubble:nth-child(95) {
-  width: 16px;
-  height: 16px;
-  left: 95vw;
-  top: 48vh;
-  background-color: #cdeb87;
-  opacity: 0.4;
+  width: 75px;
+  height: 75px;
+  left: 59vw;
+  top: 12vh;
+  background-color: #87eba2;
+  opacity: 0.2;
   -webkit-animation-name: move0, pulse;
   animation-name: move0, pulse;
-  -webkit-animation-duration: 15788ms;
-  animation-duration: 15788ms;
+  -webkit-animation-duration: 14763ms;
+  animation-duration: 14763ms;
 }
-.background-bubbles-bubble:nth-child(96) {
-  width: 13px;
-  height: 13px;
-  left: 14vw;
-  top: 85vh;
-  background-color: #bceb87;
-  opacity: 0;
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14854ms;
-  animation-duration: 14854ms;
-}
-.background-bubbles-bubble:nth-child(97) {
+.background-bubbles-bubble:nth-child(95) {
   width: 7px;
   height: 7px;
-  left: 89vw;
-  top: 99vh;
-  background-color: #eb9e87;
-  opacity: 0;
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14976ms;
-  animation-duration: 14976ms;
-}
-.background-bubbles-bubble:nth-child(98) {
-  width: 50px;
-  height: 50px;
-  left: 67vw;
-  top: 75vh;
-  background-color: #94eb87;
+  left: 53vw;
+  top: 87vh;
+  background-color: #87ebad;
   opacity: 0.2;
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 14202ms;
-  animation-duration: 14202ms;
+  -webkit-animation-duration: 15069ms;
+  animation-duration: 15069ms;
+}
+.background-bubbles-bubble:nth-child(96) {
+  width: 38px;
+  height: 38px;
+  left: 79vw;
+  top: 76vh;
+  background-color: #91eb87;
+  opacity: 0.2;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14591ms;
+  animation-duration: 14591ms;
+}
+.background-bubbles-bubble:nth-child(97) {
+  width: 77px;
+  height: 77px;
+  left: 4vw;
+  top: 88vh;
+  background-color: #87eb99;
+  opacity: 0;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14516ms;
+  animation-duration: 14516ms;
+}
+.background-bubbles-bubble:nth-child(98) {
+  width: 29px;
+  height: 29px;
+  left: 72vw;
+  top: 53vh;
+  background-color: #9beb87;
+  opacity: 0;
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15804ms;
+  animation-duration: 15804ms;
 }
 .background-bubbles-bubble:nth-child(99) {
-  width: 55px;
-  height: 55px;
-  left: 47vw;
-  top: 5vh;
-  background-color: #87eb9b;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15730ms;
-  animation-duration: 15730ms;
+  width: 66px;
+  height: 66px;
+  left: 24vw;
+  top: 86vh;
+  background-color: #e3eb87;
+  opacity: 0.2;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15614ms;
+  animation-duration: 15614ms;
 }
 .background-bubbles-bubble:nth-child(100) {
-  width: 0px;
-  height: 0px;
-  left: 63vw;
-  top: 60vh;
-  background-color: #87eba2;
-  opacity: 0.3;
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15163ms;
-  animation-duration: 15163ms;
+  width: 98px;
+  height: 98px;
+  left: 67vw;
+  top: 85vh;
+  background-color: #87eb94;
+  opacity: 0;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14315ms;
+  animation-duration: 14315ms;
 }
 @-webkit-keyframes pulse {
   100% {

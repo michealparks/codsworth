@@ -1,18 +1,22 @@
 import React from 'react'
 
+localStorage.setItem('codsworthApp_widgets_search', JSON.stringify({
+  engine: {
+    name: 'Google',
+    api: 'https://www.google.com/search?q='
+  }
+}))
+
 export default class IconsWidget extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      engine: 'Google',
-      searchURL: 'http://www.google.com/search?q='
-    }
+    this.state = JSON.parse(localStorage.getItem('codsworthApp_widgets_search'))    
   }
 
   search(e) {
-    if (e.keyCode === 13) {
-      window.location.href = `${this.state.searchURL}${encodeURI(e.target.value)}`
-    }
+    if (e.keyCode !== 13) return
+
+    window.location.href = `${this.state.engine.api}${encodeURI(e.target.value)}`
   }
 
   render() {
@@ -21,8 +25,8 @@ export default class IconsWidget extends React.Component {
         <input
           id="widget-search-input"
           ref={ input => input.focus() }
-          placeholder={ `Search ${this.state.engine}` }
-          onKeyDown={ this.search.bind(this) }
+          placeholder={ `Search ${this.state.engine.name}` }
+          onKeyDown={ this.search }
         />
       </div>
     )

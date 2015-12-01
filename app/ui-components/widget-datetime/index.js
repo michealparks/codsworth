@@ -9,12 +9,12 @@ export default class DateTimeWidget extends React.Component {
   }
 
   componentDidMount() {
-    this.update()
+    this.tick()
   }
 
-  update() {
+  tick() {
     this.setState(this.getDateTime())
-    window.setTimeout(this.update.bind(this), 10)
+    window.setTimeout(this.tick.bind(this), 50)
   }
 
   getDateTime() {
