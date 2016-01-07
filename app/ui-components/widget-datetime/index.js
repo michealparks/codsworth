@@ -1,41 +1,42 @@
-import React  from 'react'
-import months from './month'
-import days   from './day'
+import React from 'react'
+import { expandDay, expandMonth } from '../../services/time'
 
 export default class DateTimeWidget extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = this.getDateTime()
   }
 
-  componentDidMount() {
-    this.tick()
+  componentDidMount () {
+    var tick = () => {
+      this.setState(this.getDateTime())
+      window.setTimeout(tick, 50)
+    }
+
+    tick()
   }
 
-  tick() {
-    this.setState(this.getDateTime())
-    window.setTimeout(this.tick.bind(this), 50)
-  }
-
-  getDateTime() {
+  getDateTime () {
     const d = new Date().toString().split(' ')
 
     return {
       time: d[4].replace(/:/g, '.'),
-      date: `${days(d[0])}, ${months(d[1])} ${d[2]}, ${d[3]}`
+      date: `${expandDay(d[0])}, ${expandMonth(d[1])} ${d[2]}, ${d[3]}`
     }
   }
 
-  render() {
+  render () {
     return (
-      <div id="widget-datetime">
-        <div id="widget-datetime-time">
+      <div className='widget-datetime'>
+        <div className='widget-datetime__time'>
           { this.state.time }
         </div>
-        <div id="widget-datetime-date">
+        <div className='widget-datetime__date'>
           { this.state.date }
         </div>
       </div>
     )
   }
 }
+
+DateTimeWidget.propTypes = {}

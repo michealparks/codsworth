@@ -1,26 +1,30 @@
 import React from 'react'
 
 export default class DateTimeWidget extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = { isOpen: this.props.isOpen }
   }
 
-  toggle() {
+  componentWillUpdate (nextProps, nextState) {
+    this.state.isOpen = nextProps.isOpen
+  }
+
+  toggle () {
     this.setState({ isOpen: !this.state.isOpen })
   }
 
-  render() {
+  render () {
     return (
-      <div id="lightbox">
-        <div id="lightbox-modal">
-          <div id="lightbox-modal-title">{ this.props.title || '' }</div>
-          <div 
-            id="lightbox-modal-btn-exit"
-            onClick={ this.toggle }
-          >x</div>
-          <div id="lightbox-modal-content">
+      <div className={ `lightbox ${this.state.isOpen ? '' : 'state-hidden'}` }>
+        <div className='lightbox__modal'>
+          <div className='lightbox__modal-title'>{ this.props.title || '' }</div>
+          <button
+            id='lightbox__modal-btn-exit'
+            onClick={ this.toggle.bind(this) }
+          >x</button>
+          <div id='lightbox__modal-content'>
             { this.props.children }
           </div>
         </div>
@@ -28,3 +32,5 @@ export default class DateTimeWidget extends React.Component {
     )
   }
 }
+
+DateTimeWidget.defaultProps = { isOpen: false }

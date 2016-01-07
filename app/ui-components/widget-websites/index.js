@@ -1,53 +1,40 @@
-import React    from 'react'
-import Settings from './settings'
-import Lightbox from './../lightbox/index'
+import React from 'react'
+import { ls } from '../../services/storage'
 
 export default class WebsitesWidget extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
-      websites: JSON.parse(localStorage.getItem('codsworthApp_widgets_websites') || '[]'),
-      isSettingsOpen: false
+      websites: ls.getJSON('Codsworth.Widgets.Websites.list') || []
     }
   }
 
-  onAddWebsite() {
+  onAddWebsite () {
     this.setState({ isSettingsOpen: true })
   }
 
-  render() {
+  render () {
     return (
       <div>
-        <div id="widget-websites">
+        <div className='widget-websites'>
           { this.state.websites.map((website, i) => (
-            <div
-              key={ i }
-              className="widget-websites-website"
-            >
+            <div key={ i } className='widget-websites__website' >
               <a href={ website.url }>
                 <img
-                  className="widget-websites-icon"
+                  className='widget-websites__website-icon'
                   width={ 100 }
                   height={ 100 }
-                  src={ localStorage.getItem(`codsworthApp_icons_${website.title}`) }
+                  src={ website.imgDataUrl }
                   alt={ website.title }
                 />
               </a>
             </div>
           )) }
-          <button
-            id="widget-websites-btn-add"
-            onClick={ this.onAddWebsite }
-          >
-            <div id="widget-websites-btn-add-vertline"></div>
-            <div id="widget-websites-btn-add-horizline"></div>
-          </button>
         </div>
-        <Lightbox isOpen={ this.state.isSettingsOpen }>
-          <Settings />
-        </Lightbox>
       </div>
     )
   }
 }
+
+WebsitesWidget.propTypes = {}

@@ -1,9 +1,12 @@
+import 'whatwg-fetch'
+import './services/time'
+import './services/default-config'
 
-import ready    from 'document-ready-promise'
-import React    from 'react'
+import ready from 'document-ready-promise'
+import React from 'react'
 import {render} from 'react-dom'
-import App      from './ui-components/app/index'
+import App from './ui-components/app/index'
 
-ready().then(() => 
+ready().then(() =>
   render(<App />, document.body.children[0])
 )

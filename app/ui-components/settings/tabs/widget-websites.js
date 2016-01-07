@@ -1,5 +1,6 @@
 import React from 'react'
-import {readAsDataURL} from '../../services/file-reader'
+import { readAsDataURL } from '../../../services/file-reader'
+import { ls } from '../../services/storage'
 
 export default class WebsitesWidgetSettings extends React.Component {
   constructor (props) {
@@ -8,19 +9,18 @@ export default class WebsitesWidgetSettings extends React.Component {
 
   readImage () {
     readAsDataURL(this.refs.imgInput.files[0])
-      .then(dataURL => {
-        this.refs.preview.src = dataURL
-        JSON.parse(window.localStorage.getItem('codsworthApp_widgets_websites'))
-      })
+      .then(dataURL => this.refs.preview.src = dataURL)
   }
 
   updateWebsites () {
-    const websites = JSON.parse(window.localStorage.getItem('codsworthApp_widgets_websites'))
-    window.localStorage.setItem('codsworthApp_widgets_websites', JSON.stringify((websites || []).concat({
-      title: this.refs.titleInput.value,
-      url: this.refs.urlInput.value,
-      imgDataUrl: this.refs.preview.src
-    })))
+    ls.setJSON(
+      'Codsworth.Widgets.Websites.list',
+      ls.getJSON('Codsworth.Widgets.Websites.list').concat({
+        title: this.refs.titleInput.value,
+        url: this.refs.urlInput.value,
+        imgDataUrl: this.refs.preview.src
+      })
+    )
   }
 
   render () {
@@ -40,5 +40,3 @@ export default class WebsitesWidgetSettings extends React.Component {
     )
   }
 }
-
-WebsitesWidgetSettings.propTypes = {}

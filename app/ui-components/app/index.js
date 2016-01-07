@@ -1,19 +1,21 @@
-import React             from 'react'
+import React from 'react'
 import BubblesBackground from '../backgrounds/bubbles/index'
-import DateTimeWidget    from '../widget-datetime/index'
-import SearchWidget      from '../widget-search/index'
-import WebsitesWidget    from '../widget-websites/index'
+import DateTimeWidget from '../widget-datetime/index'
+import WeatherWidget from '../widget-weather/index'
+import SearchWidget from '../widget-search/index'
+import WebsitesWidget from '../widget-websites/index'
 
 export default class App extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
   }
 
-  render() {
+  render () {
     return (
-      <div id='app'>
+      <div className='app'>
         <BubblesBackground />
         <DateTimeWidget />
+        <WeatherWidget />
         <SearchWidget />
         <WebsitesWidget />
       </div>
@@ -21,3 +23,4 @@ export default class App extends React.Component {
   }
 }
 
+App.propTypes = {}

@@ -1,9 +1,44 @@
-// API KEY: 3306be16c0e6fe58e677c17c97488f95
+import '../../services/open-weather'
 
-localStorage.setItem('codsworthApp_widgets_weather', JSON.stringify({
-  location: {
-    zip: '10026',
-    country: 'US'
+import React from 'react'
+import { on } from '../../services/mediator'
+import { ls } from '../../services/storage'
+
+export default class WeatherWidget extends React.Component {
+  constructor (props) {
+    super(props)
+
+    on('update.Widgets.Weather', changes =>
+      this.setState(changes)
+    )
+
+    const units = ls.get('Codsworth.Widgets.Weather.units')
+
+    this.state = {
+      temp: ls.get('Codsworth.Widgets.Weather.current.temp'),
+      forecast: ls.getJSON('Codsworth.Widgets.Weather.forecast'),
+      units: units === 'imperial' ? '\u00B0 F' : '\u00B0 C'
+    }
   }
-}))
 
+  render () {
+    return (
+      <div className='widget-weather'>
+        <div className='widget-weather__now'>
+          <span className='widget-weather__temp'>{ this.state.temp }</span>
+          <span className='widget-weather__units'>{ this.state.units }</span>
+        </div>
+        <div className='widget-weather__forecast'>
+          { this.state.forecast.map((weather, i) =>
+            <span key={ i } className='widget-weather__forecast-date'>
+              <div className='widget-weather__forecast-temp'>
+                { `${weather.tempMin}\u00B0 ${weather.tempMax}\u00B0` }
+              </div>
+              <div>{ weather.day }</div>
+            </span>
+          ) }
+        </div>
+      </div>
+    )
+  }
+}

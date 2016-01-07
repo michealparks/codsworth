@@ -13,7 +13,8 @@
     "es6-shim": "^0.33.6",
     "history": "^1.12.5",
     "react": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "whatwg-fetch": "^0.10.1"
   },
   "devDependencies": {
     "babelify": "^6.3.0",
@@ -22,7 +23,10 @@
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
+    "gulp-if": "^2.0.0",
+    "gulp-inline": "^0.1.0",
     "gulp-html-replace": "^1.5.4",
+    "gulp-jade": "^1.1.0",
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
@@ -31,7 +35,9 @@
     "gulp-uglify": "^1.4.2",
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.3.5",
+    "gulp-webserver": "^0.9.1",
     "lodash.assign": "^3.2.0",
+    "nib": "^1.1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
