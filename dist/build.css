@@ -7,7 +7,11 @@ body {
 .state-hidden {
   display: none;
 }
-
+.g-signin2 {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
 
 .app {
   font-family: Open Sans;
@@ -32,6 +36,20 @@ body {
   color: #555;
 }
 
+
+
+.widget-datetime {
+  width: 400px;
+  margin: 250px auto 0;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #ccc;
+}
+.widget-datetime__time {
+  font-size: 50px;
+}
+.widget-datetime__date {
+  font-size: 16px;
+}
 
 .widget-search {
   width: 400px;
@@ -58,58 +76,6 @@ body {
 }
 .widget-search__input:-ms-input-placeholder {
   color: #555;
-}
-
-.widget-datetime {
-  width: 400px;
-  margin: 250px auto 0;
-  padding: 0 0 20px;
-  border-bottom: 1px solid #ccc;
-}
-.widget-datetime__time {
-  font-size: 50px;
-}
-.widget-datetime__date {
-  font-size: 16px;
-}
-
-.widget-weather {
-  -webkit-box-lines: single;
-  -moz-box-lines: single;
-  -o-box-lines: single;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  width: 400px;
-  margin: 20px auto;
-}
-.widget-weather__temp {
-  font-size: 34px;
-  line-height: 1;
-}
-.widget-weather__units {
-  margin: 0 2px;
-  vertical-align: top;
-}
-.widget-weather__now,
-.widget-weather__forecast {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: box;
-  display: flex;
-  width: 400px;
-}
-.widget-weather__forecast {
-  margin-top: 10px;
-}
-.widget-weather__forecast-date {
-  padding: 7px;
-}
-.widget-weather__forecast-date:first-child {
-  background-color: rgba(255,255,255,0.2);
-}
-.widget-weather__forecast-temp {
-  font-size: 13px;
 }
 
 .widget-websites {
@@ -162,6 +128,45 @@ body {
   width: 30px;
 }
 
+.widget-weather {
+  -webkit-box-lines: single;
+  -moz-box-lines: single;
+  -o-box-lines: single;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  width: 400px;
+  margin: 20px auto;
+}
+.widget-weather__temp {
+  font-size: 34px;
+  line-height: 1;
+}
+.widget-weather__units {
+  margin: 0 2px;
+  vertical-align: top;
+}
+.widget-weather__now,
+.widget-weather__forecast {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  width: 400px;
+}
+.widget-weather__forecast {
+  margin-top: 10px;
+}
+.widget-weather__forecast-date {
+  padding: 7px;
+}
+.widget-weather__forecast-date:first-child {
+  background-color: rgba(255,255,255,0.2);
+}
+.widget-weather__forecast-temp {
+  font-size: 13px;
+}
+
 .bg1 {
   z-index: -1;
   position: absolute;
@@ -183,1341 +188,627 @@ body {
   animation-iteration-count: infinite;
 }
 .bg1__bubble:nth-child(0) {
-  width: 42px;
-  height: 42px;
-  left: 88vw;
-  top: 87vh;
+  width: 88px;
+  height: 88px;
+  left: 19vw;
+  top: 85vh;
   background-color: #eb8787;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14665ms;
-  animation-duration: 14665ms;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14028ms;
+  animation-duration: 14028ms;
 }
 .bg1__bubble:nth-child(1) {
-  width: 86px;
-  height: 86px;
-  left: 78vw;
-  top: 66vh;
+  width: 54px;
+  height: 54px;
+  left: 99vw;
+  top: 95vh;
   background-color: #eb8787;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14713ms;
+  animation-duration: 14713ms;
+}
+.bg1__bubble:nth-child(2) {
+  width: 10px;
+  height: 10px;
+  left: 41vw;
+  top: 27vh;
+  background-color: #eb8e87;
   opacity: 0.4;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
   filter: alpha(opacity=40);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15881ms;
-  animation-duration: 15881ms;
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15958ms;
+  animation-duration: 15958ms;
 }
-.bg1__bubble:nth-child(2) {
-  width: 12px;
-  height: 12px;
-  left: 26vw;
-  top: 43vh;
+.bg1__bubble:nth-child(3) {
+  width: 70px;
+  height: 70px;
+  left: 65vw;
+  top: 41vh;
   background-color: #eb8a87;
   opacity: 0.4;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
   filter: alpha(opacity=40);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14319ms;
-  animation-duration: 14319ms;
-}
-.bg1__bubble:nth-child(3) {
-  width: 32px;
-  height: 32px;
-  left: 99vw;
-  top: 37vh;
-  background-color: #eb8f87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 15201ms;
-  animation-duration: 15201ms;
+  -webkit-animation-duration: 15906ms;
+  animation-duration: 15906ms;
 }
 .bg1__bubble:nth-child(4) {
-  width: 88px;
-  height: 88px;
-  left: 34vw;
-  top: 82vh;
-  background-color: #eb9487;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
+  width: 0px;
+  height: 0px;
+  left: 83vw;
+  top: 32vh;
+  background-color: #eb8787;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
   -webkit-animation-name: move2, pulse;
   animation-name: move2, pulse;
-  -webkit-animation-duration: 14844ms;
-  animation-duration: 14844ms;
+  -webkit-animation-duration: 15507ms;
+  animation-duration: 15507ms;
 }
 .bg1__bubble:nth-child(5) {
-  width: 8px;
-  height: 8px;
-  left: 64vw;
-  top: 60vh;
-  background-color: #eb9387;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15280ms;
-  animation-duration: 15280ms;
-}
-.bg1__bubble:nth-child(6) {
-  width: 58px;
-  height: 58px;
-  left: 80vw;
-  top: 90vh;
-  background-color: #eb9987;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14761ms;
-  animation-duration: 14761ms;
-}
-.bg1__bubble:nth-child(7) {
-  width: 1px;
-  height: 1px;
-  left: 44vw;
-  top: 47vh;
-  background-color: #eb8787;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14661ms;
-  animation-duration: 14661ms;
-}
-.bg1__bubble:nth-child(8) {
-  width: 72px;
-  height: 72px;
-  left: 51vw;
-  top: 0vh;
-  background-color: #eb8e87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15874ms;
-  animation-duration: 15874ms;
-}
-.bg1__bubble:nth-child(9) {
-  width: 68px;
-  height: 68px;
-  left: 2vw;
-  top: 9vh;
-  background-color: #eb9987;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15743ms;
-  animation-duration: 15743ms;
-}
-.bg1__bubble:nth-child(10) {
-  width: 57px;
-  height: 57px;
-  left: 70vw;
-  top: 26vh;
-  background-color: #eb9987;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14026ms;
-  animation-duration: 14026ms;
-}
-.bg1__bubble:nth-child(11) {
-  width: 91px;
-  height: 91px;
-  left: 28vw;
-  top: 40vh;
-  background-color: #eba387;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15775ms;
-  animation-duration: 15775ms;
-}
-.bg1__bubble:nth-child(12) {
-  width: 30px;
-  height: 30px;
-  left: 21vw;
-  top: 39vh;
-  background-color: #eba787;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14997ms;
-  animation-duration: 14997ms;
-}
-.bg1__bubble:nth-child(13) {
-  width: 14px;
-  height: 14px;
-  left: 76vw;
-  top: 33vh;
-  background-color: #ebaa87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15132ms;
-  animation-duration: 15132ms;
-}
-.bg1__bubble:nth-child(14) {
-  width: 69px;
-  height: 69px;
-  left: 65vw;
-  top: 95vh;
-  background-color: #eba387;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15180ms;
-  animation-duration: 15180ms;
-}
-.bg1__bubble:nth-child(15) {
-  width: 50px;
-  height: 50px;
-  left: 92vw;
-  top: 93vh;
-  background-color: #eb9e87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15779ms;
-  animation-duration: 15779ms;
-}
-.bg1__bubble:nth-child(16) {
-  width: 35px;
-  height: 35px;
-  left: 20vw;
-  top: 23vh;
-  background-color: #ebad87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14728ms;
-  animation-duration: 14728ms;
-}
-.bg1__bubble:nth-child(17) {
-  width: 86px;
-  height: 86px;
-  left: 88vw;
-  top: 73vh;
-  background-color: #ebb287;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15726ms;
-  animation-duration: 15726ms;
-}
-.bg1__bubble:nth-child(18) {
-  width: 43px;
-  height: 43px;
-  left: 59vw;
-  top: 66vh;
-  background-color: #eb9887;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15095ms;
-  animation-duration: 15095ms;
-}
-.bg1__bubble:nth-child(19) {
-  width: 54px;
-  height: 54px;
-  left: 64vw;
-  top: 59vh;
-  background-color: #eb8787;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15786ms;
-  animation-duration: 15786ms;
-}
-.bg1__bubble:nth-child(20) {
-  width: 39px;
-  height: 39px;
-  left: 32vw;
-  top: 52vh;
-  background-color: #eba587;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14477ms;
-  animation-duration: 14477ms;
-}
-.bg1__bubble:nth-child(21) {
-  width: 30px;
-  height: 30px;
-  left: 9vw;
-  top: 4vh;
-  background-color: #eba087;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15842ms;
-  animation-duration: 15842ms;
-}
-.bg1__bubble:nth-child(22) {
-  width: 81px;
-  height: 81px;
-  left: 20vw;
-  top: 45vh;
-  background-color: #eb8e87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15204ms;
-  animation-duration: 15204ms;
-}
-.bg1__bubble:nth-child(23) {
-  width: 46px;
-  height: 46px;
-  left: 63vw;
-  top: 92vh;
-  background-color: #eba887;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14497ms;
-  animation-duration: 14497ms;
-}
-.bg1__bubble:nth-child(24) {
-  width: 11px;
-  height: 11px;
-  left: 40vw;
-  top: 45vh;
-  background-color: #ebd587;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14068ms;
-  animation-duration: 14068ms;
-}
-.bg1__bubble:nth-child(25) {
-  width: 56px;
-  height: 56px;
-  left: 75vw;
-  top: 48vh;
-  background-color: #eba287;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15076ms;
-  animation-duration: 15076ms;
-}
-.bg1__bubble:nth-child(26) {
-  width: 74px;
-  height: 74px;
-  left: 75vw;
-  top: 37vh;
-  background-color: #ebcb87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14830ms;
-  animation-duration: 14830ms;
-}
-.bg1__bubble:nth-child(27) {
-  width: 96px;
-  height: 96px;
-  left: 14vw;
-  top: 9vh;
-  background-color: #ebbb87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15916ms;
-  animation-duration: 15916ms;
-}
-.bg1__bubble:nth-child(28) {
-  width: 81px;
-  height: 81px;
-  left: 94vw;
-  top: 52vh;
-  background-color: #eb9687;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15725ms;
-  animation-duration: 15725ms;
-}
-.bg1__bubble:nth-child(29) {
-  width: 47px;
-  height: 47px;
-  left: 13vw;
-  top: 85vh;
-  background-color: #ebc887;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15525ms;
-  animation-duration: 15525ms;
-}
-.bg1__bubble:nth-child(30) {
-  width: 9px;
-  height: 9px;
-  left: 39vw;
-  top: 21vh;
-  background-color: #ebd987;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14741ms;
-  animation-duration: 14741ms;
-}
-.bg1__bubble:nth-child(31) {
-  width: 62px;
-  height: 62px;
-  left: 40vw;
-  top: 5vh;
-  background-color: #ebb287;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14758ms;
-  animation-duration: 14758ms;
-}
-.bg1__bubble:nth-child(32) {
-  width: 7px;
-  height: 7px;
-  left: 97vw;
-  top: 58vh;
-  background-color: #ebda87;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14387ms;
-  animation-duration: 14387ms;
-}
-.bg1__bubble:nth-child(33) {
-  width: 18px;
-  height: 18px;
-  left: 85vw;
-  top: 55vh;
-  background-color: #eb8f87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14309ms;
-  animation-duration: 14309ms;
-}
-.bg1__bubble:nth-child(34) {
-  width: 97px;
-  height: 97px;
-  left: 70vw;
-  top: 89vh;
-  background-color: #ebe187;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14535ms;
-  animation-duration: 14535ms;
-}
-.bg1__bubble:nth-child(35) {
-  width: 34px;
-  height: 34px;
-  left: 11vw;
-  top: 29vh;
-  background-color: #ebe187;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15319ms;
-  animation-duration: 15319ms;
-}
-.bg1__bubble:nth-child(36) {
-  width: 42px;
-  height: 42px;
-  left: 65vw;
-  top: 75vh;
-  background-color: #ebd987;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15873ms;
-  animation-duration: 15873ms;
-}
-.bg1__bubble:nth-child(37) {
-  width: 11px;
-  height: 11px;
-  left: 29vw;
-  top: 82vh;
-  background-color: #e6eb87;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14579ms;
-  animation-duration: 14579ms;
-}
-.bg1__bubble:nth-child(38) {
-  width: 39px;
-  height: 39px;
-  left: 30vw;
-  top: 48vh;
-  background-color: #ebe987;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15558ms;
-  animation-duration: 15558ms;
-}
-.bg1__bubble:nth-child(39) {
-  width: 16px;
-  height: 16px;
-  left: 12vw;
-  top: 79vh;
-  background-color: #ebd487;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14898ms;
-  animation-duration: 14898ms;
-}
-.bg1__bubble:nth-child(40) {
-  width: 89px;
-  height: 89px;
-  left: 33vw;
-  top: 22vh;
-  background-color: #eb9387;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14375ms;
-  animation-duration: 14375ms;
-}
-.bg1__bubble:nth-child(41) {
-  width: 27px;
-  height: 27px;
-  left: 54vw;
-  top: 76vh;
-  background-color: #ebe187;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14589ms;
-  animation-duration: 14589ms;
-}
-.bg1__bubble:nth-child(42) {
-  width: 76px;
-  height: 76px;
-  left: 44vw;
-  top: 74vh;
-  background-color: #ebcd87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15142ms;
-  animation-duration: 15142ms;
-}
-.bg1__bubble:nth-child(43) {
-  width: 74px;
-  height: 74px;
-  left: 46vw;
-  top: 96vh;
-  background-color: #eb9987;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15301ms;
-  animation-duration: 15301ms;
-}
-.bg1__bubble:nth-child(44) {
-  width: 46px;
-  height: 46px;
-  left: 78vw;
-  top: 26vh;
-  background-color: #c1eb87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15850ms;
-  animation-duration: 15850ms;
-}
-.bg1__bubble:nth-child(45) {
-  width: 80px;
-  height: 80px;
-  left: 14vw;
-  top: 64vh;
-  background-color: #bceb87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15774ms;
-  animation-duration: 15774ms;
-}
-.bg1__bubble:nth-child(46) {
-  width: 96px;
-  height: 96px;
-  left: 32vw;
-  top: 67vh;
-  background-color: #ebe687;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14249ms;
-  animation-duration: 14249ms;
-}
-.bg1__bubble:nth-child(47) {
-  width: 29px;
-  height: 29px;
-  left: 26vw;
-  top: 85vh;
-  background-color: #ebe687;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14286ms;
-  animation-duration: 14286ms;
-}
-.bg1__bubble:nth-child(48) {
-  width: 28px;
-  height: 28px;
-  left: 92vw;
-  top: 70vh;
-  background-color: #eb8f87;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14671ms;
-  animation-duration: 14671ms;
-}
-.bg1__bubble:nth-child(49) {
-  width: 32px;
-  height: 32px;
-  left: 38vw;
-  top: 94vh;
-  background-color: #ebaf87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15769ms;
-  animation-duration: 15769ms;
-}
-.bg1__bubble:nth-child(50) {
-  width: 65px;
-  height: 65px;
-  left: 23vw;
-  top: 29vh;
-  background-color: #ebb487;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14014ms;
-  animation-duration: 14014ms;
-}
-.bg1__bubble:nth-child(51) {
-  width: 85px;
-  height: 85px;
-  left: 18vw;
-  top: 13vh;
-  background-color: #e6eb87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14146ms;
-  animation-duration: 14146ms;
-}
-.bg1__bubble:nth-child(52) {
-  width: 39px;
-  height: 39px;
-  left: 70vw;
-  top: 60vh;
-  background-color: #eba787;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14544ms;
-  animation-duration: 14544ms;
-}
-.bg1__bubble:nth-child(53) {
-  width: 30px;
-  height: 30px;
-  left: 49vw;
-  top: 35vh;
-  background-color: #a3eb87;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14649ms;
-  animation-duration: 14649ms;
-}
-.bg1__bubble:nth-child(54) {
-  width: 82px;
-  height: 82px;
-  left: 47vw;
-  top: 46vh;
-  background-color: #ebe187;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15886ms;
-  animation-duration: 15886ms;
-}
-.bg1__bubble:nth-child(55) {
-  width: 70px;
-  height: 70px;
-  left: 94vw;
-  top: 6vh;
-  background-color: #eba587;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15999ms;
-  animation-duration: 15999ms;
-}
-.bg1__bubble:nth-child(56) {
   width: 66px;
   height: 66px;
-  left: 58vw;
-  top: 88vh;
-  background-color: #a0eb87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14741ms;
-  animation-duration: 14741ms;
-}
-.bg1__bubble:nth-child(57) {
-  width: 54px;
-  height: 54px;
-  left: 13vw;
-  top: 94vh;
-  background-color: #deeb87;
+  left: 4vw;
+  top: 62vh;
+  background-color: #eb8787;
   opacity: 0.3;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: alpha(opacity=30);
   -webkit-animation-name: move0, pulse;
   animation-name: move0, pulse;
-  -webkit-animation-duration: 14509ms;
-  animation-duration: 14509ms;
+  -webkit-animation-duration: 15589ms;
+  animation-duration: 15589ms;
 }
-.bg1__bubble:nth-child(58) {
-  width: 47px;
-  height: 47px;
-  left: 88vw;
-  top: 13vh;
-  background-color: #c0eb87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15002ms;
-  animation-duration: 15002ms;
-}
-.bg1__bubble:nth-child(59) {
-  width: 23px;
-  height: 23px;
-  left: 37vw;
-  top: 37vh;
-  background-color: #ebcb87;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15647ms;
-  animation-duration: 15647ms;
-}
-.bg1__bubble:nth-child(60) {
-  width: 91px;
-  height: 91px;
-  left: 48vw;
-  top: 31vh;
-  background-color: #b6eb87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14808ms;
-  animation-duration: 14808ms;
-}
-.bg1__bubble:nth-child(61) {
-  width: 26px;
-  height: 26px;
-  left: 39vw;
-  top: 44vh;
-  background-color: #a2eb87;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14751ms;
-  animation-duration: 14751ms;
-}
-.bg1__bubble:nth-child(62) {
-  width: 72px;
-  height: 72px;
-  left: 37vw;
-  top: 56vh;
-  background-color: #ebb487;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14960ms;
-  animation-duration: 14960ms;
-}
-.bg1__bubble:nth-child(63) {
-  width: 4px;
-  height: 4px;
-  left: 16vw;
-  top: 27vh;
-  background-color: #ebc187;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14157ms;
-  animation-duration: 14157ms;
-}
-.bg1__bubble:nth-child(64) {
-  width: 87px;
-  height: 87px;
-  left: 93vw;
-  top: 61vh;
-  background-color: #c6eb87;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14216ms;
-  animation-duration: 14216ms;
-}
-.bg1__bubble:nth-child(65) {
-  width: 84px;
-  height: 84px;
-  left: 37vw;
-  top: 73vh;
-  background-color: #87eb91;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15829ms;
-  animation-duration: 15829ms;
-}
-.bg1__bubble:nth-child(66) {
-  width: 23px;
-  height: 23px;
-  left: 63vw;
-  top: 8vh;
-  background-color: #ebe987;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15634ms;
-  animation-duration: 15634ms;
-}
-.bg1__bubble:nth-child(67) {
-  width: 64px;
-  height: 64px;
-  left: 1vw;
-  top: 20vh;
-  background-color: #ebb287;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15081ms;
-  animation-duration: 15081ms;
-}
-.bg1__bubble:nth-child(68) {
-  width: 63px;
-  height: 63px;
-  left: 0vw;
-  top: 84vh;
-  background-color: #cfeb87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15700ms;
-  animation-duration: 15700ms;
-}
-.bg1__bubble:nth-child(69) {
-  width: 68px;
-  height: 68px;
-  left: 1vw;
-  top: 1vh;
-  background-color: #ebe687;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 14750ms;
-  animation-duration: 14750ms;
-}
-.bg1__bubble:nth-child(70) {
-  width: 99px;
-  height: 99px;
-  left: 15vw;
-  top: 88vh;
-  background-color: #ebcb87;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 14227ms;
-  animation-duration: 14227ms;
-}
-.bg1__bubble:nth-child(71) {
-  width: 23px;
-  height: 23px;
-  left: 91vw;
-  top: 32vh;
-  background-color: #a8eb87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14219ms;
-  animation-duration: 14219ms;
-}
-.bg1__bubble:nth-child(72) {
-  width: 21px;
-  height: 21px;
-  left: 7vw;
-  top: 37vh;
-  background-color: #ebb687;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15684ms;
-  animation-duration: 15684ms;
-}
-.bg1__bubble:nth-child(73) {
-  width: 47px;
-  height: 47px;
-  left: 99vw;
-  top: 70vh;
-  background-color: #eb9e87;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move3, pulse;
-  animation-name: move3, pulse;
-  -webkit-animation-duration: 15754ms;
-  animation-duration: 15754ms;
-}
-.bg1__bubble:nth-child(74) {
-  width: 15px;
-  height: 15px;
-  left: 62vw;
-  top: 0vh;
-  background-color: #87ebad;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 15820ms;
-  animation-duration: 15820ms;
-}
-.bg1__bubble:nth-child(75) {
-  width: 86px;
-  height: 86px;
-  left: 40vw;
-  top: 48vh;
-  background-color: #ebe187;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15320ms;
-  animation-duration: 15320ms;
-}
-.bg1__bubble:nth-child(76) {
-  width: 98px;
-  height: 98px;
-  left: 22vw;
-  top: 20vh;
-  background-color: #ebd287;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15340ms;
-  animation-duration: 15340ms;
-}
-.bg1__bubble:nth-child(77) {
-  width: 15px;
-  height: 15px;
-  left: 50vw;
-  top: 29vh;
-  background-color: #87ebaf;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14514ms;
-  animation-duration: 14514ms;
-}
-.bg1__bubble:nth-child(78) {
-  width: 12px;
-  height: 12px;
-  left: 31vw;
-  top: 92vh;
-  background-color: #ebcf87;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 15246ms;
-  animation-duration: 15246ms;
-}
-.bg1__bubble:nth-child(79) {
-  width: 62px;
-  height: 62px;
-  left: 18vw;
-  top: 43vh;
-  background-color: #ebac87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14890ms;
-  animation-duration: 14890ms;
-}
-.bg1__bubble:nth-child(80) {
-  width: 92px;
-  height: 92px;
-  left: 81vw;
-  top: 65vh;
-  background-color: #a0eb87;
-  opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-  filter: alpha(opacity=20);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14443ms;
-  animation-duration: 14443ms;
-}
-.bg1__bubble:nth-child(81) {
-  width: 8px;
-  height: 8px;
-  left: 72vw;
-  top: 95vh;
-  background-color: #eb8f87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15267ms;
-  animation-duration: 15267ms;
-}
-.bg1__bubble:nth-child(82) {
-  width: 57px;
-  height: 57px;
-  left: 6vw;
-  top: 39vh;
-  background-color: #87ebb4;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14533ms;
-  animation-duration: 14533ms;
-}
-.bg1__bubble:nth-child(83) {
-  width: 74px;
-  height: 74px;
-  left: 31vw;
-  top: 28vh;
-  background-color: #87ebc6;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15549ms;
-  animation-duration: 15549ms;
-}
-.bg1__bubble:nth-child(84) {
-  width: 7px;
-  height: 7px;
-  left: 84vw;
-  top: 95vh;
-  background-color: #ebb487;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15313ms;
-  animation-duration: 15313ms;
-}
-.bg1__bubble:nth-child(85) {
-  width: 33px;
-  height: 33px;
-  left: 93vw;
-  top: 95vh;
-  background-color: #87ebd2;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14250ms;
-  animation-duration: 14250ms;
-}
-.bg1__bubble:nth-child(86) {
-  width: 9px;
-  height: 9px;
-  left: 67vw;
-  top: 51vh;
+.bg1__bubble:nth-child(6) {
+  width: 80px;
+  height: 80px;
+  left: 69vw;
+  top: 55vh;
   background-color: #eb9187;
   opacity: 0.4;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
   filter: alpha(opacity=40);
-  -webkit-animation-name: move1, pulse;
-  animation-name: move1, pulse;
-  -webkit-animation-duration: 14183ms;
-  animation-duration: 14183ms;
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14215ms;
+  animation-duration: 14215ms;
 }
-.bg1__bubble:nth-child(87) {
-  width: 18px;
-  height: 18px;
-  left: 6vw;
-  top: 43vh;
-  background-color: #87ebbc;
+.bg1__bubble:nth-child(7) {
+  width: 25px;
+  height: 25px;
+  left: 39vw;
+  top: 14vh;
+  background-color: #eb9187;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14633ms;
+  animation-duration: 14633ms;
+}
+.bg1__bubble:nth-child(8) {
+  width: 48px;
+  height: 48px;
+  left: 47vw;
+  top: 90vh;
+  background-color: #eb9d87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14730ms;
+  animation-duration: 14730ms;
+}
+.bg1__bubble:nth-child(9) {
+  width: 27px;
+  height: 27px;
+  left: 54vw;
+  top: 18vh;
+  background-color: #eb9387;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15517ms;
+  animation-duration: 15517ms;
+}
+.bg1__bubble:nth-child(10) {
+  width: 100px;
+  height: 100px;
+  left: 71vw;
+  top: 75vh;
+  background-color: #eb9d87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14309ms;
+  animation-duration: 14309ms;
+}
+.bg1__bubble:nth-child(11) {
+  width: 84px;
+  height: 84px;
+  left: 51vw;
+  top: 8vh;
+  background-color: #eb9987;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14529ms;
+  animation-duration: 14529ms;
+}
+.bg1__bubble:nth-child(12) {
+  width: 66px;
+  height: 66px;
+  left: 11vw;
+  top: 61vh;
+  background-color: #ebac87;
   opacity: 0.3;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: alpha(opacity=30);
   -webkit-animation-name: move3, pulse;
   animation-name: move3, pulse;
-  -webkit-animation-duration: 15383ms;
-  animation-duration: 15383ms;
+  -webkit-animation-duration: 14427ms;
+  animation-duration: 14427ms;
 }
-.bg1__bubble:nth-child(88) {
-  width: 67px;
-  height: 67px;
-  left: 44vw;
-  top: 66vh;
-  background-color: #87eb87;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15437ms;
-  animation-duration: 15437ms;
-}
-.bg1__bubble:nth-child(89) {
-  width: 32px;
-  height: 32px;
-  left: 40vw;
-  top: 31vh;
-  background-color: #87ebdf;
-  opacity: 0.4;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-  filter: alpha(opacity=40);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15727ms;
-  animation-duration: 15727ms;
-}
-.bg1__bubble:nth-child(90) {
-  width: 26px;
-  height: 26px;
-  left: 94vw;
-  top: 65vh;
-  background-color: #ebe187;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14991ms;
-  animation-duration: 14991ms;
-}
-.bg1__bubble:nth-child(91) {
-  width: 59px;
-  height: 59px;
-  left: 97vw;
-  top: 2vh;
-  background-color: #87ebb6;
-  opacity: 0.3;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=30);
-  -webkit-animation-name: move2, pulse;
-  animation-name: move2, pulse;
-  -webkit-animation-duration: 15254ms;
-  animation-duration: 15254ms;
-}
-.bg1__bubble:nth-child(92) {
-  width: 8px;
-  height: 8px;
-  left: 24vw;
-  top: 18vh;
-  background-color: #ebd087;
-  opacity: 0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  -webkit-animation-name: move4, pulse;
-  animation-name: move4, pulse;
-  -webkit-animation-duration: 14041ms;
-  animation-duration: 14041ms;
-}
-.bg1__bubble:nth-child(93) {
-  width: 26px;
-  height: 26px;
-  left: 75vw;
-  top: 38vh;
-  background-color: #87eba7;
+.bg1__bubble:nth-child(13) {
+  width: 81px;
+  height: 81px;
+  left: 10vw;
+  top: 6vh;
+  background-color: #eb8e87;
   opacity: 0.2;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14143ms;
+  animation-duration: 14143ms;
+}
+.bg1__bubble:nth-child(14) {
+  width: 12px;
+  height: 12px;
+  left: 58vw;
+  top: 23vh;
+  background-color: #eb9687;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
   -webkit-animation-name: move2, pulse;
   animation-name: move2, pulse;
-  -webkit-animation-duration: 15274ms;
-  animation-duration: 15274ms;
+  -webkit-animation-duration: 14541ms;
+  animation-duration: 14541ms;
 }
-.bg1__bubble:nth-child(94) {
-  width: 47px;
-  height: 47px;
-  left: 67vw;
+.bg1__bubble:nth-child(15) {
+  width: 1px;
+  height: 1px;
+  left: 71vw;
+  top: 92vh;
+  background-color: #ebad87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15242ms;
+  animation-duration: 15242ms;
+}
+.bg1__bubble:nth-child(16) {
+  width: 58px;
+  height: 58px;
+  left: 75vw;
   top: 22vh;
-  background-color: #ebd787;
+  background-color: #ebac87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14057ms;
+  animation-duration: 14057ms;
+}
+.bg1__bubble:nth-child(17) {
+  width: 5px;
+  height: 5px;
+  left: 7vw;
+  top: 64vh;
+  background-color: #eb9387;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14051ms;
+  animation-duration: 14051ms;
+}
+.bg1__bubble:nth-child(18) {
+  width: 43px;
+  height: 43px;
+  left: 81vw;
+  top: 69vh;
+  background-color: #eba787;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15282ms;
+  animation-duration: 15282ms;
+}
+.bg1__bubble:nth-child(19) {
+  width: 92px;
+  height: 92px;
+  left: 43vw;
+  top: 61vh;
+  background-color: #eb9b87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14454ms;
+  animation-duration: 14454ms;
+}
+.bg1__bubble:nth-child(20) {
+  width: 11px;
+  height: 11px;
+  left: 42vw;
+  top: 55vh;
+  background-color: #ebc087;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15782ms;
+  animation-duration: 15782ms;
+}
+.bg1__bubble:nth-child(21) {
+  width: 86px;
+  height: 86px;
+  left: 40vw;
+  top: 61vh;
+  background-color: #ebc087;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15134ms;
+  animation-duration: 15134ms;
+}
+.bg1__bubble:nth-child(22) {
+  width: 25px;
+  height: 25px;
+  left: 78vw;
+  top: 7vh;
+  background-color: #ebbc87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14855ms;
+  animation-duration: 14855ms;
+}
+.bg1__bubble:nth-child(23) {
+  width: 15px;
+  height: 15px;
+  left: 95vw;
+  top: 17vh;
+  background-color: #ebb987;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15841ms;
+  animation-duration: 15841ms;
+}
+.bg1__bubble:nth-child(24) {
+  width: 24px;
+  height: 24px;
+  left: 2vw;
+  top: 79vh;
+  background-color: #ebbb87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14545ms;
+  animation-duration: 14545ms;
+}
+.bg1__bubble:nth-child(25) {
+  width: 16px;
+  height: 16px;
+  left: 11vw;
+  top: 37vh;
+  background-color: #ebb787;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14648ms;
+  animation-duration: 14648ms;
+}
+.bg1__bubble:nth-child(26) {
+  width: 86px;
+  height: 86px;
+  left: 85vw;
+  top: 43vh;
+  background-color: #ebaa87;
   opacity: 0.2;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 15102ms;
-  animation-duration: 15102ms;
+  -webkit-animation-duration: 14721ms;
+  animation-duration: 14721ms;
 }
-.bg1__bubble:nth-child(95) {
-  width: 0px;
-  height: 0px;
-  left: 83vw;
+.bg1__bubble:nth-child(27) {
+  width: 100px;
+  height: 100px;
+  left: 97vw;
+  top: 5vh;
+  background-color: #ebe187;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14391ms;
+  animation-duration: 14391ms;
+}
+.bg1__bubble:nth-child(28) {
+  width: 25px;
+  height: 25px;
+  left: 43vw;
+  top: 96vh;
+  background-color: #ebb287;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14901ms;
+  animation-duration: 14901ms;
+}
+.bg1__bubble:nth-child(29) {
+  width: 27px;
+  height: 27px;
+  left: 56vw;
+  top: 25vh;
+  background-color: #ebdf87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15976ms;
+  animation-duration: 15976ms;
+}
+.bg1__bubble:nth-child(30) {
+  width: 62px;
+  height: 62px;
+  left: 56vw;
+  top: 26vh;
+  background-color: #ebb987;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15906ms;
+  animation-duration: 15906ms;
+}
+.bg1__bubble:nth-child(31) {
+  width: 72px;
+  height: 72px;
+  left: 31vw;
+  top: 13vh;
+  background-color: #ebdc87;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14692ms;
+  animation-duration: 14692ms;
+}
+.bg1__bubble:nth-child(32) {
+  width: 83px;
+  height: 83px;
+  left: 39vw;
+  top: 92vh;
+  background-color: #ebe687;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15994ms;
+  animation-duration: 15994ms;
+}
+.bg1__bubble:nth-child(33) {
+  width: 33px;
+  height: 33px;
+  left: 34vw;
+  top: 9vh;
+  background-color: #eb9387;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15058ms;
+  animation-duration: 15058ms;
+}
+.bg1__bubble:nth-child(34) {
+  width: 76px;
+  height: 76px;
+  left: 64vw;
+  top: 72vh;
+  background-color: #ebac87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15111ms;
+  animation-duration: 15111ms;
+}
+.bg1__bubble:nth-child(35) {
+  width: 91px;
+  height: 91px;
+  left: 6vw;
+  top: 30vh;
+  background-color: #ebe487;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15477ms;
+  animation-duration: 15477ms;
+}
+.bg1__bubble:nth-child(36) {
+  width: 33px;
+  height: 33px;
+  left: 65vw;
+  top: 46vh;
+  background-color: #eba287;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15711ms;
+  animation-duration: 15711ms;
+}
+.bg1__bubble:nth-child(37) {
+  width: 18px;
+  height: 18px;
+  left: 47vw;
   top: 48vh;
-  background-color: #93eb87;
+  background-color: #ebe887;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15372ms;
+  animation-duration: 15372ms;
+}
+.bg1__bubble:nth-child(38) {
+  width: 95px;
+  height: 95px;
+  left: 25vw;
+  top: 68vh;
+  background-color: #ebb787;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14477ms;
+  animation-duration: 14477ms;
+}
+.bg1__bubble:nth-child(39) {
+  width: 34px;
+  height: 34px;
+  left: 69vw;
+  top: 13vh;
+  background-color: #eba887;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15012ms;
+  animation-duration: 15012ms;
+}
+.bg1__bubble:nth-child(40) {
+  width: 94px;
+  height: 94px;
+  left: 40vw;
+  top: 59vh;
+  background-color: #e6eb87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15550ms;
+  animation-duration: 15550ms;
+}
+.bg1__bubble:nth-child(41) {
+  width: 90px;
+  height: 90px;
+  left: 28vw;
+  top: 99vh;
+  background-color: #ebb187;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14409ms;
+  animation-duration: 14409ms;
+}
+.bg1__bubble:nth-child(42) {
+  width: 37px;
+  height: 37px;
+  left: 36vw;
+  top: 98vh;
+  background-color: #ebb787;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15745ms;
+  animation-duration: 15745ms;
+}
+.bg1__bubble:nth-child(43) {
+  width: 9px;
+  height: 9px;
+  left: 76vw;
+  top: 28vh;
+  background-color: #ebaf87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14139ms;
+  animation-duration: 14139ms;
+}
+.bg1__bubble:nth-child(44) {
+  width: 98px;
+  height: 98px;
+  left: 68vw;
+  top: 27vh;
+  background-color: #cbeb87;
   opacity: 0.1;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
   filter: alpha(opacity=10);
@@ -1526,75 +817,789 @@ body {
   -webkit-animation-duration: 14800ms;
   animation-duration: 14800ms;
 }
-.bg1__bubble:nth-child(96) {
-  width: 32px;
-  height: 32px;
-  left: 91vw;
-  top: 27vh;
-  background-color: #87ebc1;
+.bg1__bubble:nth-child(45) {
+  width: 83px;
+  height: 83px;
+  left: 34vw;
+  top: 22vh;
+  background-color: #ebc587;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14422ms;
+  animation-duration: 14422ms;
+}
+.bg1__bubble:nth-child(46) {
+  width: 20px;
+  height: 20px;
+  left: 71vw;
+  top: 28vh;
+  background-color: #eb8987;
   opacity: 0.3;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: alpha(opacity=30);
   -webkit-animation-name: move1, pulse;
   animation-name: move1, pulse;
-  -webkit-animation-duration: 14472ms;
-  animation-duration: 14472ms;
+  -webkit-animation-duration: 15068ms;
+  animation-duration: 15068ms;
 }
-.bg1__bubble:nth-child(97) {
-  width: 29px;
-  height: 29px;
-  left: 49vw;
-  top: 75vh;
-  background-color: #87eb89;
+.bg1__bubble:nth-child(47) {
+  width: 8px;
+  height: 8px;
+  left: 4vw;
+  top: 45vh;
+  background-color: #eba787;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15751ms;
+  animation-duration: 15751ms;
+}
+.bg1__bubble:nth-child(48) {
+  width: 54px;
+  height: 54px;
+  left: 73vw;
+  top: 34vh;
+  background-color: #eb9b87;
   opacity: 0.2;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14895ms;
+  animation-duration: 14895ms;
+}
+.bg1__bubble:nth-child(49) {
+  width: 90px;
+  height: 90px;
+  left: 50vw;
+  top: 62vh;
+  background-color: #c3eb87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14508ms;
+  animation-duration: 14508ms;
+}
+.bg1__bubble:nth-child(50) {
+  width: 79px;
+  height: 79px;
+  left: 63vw;
+  top: 80vh;
+  background-color: #eb8e87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
   -webkit-animation-name: move4, pulse;
   animation-name: move4, pulse;
-  -webkit-animation-duration: 15933ms;
-  animation-duration: 15933ms;
+  -webkit-animation-duration: 14602ms;
+  animation-duration: 14602ms;
 }
-.bg1__bubble:nth-child(98) {
-  width: 7px;
-  height: 7px;
+.bg1__bubble:nth-child(51) {
+  width: 89px;
+  height: 89px;
+  left: 64vw;
+  top: 72vh;
+  background-color: #ebcf87;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14120ms;
+  animation-duration: 14120ms;
+}
+.bg1__bubble:nth-child(52) {
+  width: 23px;
+  height: 23px;
+  left: 25vw;
+  top: 47vh;
+  background-color: #ebc387;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15678ms;
+  animation-duration: 15678ms;
+}
+.bg1__bubble:nth-child(53) {
+  width: 43px;
+  height: 43px;
+  left: 20vw;
+  top: 41vh;
+  background-color: #ebd087;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14340ms;
+  animation-duration: 14340ms;
+}
+.bg1__bubble:nth-child(54) {
+  width: 52px;
+  height: 52px;
+  left: 19vw;
+  top: 90vh;
+  background-color: #ebd087;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15148ms;
+  animation-duration: 15148ms;
+}
+.bg1__bubble:nth-child(55) {
+  width: 6px;
+  height: 6px;
+  left: 41vw;
+  top: 13vh;
+  background-color: #b1eb87;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14246ms;
+  animation-duration: 14246ms;
+}
+.bg1__bubble:nth-child(56) {
+  width: 3px;
+  height: 3px;
+  left: 34vw;
+  top: 86vh;
+  background-color: #eb9b87;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15194ms;
+  animation-duration: 15194ms;
+}
+.bg1__bubble:nth-child(57) {
+  width: 36px;
+  height: 36px;
+  left: 31vw;
+  top: 24vh;
+  background-color: #ebe387;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14023ms;
+  animation-duration: 14023ms;
+}
+.bg1__bubble:nth-child(58) {
+  width: 98px;
+  height: 98px;
+  left: 95vw;
+  top: 40vh;
+  background-color: #ebdc87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15808ms;
+  animation-duration: 15808ms;
+}
+.bg1__bubble:nth-child(59) {
+  width: 12px;
+  height: 12px;
+  left: 36vw;
+  top: 50vh;
+  background-color: #9eeb87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14690ms;
+  animation-duration: 14690ms;
+}
+.bg1__bubble:nth-child(60) {
+  width: 47px;
+  height: 47px;
+  left: 43vw;
+  top: 54vh;
+  background-color: #8aeb87;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15452ms;
+  animation-duration: 15452ms;
+}
+.bg1__bubble:nth-child(61) {
+  width: 96px;
+  height: 96px;
   left: 85vw;
-  top: 20vh;
-  background-color: #87ebe4;
+  top: 14vh;
+  background-color: #d4eb87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14347ms;
+  animation-duration: 14347ms;
+}
+.bg1__bubble:nth-child(62) {
+  width: 77px;
+  height: 77px;
+  left: 16vw;
+  top: 30vh;
+  background-color: #87eb89;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15294ms;
+  animation-duration: 15294ms;
+}
+.bg1__bubble:nth-child(63) {
+  width: 58px;
+  height: 58px;
+  left: 0vw;
+  top: 43vh;
+  background-color: #c6eb87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14806ms;
+  animation-duration: 14806ms;
+}
+.bg1__bubble:nth-child(64) {
+  width: 80px;
+  height: 80px;
+  left: 1vw;
+  top: 6vh;
+  background-color: #ebb787;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15097ms;
+  animation-duration: 15097ms;
+}
+.bg1__bubble:nth-child(65) {
+  width: 80px;
+  height: 80px;
+  left: 87vw;
+  top: 65vh;
+  background-color: #cdeb87;
   opacity: 0.4;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
   filter: alpha(opacity=40);
   -webkit-animation-name: move3, pulse;
   animation-name: move3, pulse;
-  -webkit-animation-duration: 15132ms;
-  animation-duration: 15132ms;
+  -webkit-animation-duration: 15833ms;
+  animation-duration: 15833ms;
+}
+.bg1__bubble:nth-child(66) {
+  width: 63px;
+  height: 63px;
+  left: 59vw;
+  top: 93vh;
+  background-color: #ebb787;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14417ms;
+  animation-duration: 14417ms;
+}
+.bg1__bubble:nth-child(67) {
+  width: 36px;
+  height: 36px;
+  left: 68vw;
+  top: 35vh;
+  background-color: #87eb91;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 15238ms;
+  animation-duration: 15238ms;
+}
+.bg1__bubble:nth-child(68) {
+  width: 23px;
+  height: 23px;
+  left: 35vw;
+  top: 46vh;
+  background-color: #ebc387;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15100ms;
+  animation-duration: 15100ms;
+}
+.bg1__bubble:nth-child(69) {
+  width: 74px;
+  height: 74px;
+  left: 40vw;
+  top: 94vh;
+  background-color: #87eb9d;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15447ms;
+  animation-duration: 15447ms;
+}
+.bg1__bubble:nth-child(70) {
+  width: 48px;
+  height: 48px;
+  left: 33vw;
+  top: 46vh;
+  background-color: #ebdc87;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14042ms;
+  animation-duration: 14042ms;
+}
+.bg1__bubble:nth-child(71) {
+  width: 2px;
+  height: 2px;
+  left: 90vw;
+  top: 29vh;
+  background-color: #87eb8a;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14495ms;
+  animation-duration: 14495ms;
+}
+.bg1__bubble:nth-child(72) {
+  width: 0px;
+  height: 0px;
+  left: 2vw;
+  top: 27vh;
+  background-color: #c8eb87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15371ms;
+  animation-duration: 15371ms;
+}
+.bg1__bubble:nth-child(73) {
+  width: 29px;
+  height: 29px;
+  left: 25vw;
+  top: 1vh;
+  background-color: #eba387;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14520ms;
+  animation-duration: 14520ms;
+}
+.bg1__bubble:nth-child(74) {
+  width: 73px;
+  height: 73px;
+  left: 23vw;
+  top: 54vh;
+  background-color: #eb8787;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14388ms;
+  animation-duration: 14388ms;
+}
+.bg1__bubble:nth-child(75) {
+  width: 83px;
+  height: 83px;
+  left: 31vw;
+  top: 98vh;
+  background-color: #d4eb87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15526ms;
+  animation-duration: 15526ms;
+}
+.bg1__bubble:nth-child(76) {
+  width: 91px;
+  height: 91px;
+  left: 49vw;
+  top: 95vh;
+  background-color: #87eb9d;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15268ms;
+  animation-duration: 15268ms;
+}
+.bg1__bubble:nth-child(77) {
+  width: 89px;
+  height: 89px;
+  left: 12vw;
+  top: 50vh;
+  background-color: #87eb9e;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15976ms;
+  animation-duration: 15976ms;
+}
+.bg1__bubble:nth-child(78) {
+  width: 17px;
+  height: 17px;
+  left: 7vw;
+  top: 87vh;
+  background-color: #eba287;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15206ms;
+  animation-duration: 15206ms;
+}
+.bg1__bubble:nth-child(79) {
+  width: 38px;
+  height: 38px;
+  left: 92vw;
+  top: 85vh;
+  background-color: #eba287;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15604ms;
+  animation-duration: 15604ms;
+}
+.bg1__bubble:nth-child(80) {
+  width: 8px;
+  height: 8px;
+  left: 8vw;
+  top: 96vh;
+  background-color: #eba387;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15837ms;
+  animation-duration: 15837ms;
+}
+.bg1__bubble:nth-child(81) {
+  width: 26px;
+  height: 26px;
+  left: 36vw;
+  top: 88vh;
+  background-color: #a7eb87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14076ms;
+  animation-duration: 14076ms;
+}
+.bg1__bubble:nth-child(82) {
+  width: 22px;
+  height: 22px;
+  left: 94vw;
+  top: 50vh;
+  background-color: #87eb93;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15410ms;
+  animation-duration: 15410ms;
+}
+.bg1__bubble:nth-child(83) {
+  width: 84px;
+  height: 84px;
+  left: 52vw;
+  top: 4vh;
+  background-color: #87ebcf;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14227ms;
+  animation-duration: 14227ms;
+}
+.bg1__bubble:nth-child(84) {
+  width: 25px;
+  height: 25px;
+  left: 69vw;
+  top: 54vh;
+  background-color: #87ebcd;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15361ms;
+  animation-duration: 15361ms;
+}
+.bg1__bubble:nth-child(85) {
+  width: 14px;
+  height: 14px;
+  left: 84vw;
+  top: 92vh;
+  background-color: #ebeb87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15435ms;
+  animation-duration: 15435ms;
+}
+.bg1__bubble:nth-child(86) {
+  width: 98px;
+  height: 98px;
+  left: 99vw;
+  top: 91vh;
+  background-color: #afeb87;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15350ms;
+  animation-duration: 15350ms;
+}
+.bg1__bubble:nth-child(87) {
+  width: 3px;
+  height: 3px;
+  left: 11vw;
+  top: 40vh;
+  background-color: #ebc087;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15364ms;
+  animation-duration: 15364ms;
+}
+.bg1__bubble:nth-child(88) {
+  width: 12px;
+  height: 12px;
+  left: 9vw;
+  top: 30vh;
+  background-color: #eb8a87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move0, pulse;
+  animation-name: move0, pulse;
+  -webkit-animation-duration: 14689ms;
+  animation-duration: 14689ms;
+}
+.bg1__bubble:nth-child(89) {
+  width: 41px;
+  height: 41px;
+  left: 7vw;
+  top: 80vh;
+  background-color: #a3eb87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14766ms;
+  animation-duration: 14766ms;
+}
+.bg1__bubble:nth-child(90) {
+  width: 46px;
+  height: 46px;
+  left: 3vw;
+  top: 50vh;
+  background-color: #daeb87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14799ms;
+  animation-duration: 14799ms;
+}
+.bg1__bubble:nth-child(91) {
+  width: 88px;
+  height: 88px;
+  left: 12vw;
+  top: 61vh;
+  background-color: #87ebc5;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15285ms;
+  animation-duration: 15285ms;
+}
+.bg1__bubble:nth-child(92) {
+  width: 30px;
+  height: 30px;
+  left: 85vw;
+  top: 6vh;
+  background-color: #eb8987;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 14214ms;
+  animation-duration: 14214ms;
+}
+.bg1__bubble:nth-child(93) {
+  width: 93px;
+  height: 93px;
+  left: 89vw;
+  top: 85vh;
+  background-color: #eb8787;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 15854ms;
+  animation-duration: 15854ms;
+}
+.bg1__bubble:nth-child(94) {
+  width: 80px;
+  height: 80px;
+  left: 69vw;
+  top: 97vh;
+  background-color: #b9eb87;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 15858ms;
+  animation-duration: 15858ms;
+}
+.bg1__bubble:nth-child(95) {
+  width: 63px;
+  height: 63px;
+  left: 53vw;
+  top: 36vh;
+  background-color: #c3eb87;
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15126ms;
+  animation-duration: 15126ms;
+}
+.bg1__bubble:nth-child(96) {
+  width: 47px;
+  height: 47px;
+  left: 90vw;
+  top: 12vh;
+  background-color: #87ebd4;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  -webkit-animation-name: move3, pulse;
+  animation-name: move3, pulse;
+  -webkit-animation-duration: 14972ms;
+  animation-duration: 14972ms;
+}
+.bg1__bubble:nth-child(97) {
+  width: 26px;
+  height: 26px;
+  left: 55vw;
+  top: 90vh;
+  background-color: #eba587;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move4, pulse;
+  animation-name: move4, pulse;
+  -webkit-animation-duration: 14150ms;
+  animation-duration: 14150ms;
+}
+.bg1__bubble:nth-child(98) {
+  width: 37px;
+  height: 37px;
+  left: 7vw;
+  top: 10vh;
+  background-color: #eb8f87;
+  opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 14328ms;
+  animation-duration: 14328ms;
 }
 .bg1__bubble:nth-child(99) {
-  width: 82px;
-  height: 82px;
-  left: 50vw;
-  top: 33vh;
-  background-color: #ebe487;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 14206ms;
-  animation-duration: 14206ms;
+  width: 94px;
+  height: 94px;
+  left: 39vw;
+  top: 82vh;
+  background-color: #ebe387;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move2, pulse;
+  animation-name: move2, pulse;
+  -webkit-animation-duration: 15735ms;
+  animation-duration: 15735ms;
 }
 .bg1__bubble:nth-child(100) {
-  width: 59px;
-  height: 59px;
-  left: 10vw;
-  top: 12vh;
-  background-color: #87eb9d;
-  opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity=10);
-  -webkit-animation-name: move0, pulse;
-  animation-name: move0, pulse;
-  -webkit-animation-duration: 15219ms;
-  animation-duration: 15219ms;
+  width: 14px;
+  height: 14px;
+  left: 2vw;
+  top: 1vh;
+  background-color: #ebeb87;
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  -webkit-animation-name: move1, pulse;
+  animation-name: move1, pulse;
+  -webkit-animation-duration: 15037ms;
+  animation-duration: 15037ms;
 }
 @-webkit-keyframes pulse {
   100% {

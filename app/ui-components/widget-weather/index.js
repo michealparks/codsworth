@@ -22,6 +22,8 @@ export default class WeatherWidget extends React.Component {
   }
 
   render () {
+    if (!this.state.forecast) return <div />
+
     return (
       <div className='widget-weather'>
         <div className='widget-weather__now'>

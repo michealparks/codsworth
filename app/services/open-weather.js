@@ -2,7 +2,7 @@ import { ls } from './storage'
 
 const API_KEY = '3306be16c0e6fe58e677c17c97488f95'
 const API_VERSION = '2.5'
-const API_BASE_URL = `http://api.openweathermap.org/data`
+const API_BASE_URL = `https://api.openweathermap.org/data`
 const SEARCH_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/find`
 const CURRENT_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/weather`
 const FORECAST_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/forecast/daily`
@@ -97,9 +97,9 @@ function updateWeather () {
     .catch(err => { throw err })
 
   getWeatherForecast({ latitude, longitude })
-    .then(response => {
-      console.log(response)
+    .then(response =>
       ls.setJSON('Codsworth.Widgets.Weather.forecast', response)
-    })
+    )
 }
+
 

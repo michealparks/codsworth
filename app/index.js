@@ -1,6 +1,7 @@
 import 'whatwg-fetch'
 import './services/time'
 import './services/default-config'
+import './services/google-calendar'
 
 import ready from 'document-ready-promise'
 import React from 'react'

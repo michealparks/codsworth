@@ -26,7 +26,7 @@ var babelify = require('babelify')
 
 var webserver = require('gulp-webserver')
 
-var production = false
+var production = true
 
 var path = {
   HTML: 'app/index.jade',
@@ -135,8 +135,8 @@ gulp.task('webserver', function () {
   gulp.src('dist')
     .pipe(webserver({
       livereload: true,
-      https: false,
-      host: '0.0.0.0',
+      https: true,
+      // host: '0.0.0.0',
       directoryListing: false,
       open: true,
       fallback: 'index.html'
