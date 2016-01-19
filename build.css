@@ -13,6 +13,11 @@ body {
   right: 10px;
 }
 
+.app {
+  font-family: Open Sans;
+  color: #fff;
+}
+
 .background {
   position: absolute;
   z-index: -1;
@@ -20,11 +25,6 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-.app {
-  font-family: Open Sans;
-  color: #fff;
 }
 
 .lightbox {
@@ -57,6 +57,33 @@ body {
 }
 .widget-datetime__date {
   font-size: 16px;
+}
+
+.widget-search {
+  width: 400px;
+  margin: 20px auto 0;
+}
+.widget-search__input {
+  outline: none;
+  width: calc(100% - 20px);
+  padding: 10px;
+  background-color: rgba(255,255,255,0.7);
+  border: 0;
+  font-size: 16px;
+  font-family: Open Sans;
+  color: #333;
+}
+.widget-search__input::-webkit-input-placeholder {
+  color: #555;
+}
+.widget-search__input:-moz-placeholder {
+  color: #555;
+}
+.widget-search__input::-moz-placeholder {
+  color: #555;
+}
+.widget-search__input:-ms-input-placeholder {
+  color: #555;
 }
 
 .widget-weather {
@@ -96,33 +123,6 @@ body {
 }
 .widget-weather__forecast-temp {
   font-size: 13px;
-}
-
-.widget-search {
-  width: 400px;
-  margin: 20px auto 0;
-}
-.widget-search__input {
-  outline: none;
-  width: calc(100% - 20px);
-  padding: 10px;
-  background-color: rgba(255,255,255,0.7);
-  border: 0;
-  font-size: 16px;
-  font-family: Open Sans;
-  color: #333;
-}
-.widget-search__input::-webkit-input-placeholder {
-  color: #555;
-}
-.widget-search__input:-moz-placeholder {
-  color: #555;
-}
-.widget-search__input::-moz-placeholder {
-  color: #555;
-}
-.widget-search__input:-ms-input-placeholder {
-  color: #555;
 }
 
 .widget-websites {
