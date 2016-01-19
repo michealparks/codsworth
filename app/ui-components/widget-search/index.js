@@ -1,12 +1,16 @@
 import React from 'react'
-import { ls } from '../../services/storage'
+import localforage from 'localforage'
 
-export default class IconsWidget extends React.Component {
+export default class SearchWidget extends React.Component {
   constructor (props) {
     super(props)
+
+    localforage.get('Search.engine')
+      .then(data => this.setState(data))
+
     this.state = {
-      name: ls.get('Codsworth.Widgets.Search.engine.name'),
-      href: ls.get('Codsworth.Widgets.Search.engine.href')
+      name: 'Google',
+      url: 'https://www.google.com/search?q='
     }
   }
 
@@ -19,8 +23,8 @@ export default class IconsWidget extends React.Component {
     return (
       <div className='widget-search'>
         <input
+          tabIndex='1'
           className='widget-search__input'
-          ref={ input => input.focus() }
           placeholder={ `Search ${this.state.name}` }
           onKeyDown={ this.search.bind(this) }
         />
@@ -29,4 +33,4 @@ export default class IconsWidget extends React.Component {
   }
 }
 
-IconsWidget.propTypes = {}
+SearchWidget.propTypes = {}

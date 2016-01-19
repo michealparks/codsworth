@@ -1,6 +1,6 @@
 import React from 'react'
+import localforage from 'localforage'
 import { readAsDataURL } from '../../../services/file-reader'
-import { ls } from '../../services/storage'
 
 export default class WebsitesWidgetSettings extends React.Component {
   constructor (props) {
@@ -13,13 +13,12 @@ export default class WebsitesWidgetSettings extends React.Component {
   }
 
   updateWebsites () {
-    ls.setJSON(
-      'Codsworth.Widgets.Websites.list',
-      ls.getJSON('Codsworth.Widgets.Websites.list').concat({
+    localforage.get('Websites.list').then(websites =>
+      localforage.set('Websites.list', websites.concat({
         title: this.refs.titleInput.value,
         url: this.refs.urlInput.value,
         imgDataUrl: this.refs.preview.src
-      })
+      }))
     )
   }
 

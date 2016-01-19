@@ -1,3 +1,5 @@
+import localForage from 'localForage'
+
 function onLoad (done) {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -10,12 +12,12 @@ function onLoad (done) {
     .toDataURL(`image/${this.src.substr(this.src.lastIndexOf('.') + 1)}`)
 
   try {
-    window.localStorage.setItem(`codsworthApp_icons_${this.alt}`, imgAsDataURL)
+    localForage.set(`Websites.icons.${this.alt}`, imgAsDataURL)
+      .then(done)
   } catch (err) {
+    done()
     throw err
   }
-
-  done()
 }
 
 export default config => {

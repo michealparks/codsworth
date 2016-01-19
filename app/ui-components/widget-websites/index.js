@@ -1,13 +1,14 @@
 import React from 'react'
-import { ls } from '../../services/storage'
+import localforage from 'localforage'
 
 export default class WebsitesWidget extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = {
-      websites: ls.getJSON('Codsworth.Widgets.Websites.list') || []
-    }
+    localforage.get('Websites.list')
+      .then(websites => this.setState({ websites }))
+
+    this.state = { websites: [] }
   }
 
   onAddWebsite () {

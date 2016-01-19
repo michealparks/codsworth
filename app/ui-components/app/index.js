@@ -1,5 +1,5 @@
 import React from 'react'
-import BubblesBackground from '../backgrounds/bubbles/index'
+import FeatPicBackground from '../backgrounds/wiki-feat-pic/index'
 import DateTimeWidget from '../widget-datetime/index'
 import WeatherWidget from '../widget-weather/index'
 import SearchWidget from '../widget-search/index'
@@ -13,7 +13,7 @@ export default class App extends React.Component {
   render () {
     return (
       <div className='app'>
-        <BubblesBackground />
+        <FeatPicBackground />
         <DateTimeWidget />
         <WeatherWidget />
         <SearchWidget />

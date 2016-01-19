@@ -86,7 +86,7 @@ gulp.task('js', function () {
     debug: true
   })
   var bundler = watchify(browserify(args).transform(babelify, {
-    /* opts */
+    presets: ['es2015', 'react']
   }))
 
   bundleJS()
@@ -134,8 +134,8 @@ gulp.task('default', function () {
 gulp.task('webserver', function () {
   gulp.src('dist')
     .pipe(webserver({
-      livereload: true,
-      https: true,
+      livereload: false,
+      https: false,
       // host: '0.0.0.0',
       directoryListing: false,
       open: true,
