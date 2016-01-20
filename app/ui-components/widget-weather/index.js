@@ -1,25 +1,31 @@
 import React from 'react'
 import localforage from 'localforage'
 import getWeather from '../../services/weather'
-import { on } from '../../services/mediator'
 
 export default class WeatherWidget extends React.Component {
   constructor (props) {
     super(props)
 
-    on('Weather.data.update', changes => this.setState(changes))
-    getWeather().then(data => this.setState(data))
-    localforage.get('Weather.units')
-      .then(units => this.setState({
+    localforage.get('Weather.units').then(units =>
+      this.setState({
         units: units === 'imperial' ? '\u00B0 F' : '\u00B0 C'
-      }))
+      })
+    )
 
-    this.state = { units: '' }
+    localforage.on('Weather.data', data => this.setState(data))
+
+    getWeather()
+      .then(data => this.setState(data))
+      .catch(() => {})
+
+    this.state = {
+      units: '',
+      temp: '',
+      forecast: []
+    }
   }
 
   render () {
-    if (!this.state.forecast) return <div />
-
     return (
       <div className='widget-weather'>
         <div className='widget-weather__now'>

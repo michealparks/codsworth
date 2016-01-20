@@ -3,7 +3,7 @@ import localforage from 'localforage'
 const api = 'http://104.131.164.142:3000'
 const oneDay = 1000 * 60 * 60 * 24
 
-export default function getFeaturedImg () {
+export default function getFeatPic () {
   return localforage.get('Backgrounds.FeatPic').then(data => {
     if (!data || Date.now() - data.time > oneDay) return getFromAPI()
     return data

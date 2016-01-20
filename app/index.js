@@ -2,7 +2,6 @@ import 'whatwg-fetch'
 
 import './services/storage'
 import './services/time'
-import './services/wikipedia'
 import initConfig from './services/config'
 
 import ready from 'document-ready-promise'
