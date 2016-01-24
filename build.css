@@ -1,12 +1,209 @@
-* {
+.react-toggle {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.react-toggle-screenreader-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.react-toggle--disabled {
+  opacity: 0.5;
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+}
+
+.react-toggle-track {
+  width: 50px;
+  height: 24px;
+  padding: 0;
+  border-radius: 30px;
+  background-color: #4D4D4D;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.react-toggle:hover .react-toggle-track {
+  background-color: #000000;
+}
+
+.react-toggle--checked .react-toggle-track {
+  background-color: #19AB27;
+}
+
+.react-toggle.react-toggle--checked:hover .react-toggle-track {
+  background-color: #128D15;
+}
+
+.react-toggle-track-check {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  top: 0px;
+  bottom: 0px;
+  margin-top: auto;
+  margin-bottom: auto;
+  line-height: 0;
+  left: 8px;
+  opacity: 0;
+  -webkit-transition: opacity 0.25s ease;
+  -moz-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+}
+
+.react-toggle--checked .react-toggle-track-check {
+  opacity: 1;
+  -webkit-transition: opacity 0.25s ease;
+  -moz-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+}
+
+.react-toggle-track-x {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 0px;
+  bottom: 0px;
+  margin-top: auto;
+  margin-bottom: auto;
+  line-height: 0;
+  right: 10px;
+  opacity: 1;
+  -webkit-transition: opacity 0.25s ease;
+  -moz-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+}
+
+.react-toggle--checked .react-toggle-track-x {
+  opacity: 0;
+}
+
+.react-toggle-thumb {
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #4D4D4D;
+  border-radius: 50%;
+  background-color: #FAFAFA;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+}
+
+.react-toggle--checked .react-toggle-thumb {
+  left: 27px;
+  border-color: #19AB27;
+}
+
+.react-toggle--focus .react-toggle-thumb {
+  -webkit-box-shadow: 0px 0px 3px 2px #0099E0;
+  -moz-box-shadow: 0px 0px 3px 2px #0099E0;
+  box-shadow: 0px 0px 2px 3px #0099E0;
+}
+
+.react-toggle:active .react-toggle-thumb {
+  -webkit-box-shadow: 0px 0px 5px 5px #0099E0;
+  -moz-box-shadow: 0px 0px 5px 5px #0099E0;
+  box-shadow: 0px 0px 5px 5px #0099E0;
+}
+
+.react-toggle-thumb {
+  box-shadow: none !important;
+}
+
+.react-toggle-track-check,
+.react-toggle-track-x {
+  display: none !important;
+}
+
+.react-toggle .react-toggle-track {
+  background-color: #34495e !important;
+}
+
+.react-toggle:hover .react-toggle-track {
+  background-color: #2c3e50 !important;
+}
+
+.react-toggle--checked .react-toggle-track {
+  background-color: #27ae60 !important;
+}
+
+.react-toggle--checked:hover .react-toggle-track {
+  background-color: #27ae60 !important;
+}
+
+*:not(input) {
   cursor: default;
 }
+
 body {
   margin: 0;
 }
+
+body,
+input {
+  font-family: Open Sans;
+}
+
+input {
+  outline: 0;
+  border: 0;
+  background-color: rgba(255,255,255,0.7);
+  color: #333;
+}
+
+input::-webkit-input-placeholder {
+  color: #555;
+}
+
+input:-moz-placeholder {
+  color: #555;
+}
+
+input::-moz-placeholder {
+  color: #555;
+}
+
+input:-ms-input-placeholder {
+  color: #555;
+}
+
+button {
+  background: 0;
+  border: 0;
+  outline: none;
+}
+
 .state-hidden {
   display: none;
 }
+
 .g-signin2 {
   position: fixed;
   top: 10px;
@@ -14,7 +211,6 @@ body {
 }
 
 .app {
-  font-family: Open Sans;
   color: #fff;
 }
 
@@ -28,6 +224,7 @@ body {
 }
 
 .lightbox {
+  z-index: 100;
   position: fixed;
   left: 0;
   top: 0;
@@ -35,16 +232,34 @@ body {
   height: 100%;
   background-color: rgba(0,0,0,0.8);
 }
-.lightbox__modal {
+
+.settings__toggle-btn {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 300px;
-  height: 200px;
-  background-color: #fff;
-  color: #555;
+  left: 20px;
+  bottom: 20px;
 }
 
+.settings .lightbox__modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  background-color: rgba(255,255,255,0.6);
+  color: #333;
+}
+
+.settings .lightbox__modal-btn-exit {
+  position: absolute;
+  right: -50px;
+  top: 10px;
+}
+
+.settings__title,
+.settings__subtitle {
+  font-weight: 300;
+  padding: 0 20px;
+}
 
 .widget-datetime {
   width: 400px;
@@ -52,9 +267,11 @@ body {
   padding: 0 0 20px;
   border-bottom: 1px solid #ccc;
 }
+
 .widget-datetime__time {
   font-size: 50px;
 }
+
 .widget-datetime__date {
   font-size: 16px;
 }
@@ -63,44 +280,73 @@ body {
   width: 400px;
   margin: 20px auto 0;
 }
+
 .widget-search__input {
-  outline: none;
   width: calc(100% - 20px);
-  padding: 10px;
-  background-color: rgba(255,255,255,0.7);
-  border: 0;
   font-size: 16px;
-  font-family: Open Sans;
-  color: #333;
+  padding: 10px;
 }
-.widget-search__input::-webkit-input-placeholder {
-  color: #555;
+
+.widget-weather {
+  -webkit-box-lines: single;
+  -moz-box-lines: single;
+  -o-box-lines: single;
+  flex-wrap: nowrap;
+  width: 400px;
+  margin: 20px auto;
 }
-.widget-search__input:-moz-placeholder {
-  color: #555;
+
+.widget-weather__temp {
+  font-size: 34px;
+  line-height: 1;
 }
-.widget-search__input::-moz-placeholder {
-  color: #555;
+
+.widget-weather__units {
+  margin: 0 2px;
+  vertical-align: top;
 }
-.widget-search__input:-ms-input-placeholder {
-  color: #555;
+
+.widget-weather__now,
+.widget-weather__forecast {
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  width: 400px;
+}
+
+.widget-weather__forecast {
+  margin-top: 10px;
+}
+
+.widget-weather__forecast-date {
+  padding: 7px;
+}
+
+.widget-weather__forecast-date:first-child {
+  background-color: rgba(255,255,255,0.2);
+}
+
+.widget-weather__forecast-temp {
+  font-size: 13px;
 }
 
 .widget-websites {
   width: 400px;
   margin: 20px auto;
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: box;
   display: flex;
 }
+
 .widget-websites__website {
   margin-right: 10px;
 }
+
 .widget-websites__icon {
   width: 60px;
   height: 60px;
 }
+
 .widget-websites__btn-add {
   position: relative;
   width: 60px;
@@ -108,6 +354,7 @@ body {
   border: 0;
   background-color: transparent;
 }
+
 .widget-websites__btn-add-vertline,
 .widget-websites__btn-add-horizline {
   position: absolute;
@@ -119,16 +366,19 @@ body {
   border-radius: 100%;
   transition: 200ms;
 }
+
 .widget-websites__btn-add:hover .widget-websites__btn-add-vertline,
 .widget-websites__btn-add:hover .widget-websites__btn-add-horizline {
   border-radius: 0;
 }
+
 .widget-websites__btn-add:hover .widget-websites__btn-add-vertline {
   left: 29px;
   top: 15px;
   height: 30px;
   width: 2px;
 }
+
 .widget-websites__btn-add:hover .widget-websites__btn-add-horizline {
   left: 15px;
   top: 29px;
@@ -136,53 +386,15 @@ body {
   width: 30px;
 }
 
-.widget-weather {
-  -webkit-box-lines: single;
-  -moz-box-lines: single;
-  -o-box-lines: single;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  width: 400px;
-  margin: 20px auto;
-}
-.widget-weather__temp {
-  font-size: 34px;
-  line-height: 1;
-}
-.widget-weather__units {
-  margin: 0 2px;
-  vertical-align: top;
-}
-.widget-weather__now,
-.widget-weather__forecast {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: box;
-  display: flex;
-  width: 400px;
-}
-.widget-weather__forecast {
-  margin-top: 10px;
-}
-.widget-weather__forecast-date {
-  padding: 7px;
-}
-.widget-weather__forecast-date:first-child {
-  background-color: rgba(255,255,255,0.2);
-}
-.widget-weather__forecast-temp {
-  font-size: 13px;
-}
-
 .background__image {
   width: 100%;
   height: 100%;
   background-position: 50%;
   background-size: cover;
-  -webkit-filter: brightness(0.4);
-  filter: brightness(0.4);
+  -webkit-filter: brightness(0.5);
+  filter: brightness(0.5);
 }
+
 .background__description {
   position: fixed;
   bottom: 20px;
@@ -194,9 +406,41 @@ body {
   line-height: 1.6;
   font-size: 13px;
 }
+
 .background__description a {
   cursor: pointer;
   color: #ccc;
+}
+
+.settings-tab__header {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-bottom: 1px solid #8e8e8e;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -o-box-align: center;
+  align-items: center;
+}
+
+.settings-tab__title,
+.react-toggle-container {
+  padding: 15px 20px;
+}
+
+.settings-tab__title {
+  width: 90%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.settings-tab__content {
+  padding: 20px;
+  background-color: rgba(0,0,0,0.6);
+  color: #fff;
 }
 
 /*# sourceMappingURL=build.css.map */
