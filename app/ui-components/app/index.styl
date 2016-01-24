@@ -1,2 +1,10 @@
 .app
   color: #fff
+  
+.app > *:not(.settings)
+  transition: 400ms
+  transform: translate3d(0, 0, 0)
+  
+.state-settings .app > *:not(.settings)
+  transform: scale(0.7) translate3d(0, 0, 0)
+  

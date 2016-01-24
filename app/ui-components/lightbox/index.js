@@ -14,17 +14,12 @@ export default class Lightbox extends React.Component {
 
   componentWillUpdate (nextProps, nextState) {
     this.state.isOpen = nextProps.isOpen
-    this.state.isHidden = !nextProps.isOpen
-  }
-
-  toggle (isOpen) {
-    isOpen = isOpen || !this.state.isOpen
-    this.setState({ isOpen })
+    if (nextProps.isOpen) this.state.isHidden = false
   }
 
   onBackgroundPress (e) {
     if (e.target.classList.contains('lightbox')) {
-      this.toggle(false)
+      this.props.toggle(false)
     }
   }
 
@@ -54,8 +49,8 @@ export default class Lightbox extends React.Component {
               <div className='lightbox__modal-title'>{ this.props.title || '' }</div>
               <button
                 className='lightbox__modal-btn-exit'
-                onTouchEnd={ this.hasTouch && this.toggle.bind(this, false) }
-                onMouseUp={ !this.hasTouch && this.toggle.bind(this, false) }
+                onTouchEnd={ () => this.hasTouch ? this.props.toggle(false) : undefined }
+                onMouseUp={ () => !this.hasTouch ? this.props.toggle(false) : undefined }
               >
                 <svg width='28' height='28' viewBox='0 0 24 24'>
                   <path fill='#ffffff' d='M19 4q0.43 0 0.715 0.285t0.285 0.715q0 0.422-0.289 0.711l-6.297 6.289 6.297 6.289q0.289 0.289 0.289 0.711 0 0.43-0.285 0.715t-0.715 0.285q-0.422 0-0.711-0.289l-6.289-6.297-6.289 6.297q-0.289 0.289-0.711 0.289-0.43 0-0.715-0.285t-0.285-0.715q0-0.422 0.289-0.711l6.297-6.289-6.297-6.289q-0.289-0.289-0.289-0.711 0-0.43 0.285-0.715t0.715-0.285q0.422 0 0.711 0.289l6.289 6.297 6.289-6.297q0.289-0.289 0.711-0.289z'></path>
@@ -73,16 +68,17 @@ export default class Lightbox extends React.Component {
   }
 }
 
-const { string, node, bool } = React.PropTypes
+const { string, node, bool, func } = React.PropTypes
 
 Lightbox.propTypes = {
   title: string,
   isOpen: bool,
   isHidden: bool,
-  children: node.isRequired
+  children: node.isRequired,
+  toggle: func.isRequired
 }
 
 Lightbox.defaultProps = {
   isOpen: false,
-  isHidden: true
+  isHidden: true,
 }

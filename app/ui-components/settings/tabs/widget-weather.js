@@ -24,14 +24,14 @@ export default class WeatherWidgetTab extends React.Component {
         <div className='settings-tab__content'>
           <label>
             <span>Units</span>
-            <select>
+            <select className='settings-tab__option'>
               <option value='Celsius' />
               <option value='Fahrenheit' />
               <option value='Kelvin' />
             </select>
           </label>
 
-          <label>
+          <label className='settings-tab__option'>
             <span>City</span>
             <input placeholder={ this.state.location } />
           </label>

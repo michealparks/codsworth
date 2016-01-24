@@ -12,13 +12,13 @@ export default class DateTimeWidgetTab extends React.Component {
     return (
       <SettingsTab title='Date & Time' widget='DateTimeWidget'>
         <div className='settings-tab__content'>
-          <label>
+          <label className='settings-tab__option'>
             <span>Show Seconds</span>
-            <input checkbox />
+            <input type='checkbox' />
           </label>
-          <label>
+          <label className='settings-tab__option'>
             <span>24 Hour Time</span>
-            <input checkbox />
+            <input type='checkbox' />
           </label>
         </div>
       </SettingsTab>
