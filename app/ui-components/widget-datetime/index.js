@@ -10,10 +10,14 @@ export default class DateTimeWidget extends React.Component {
   componentDidMount () {
     var tick = () => {
       this.setState(this.getDateTime())
-      window.setTimeout(tick, 50)
+      this.tickId = window.setTimeout(tick, 50)
     }
 
-    tick()
+    this.tickId = window.setTimeout(tick, 0)
+  }
+
+  componentWillUnmount () {
+    window.clearTimeout(this.tickId)
   }
 
   getDateTime () {

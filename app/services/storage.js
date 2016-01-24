@@ -1,5 +1,7 @@
 import localforage from 'localforage'
-import { installEventsTo } from './mediator'
+import Mediator from 'micro-mediator'
+
+window.Mediator = Mediator
 
 localforage.get = localforage.getItem
 localforage.set = localforage.setItem
@@ -10,6 +12,6 @@ localforage.config({
   name: 'Codsworth'
 })
 
-installEventsTo(localforage)
+Mediator.installTo(localforage)
 
 window.localforage = localforage

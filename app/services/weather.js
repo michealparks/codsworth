@@ -1,5 +1,8 @@
 import getYahooWeather from 'yahoo-weather'
 import localforage from 'localforage'
+import { HOUR } from './time'
+
+window.getYahooWeather = getYahooWeather
 
 let user
 let weather
@@ -13,17 +16,21 @@ localforage.on('Weather.user', data => {
   })
 })
 
-export default function getWeather (update = false) {
+window.setInterval(() => {
+  console.log(`${Date.now()}: Auto-updating weather`)
+  getWeather.bind(undefined, true)
+}, HOUR / 2)
+
+export default function getWeather (forceUpdate = false) {
   return Promise.all([getWeatherData(), getUserData()])
     .then(data => {
       const [weatherData, userData] = data
       const time = Date.now()
-      const halfHour = 1000 * 60 * 30
       const lastUpdate = weatherData ? time - weatherData.time : 0
 
       if (!userData) return Promise.reject('No user data')
 
-      if (!update && weatherData && lastUpdate < halfHour) {
+      if (!forceUpdate && weatherData && lastUpdate < HOUR / 2) {
         console.log(`${Date.now()}: Getting weather from cache`)
         return weatherData
       }

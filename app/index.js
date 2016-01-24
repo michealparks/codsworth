@@ -9,6 +9,17 @@ import React from 'react'
 import { render } from 'react-dom'
 import App from './ui-components/app/index'
 
-Promise.all([initConfig(), ready()]).then(() =>
-  render(<App />, document.querySelector('#app-root'))
-)
+React.Component.prototype.hasTouch = 'ontouchend' in window
+
+window.React = React
+
+app()
+
+function app () {
+  Promise.all([initConfig(), ready()])
+    .then(() => render(<App />, document.querySelector('#app-root')))
+    .catch(err => {
+      return console.log(err)
+      window.setTimeout(app, 500)
+    })
+}

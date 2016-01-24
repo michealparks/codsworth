@@ -12,11 +12,13 @@ export default class WeatherWidget extends React.Component {
       })
     )
 
-    localforage.on('Weather.data', data => this.setState(data))
+    localforage.on('Weather.data', data => {
+      this.setState(data)
+    })
 
-    getWeather()
-      .then(data => this.setState(data))
-      .catch(() => {})
+    getWeather().then(data => {
+      if (data) this.setState(data)
+    })
 
     this.state = {
       units: '',

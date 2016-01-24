@@ -1,8 +1,56 @@
-* 
+@import url('../node_modules/react-toggle/style.css')
+
+.react-toggle-thumb
+  box-shadow: none !important
+  
+.react-toggle-track-check
+.react-toggle-track-x
+  display: none !important
+
+.react-toggle .react-toggle-track
+  background-color: #34495e !important
+  
+.react-toggle:hover .react-toggle-track
+  background-color: #2c3e50 !important
+  
+.react-toggle--checked .react-toggle-track
+  background-color: #27ae60 !important
+  
+.react-toggle--checked:hover .react-toggle-track
+  background-color: #27ae60 !important
+
+*:not(input)
   cursor: default
 
 body
   margin: 0
+  
+body
+input
+  font-family: Open Sans
+  
+input 
+  outline: 0
+  border: 0
+  background-color: alpha(white, 0.7)
+  color: #333
+  
+  &::-webkit-input-placeholder
+    color: #555
+    
+  &:-moz-placeholder
+    color: #555
+    
+  &::-moz-placeholder
+    color: #555
+    
+  &:-ms-input-placeholder
+    color: #555
+  
+button
+  background: 0
+  border: 0
+  outline: none
   
 .state-hidden
   display: none

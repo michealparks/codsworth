@@ -1,10 +1,28 @@
 import localforage from 'localforage'
 import getGeolocation from './geolocation'
 
-export default function initConfig () {
+const config = {
+  'version': '1.0',
+  'Widgets.active': forceReset => localforage.get('Widgets.active')
+    .then(data => !forceReset && data || localforage.set('Widgets.active', [
+      'DateTimeWidget',
+      'WeatherWidget',
+      'SearchWidget',
+      'WebsitesWidget'
+    ])
+  ),
+  'Search.engine': forceReset => localforage.get('Widgets.active')
+    .then(data => !forceReset && data || localforage.set('Search.engine', {
+      name: 'Google',
+      href: 'https://www.google.com/search?q='
+    })
+  )
+}
+
+export default function initConfig (forceReset) {
   return new Promise((resolve, reject) => {
     localforage.get('Codsworth.initialized').then(initialized => {
-      if (initialized) return resolve()
+      if (!forceReset && initialized === config.version) return resolve()
 
       getGeolocation().then(city => {
         localforage.emit('Weather.user', { location: city })
@@ -12,11 +30,8 @@ export default function initConfig () {
       })
 
       return Promise.all([
-        // Search
-        localforage.set('Search.engine', {
-          name: 'Google',
-          href: 'https://www.google.com/search?q='
-        }),
+        config['Widgets.active'](forceReset),
+        config['Search.engine'](forceReset),
 
         // Weather
         localforage.set('Weather.units', 'metric'),
@@ -25,7 +40,7 @@ export default function initConfig () {
         localforage.set('Websites.list', []),
 
         // Initialized
-        localforage.set('Codsworth.initialized', true)
+        localforage.set('Codsworth.initialized', config.version)
       ]).then(resolve)
     })
   })
