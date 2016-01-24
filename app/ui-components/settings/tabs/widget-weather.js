@@ -18,22 +18,42 @@ export default class WeatherWidgetTab extends React.Component {
     }
   }
 
+  updateCity (e) {
+    const location = this.refs.cityInput.value
+    localforage.set('Weather.user', { location })
+    localforage.emit('Weather.user', { location })
+    this.setState({ location })
+  }
+
   render () {
     return (
       <SettingsTab title='Weather' widget='WeatherWidget'>
         <div className='settings-tab__content'>
           <label>
             <span>Units</span>
-            <select className='settings-tab__option'>
-              <option value='Celsius' />
-              <option value='Fahrenheit' />
-              <option value='Kelvin' />
+            <select
+              className='settings-tab__option'
+              onChange={ this.updateUnits.bind(this) }
+            >
+              <option>Celsius</option>
+              <option>Fahrenheit'</option>
+              <option>Kelvin</option>
             </select>
           </label>
 
           <label className='settings-tab__option'>
             <span>City</span>
-            <input placeholder={ this.state.location } />
+            <input
+              ref='cityInput'
+              name='city'
+              placeholder={ this.state.location }
+            />
+            <button
+              onTouchEnd={ this.hasTouch && this.updateCity.bind(this) }
+              onMouseUp={ !this.hasTouch && this.updateCity.bind(this) }
+            >
+              Update
+            </button>
           </label>
         </div>
       </SettingsTab>
