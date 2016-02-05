@@ -1,7 +1,7 @@
-export const SECOND = 1000
-export const MINUTE = SECOND * 60
-export const HOUR = MINUTE * 60
-export const DAY = HOUR * 24
+Date.SECOND = 1000
+Date.MINUTE = Date.SECOND * 60
+Date.HOUR = Date.MINUTE * 60
+Date.DAY = Date.HOUR * 24
 
 export function expandDay (d) {
   return {

@@ -6,25 +6,29 @@ export default class WeatherWidget extends React.Component {
   constructor (props) {
     super(props)
 
-    localforage.get('Weather.units').then(units =>
-      this.setState({
-        units: units === 'imperial' ? '\u00B0 F' : '\u00B0 C'
-      })
-    )
+    localforage.get('Weather').then(data => this.setState({
+      units: data.units === 'imperial' ? '\u00B0 F' : '\u00B0 C'
+    }))
 
-    localforage.on('Weather.data', data => {
-      this.setState(data)
-    })
-
-    getWeather().then(data => {
-      if (data) this.setState(data)
-    })
+    localforage.on('Weather.data', data => this.setState(data))
+    getWeather().then(data => data && this.setState(data))
 
     this.state = {
       units: '',
       temp: '',
       forecast: []
     }
+  }
+
+  renderForecast () {
+    return this.state.forecast.map((weather, i) =>
+      <span key={ i } className='widget-weather__forecast-date'>
+        <div className='widget-weather__forecast-temp'>
+          { `${weather.high}\u00B0 ${weather.low}\u00B0` }
+        </div>
+        <div>{ weather.day }</div>
+      </span>
+    )
   }
 
   render () {
@@ -35,14 +39,7 @@ export default class WeatherWidget extends React.Component {
           <span className='widget-weather__units'>{ this.state.units }</span>
         </div>
         <div className='widget-weather__forecast'>
-          { this.state.forecast.map((weather, i) =>
-            <span key={ i } className='widget-weather__forecast-date'>
-              <div className='widget-weather__forecast-temp'>
-                { `${weather.high}\u00B0 ${weather.low}\u00B0` }
-              </div>
-              <div>{ weather.day }</div>
-            </span>
-          ) }
+          { this.renderForecast() }
         </div>
       </div>
     )

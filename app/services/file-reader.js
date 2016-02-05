@@ -1,12 +1,9 @@
 const reader = new window.FileReader()
 
-export function readAsDataURL (file, done) {
+export default function readAsDataURL (file) {
   return new Promise((resolve, reject) => {
-    reader.addEventListener('error', reject)
-    reader.addEventListener('load', () => {
-      resolve(reader.result)
-      done && done(reader.result)
-    })
+    reader.addEventListener('error', () => reject(reader.result))
+    reader.addEventListener('load', () => resolve(reader.result))
     reader.readAsDataURL(file)
   })
 }

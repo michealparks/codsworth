@@ -15,24 +15,26 @@ export default class WebsitesWidget extends React.Component {
     this.setState({ isSettingsOpen: true })
   }
 
+  renderWebsites () {
+    this.state.websites.map((website, i) =>
+      <div key={ i } className='widget-websites__website' >
+        <a href={ website.url }>
+          <img
+            className='widget-websites__website-icon'
+            width={ 100 }
+            height={ 100 }
+            src={ website.imgDataUrl }
+            alt={ website.title }
+          />
+        </a>
+      </div>
+    )
+  }
+
   render () {
     return (
-      <div>
-        <div className='widget-websites'>
-          { this.state.websites.map((website, i) => (
-            <div key={ i } className='widget-websites__website' >
-              <a href={ website.url }>
-                <img
-                  className='widget-websites__website-icon'
-                  width={ 100 }
-                  height={ 100 }
-                  src={ website.imgDataUrl }
-                  alt={ website.title }
-                />
-              </a>
-            </div>
-          )) }
-        </div>
+      <div className='widget-websites'>
+        { this.renderWebsites() }
       </div>
     )
   }

@@ -7,8 +7,12 @@ export default class SettingsTab extends React.Component {
   constructor (props) {
     super(props)
 
-    localforage.get('Widgets.active').then(widgets =>
-      this.setState({ isActive: widgets.includes(this.props.widget) })
+    localforage.get('Panels').then(panels =>
+      panels.forEach(panel =>
+        this.setState({
+          isActive: panel.widgets.includes(this.props.widget)
+        })
+      )
     )
 
     this.state = {
@@ -23,18 +27,19 @@ export default class SettingsTab extends React.Component {
 
   onActiveToggle (e) {
     const { checked } = e.target
-    localforage.get('Widgets.active').then(widgets => {
-      const index = widgets.indexOf(this.props.widget)
-      if ((checked && index !== -1) || (!checked && index === -1)) {
-        return
-      } else if (checked) {
-        widgets.push(this.props.widget)
-      } else {
-        widgets.splice(index, 1)
-      }
+    localforage.get('Panels').then(panels => {
+      panels.forEach(panel => {
+        const index = panel.widgets.indexOf(this.props.widget)
+        if ((checked && index !== -1) || (!checked && index === -1)) {
+          return checked
+        } else if (checked) {
+          panel.widgets.push(this.props.widget)
+        } else {
+          panel.widgets.splice(index, 1)
+        }
+      })
 
-      localforage.set('Widgets.active', widgets)
-      localforage.emit('Widgets.active', widgets)
+      return localforage.set('Panels', panels, true)
     })
 
     this.setState({ isActive: !this.state.isActive })

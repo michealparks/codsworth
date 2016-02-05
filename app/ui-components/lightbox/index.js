@@ -80,5 +80,5 @@ Lightbox.propTypes = {
 
 Lightbox.defaultProps = {
   isOpen: false,
-  isHidden: true,
+  isHidden: true
 }

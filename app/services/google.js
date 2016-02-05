@@ -1,8 +1,6 @@
 let isLoaded = 'google' in window
 let loadedCallbacks = []
 
-console.log(`${Date.now()}: ${ isLoaded ? 'API loaded (already)' : 'Loading API'}`)
-
 window.onGoogleApiLoad = function onGoogleApiLoad () {
   console.log(`${Date.now()}: API loaded (cb)`)
   isLoaded = true
@@ -16,9 +14,9 @@ function pushCallback (callback) {
 }
 
 export function loadGoogleAPI (name, version) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) =>
     pushCallback(() =>
-      window.google.load(name, version, { callback: () => resolve() })
+      window.google.load(name, version, { callback: resolve })
     )
-  })
+  )
 }

@@ -4,9 +4,8 @@
   "description": "A multipurpose utility app.",
   "license": "",
   "scripts": {
-    "watch": "gulp",
-    "build": "gulp build",
-    "start": "npm run watch"
+    "build": "gulp prod",
+    "dev": "gulp"
   },
   "dependencies": {
     "babel": "^6.3.26",

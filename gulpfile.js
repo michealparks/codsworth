@@ -1,33 +1,28 @@
 'use strict'
 
-const source = require('vinyl-source-stream')
-const buffer = require('vinyl-buffer')
-const sourcemaps = require('gulp-sourcemaps')
-const chalk = require('chalk')
 const assign = require('lodash.assign')
-
+const autoprefixer = require('gulp-autoprefixer')
+const babelify = require('babelify')
+const browserify = require('browserify')
+const buffer = require('vinyl-buffer')
+const chalk = require('chalk')
+const concat = require('gulp-concat')
 const gulp = require('gulp')
 const gulpif = require('gulp-if')
+const gulpUtil = require('gulp-util')
+const importCss = require('gulp-import-css')
 const inline = require('gulp-inline')
 const jade = require('gulp-jade')
-const gutil = require('gulp-util')
-const concat = require('gulp-concat')
-const watch = require('gulp-watch')
-const stylus = require('gulp-stylus')
 const nib = require('nib')
 const rename = require('gulp-rename')
-const uglify = require('gulp-uglify')
+const source = require('vinyl-source-stream')
+const sourcemaps = require('gulp-sourcemaps')
 const streamify = require('gulp-streamify')
-const autoprefixer = require('gulp-autoprefixer')
-const importCss = require('gulp-import-css')
-
+const stylus = require('gulp-stylus')
+const uglify = require('gulp-uglify')
+const watch = require('gulp-watch')
 const watchify = require('watchify')
-const browserify = require('browserify')
-const babelify = require('babelify')
-
 const webserver = require('gulp-webserver')
-
-let production = true
 
 const path = {
   HTML: 'app/index.jade',
@@ -37,31 +32,40 @@ const path = {
   OUT: 'build.js'
 }
 
-gulp.task('html', () => {
-  gulp.src(path.HTML)
-    .pipe(jade({ }))
-    .pipe(gulpif(production, inline({ base: 'dist' })))
-    .pipe(gulp.dest(path.DEST))
+const args = assign(watchify.args, {
+  entries: [path.ENTRY_POINT],
+  debug: true
 })
 
-gulp.task('css', () => {
-  return gulp.src(path.CSS)
-    .pipe(sourcemaps.init())
-    .pipe(stylus({ use: nib(), import: ['nib'] }))
-    .pipe(autoprefixer({
-      browsers: ['last 1 version'],
-      cascade: false
-    }))
-    .pipe(concat('build.css'))
+const bundler = watchify(browserify(args).transform(babelify, {
+  presets: ['es2015', 'react']
+}))
+
+let production = process.argv[2] || false
+
+bundler
+  .on('update', bundleJS)
+  .on('time', e => `JS bundle time: ${console.log(e)}`)
+  .on('postbundle', e => console.log(e))
+  .on('error', mapError)
+
+function bundleJS () {
+  return bundler.bundle()
+    .pipe(source(path.OUT))
+    .pipe(buffer())
+    .pipe(rename(path.OUT))
+    .pipe(sourcemaps.init({ loadMaps: true }))
+    .pipe(gulpif(production, uglify({
+      preserveComments: false
+    })))
     .pipe(sourcemaps.write('.'))
-    .pipe(importCss())
     .pipe(gulp.dest(path.DEST))
-})
+}
 
 function mapError (err) {
   if (err.fileName) {
     // regular error
-    gutil.log(chalk.red(err.name) +
+    gulpUtil.log(chalk.red(err.name) +
       ': ' +
       chalk.yellow(err.fileName.replace(__dirname + '/src/js/', '')) +
       ': ' +
@@ -74,7 +78,7 @@ function mapError (err) {
       chalk.blue(err.description))
   } else {
     // browserify error
-    gutil.log(chalk.red(err.name) +
+    gulpUtil.log(chalk.red(err.name) +
       ': ' +
       chalk.yellow(err.message))
   }
@@ -82,73 +86,52 @@ function mapError (err) {
   this.emit && this.emit('end')
 }
 
-gulp.task('js', () => {
-  const args = assign(watchify.args, {
-    entries: [path.ENTRY_POINT],
-    debug: true
-  })
-  const bundler = watchify(browserify(args).transform(babelify, {
-    presets: ['es2015', 'react']
+gulp.task('html', () => gulp.src(path.HTML)
+  .pipe(jade({ }))
+  .pipe(gulpif(production, inline({ base: 'dist' })))
+  .pipe(gulp.dest(path.DEST))
+)
+
+gulp.task('css', () => gulp.src(path.CSS)
+  .pipe(sourcemaps.init())
+  .pipe(stylus({ use: nib(), import: ['nib'] }))
+  .pipe(autoprefixer({
+    browsers: ['last 1 version'],
+    cascade: false
   }))
+  .pipe(concat('build.css'))
+  .pipe(sourcemaps.write('.'))
+  .pipe(importCss())
+  .pipe(gulp.dest(path.DEST))
+)
 
-  bundleJS()
-  bundler.on('update', bundleJS)
-  bundler.on('time', e => `JS bundle time: ${console.log(e)}`)
-  bundler.on('postbundle', e => console.log(e))
+gulp.task('watchJS', () => bundleJS())
 
-  function bundleJS () {
-    return bundler.bundle()
-      .on('error', mapError)
-      .pipe(source(path.OUT))
-      .pipe(buffer())
-      .pipe(rename(path.OUT))
-      .pipe(sourcemaps.init({ loadMaps: true }))
-      .pipe(gulpif(production, uglify({
-        preserveComments: false
-      })))
-      .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest(path.DEST))
-  }
+gulp.task('buildJS', () => browserify({
+  entries: [path.ENTRY_POINT],
+  transform: [babelify]
 })
+  .bundle()
+  .pipe(source(path.OUT))
+  .pipe(streamify(uglify(path.OUT)))
+  .pipe(gulp.dest(path.DEST))
+)
 
-gulp.task('build', () => {
-  browserify({
-    entries: [path.ENTRY_POINT],
-    transform: [babelify]
-  })
-    .bundle()
-    .pipe(source(path.OUT))
-    .pipe(streamify(uglify(path.OUT)))
-    .pipe(gulp.dest(path.DEST))
-})
+gulp.task('webserver', () => gulp.src('dist')
+  .pipe(webserver({
+    livereload: false,
+    https: false,
+    // host: '0.0.0.0',
+    directoryListing: false,
+    open: true,
+    fallback: 'index.html'
+  }))
+)
 
-gulp.task('production', () => {
-  production = true
-  init()
-})
+gulp.task('prod', ['html', 'css', 'buildJS'])
 
-gulp.task('default', () => {
+gulp.task('default', ['html', 'css', 'watchJS'], () => {
   watch(path.HTML, () => gulp.start('html'))
   watch(path.CSS, () => gulp.start('css'))
-  init()
-  gulp.start('webserver')
+  return gulp.start('webserver')
 })
-
-gulp.task('webserver', () => {
-  gulp.src('dist')
-    .pipe(webserver({
-      livereload: false,
-      https: false,
-      // host: '0.0.0.0',
-      directoryListing: false,
-      open: true,
-      fallback: 'index.html'
-    }))
-})
-
-function init () {
-  gulp.start('html')
-  gulp.start('css')
-  gulp.start('js')
-}
-

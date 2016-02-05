@@ -19,13 +19,12 @@ export default class WeatherWidgetTab extends React.Component {
   }
 
   updateUnits (e) {
-    
+
   }
 
   updateCity (e) {
     const location = this.refs.cityInput.value
-    localforage.set('Weather.user', { location })
-    localforage.emit('Weather.user', { location })
+    localforage.set('Weather.user', { location }, true)
     this.setState({ location })
   }
 

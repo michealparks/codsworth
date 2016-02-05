@@ -1,10 +1,11 @@
 import localforage from 'localforage'
 import Mediator from 'micro-mediator'
 
-window.Mediator = Mediator
-
 localforage.get = localforage.getItem
-localforage.set = localforage.setItem
+localforage.set = function set (key, val, toEmit) {
+  toEmit && localforage.emit(key, val)
+  return localforage.setItem(key, val)
+}
 localforage.delete = localforage.removeItem
 
 localforage.config({
