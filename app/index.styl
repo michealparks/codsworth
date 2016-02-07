@@ -1,3 +1,6 @@
+global-reset()
+html5-reset()
+
 @import url('../node_modules/react-toggle/style.css')
 
 .react-toggle-thumb
@@ -21,9 +24,11 @@
 
 *:not(input)
   cursor: default
+  user-select: none
 
 body
   margin: 0
+  overflow: hidden
   
 body
 input

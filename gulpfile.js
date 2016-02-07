@@ -7,6 +7,7 @@ const browserify = require('browserify')
 const buffer = require('vinyl-buffer')
 const chalk = require('chalk')
 const concat = require('gulp-concat')
+const cssnano = require('gulp-cssnano')
 const gulp = require('gulp')
 const gulpif = require('gulp-if')
 const gulpUtil = require('gulp-util')
@@ -41,7 +42,7 @@ const bundler = watchify(browserify(args).transform(babelify, {
   presets: ['es2015', 'react']
 }))
 
-let production = process.argv[2] || false
+let production = process.argv[2] === 'prod'
 
 bundler
   .on('update', bundleJS)
@@ -93,24 +94,30 @@ gulp.task('html', () => gulp.src(path.HTML)
 )
 
 gulp.task('css', () => gulp.src(path.CSS)
-  .pipe(sourcemaps.init())
-  .pipe(stylus({ use: nib(), import: ['nib'] }))
+  .pipe(gulpif(!production, sourcemaps.init()))
+  .pipe(stylus({
+    use: nib(),
+    import: ['nib', `${__dirname}/app/vars.styl`],
+    compress: true
+  }))
   .pipe(autoprefixer({
     browsers: ['last 1 version'],
     cascade: false
   }))
   .pipe(concat('build.css'))
-  .pipe(sourcemaps.write('.'))
   .pipe(importCss())
+  .pipe(gulpif(production, cssnano()))
+  .pipe(gulpif(!production, sourcemaps.write()))
   .pipe(gulp.dest(path.DEST))
 )
 
 gulp.task('watchJS', () => bundleJS())
 
-gulp.task('buildJS', () => browserify({
-  entries: [path.ENTRY_POINT],
-  transform: [babelify]
-})
+gulp.task('buildJS', () =>
+  browserify({
+    entries: [path.ENTRY_POINT]
+  })
+  .transform(babelify, { presets: ['es2015', 'react'] })
   .bundle()
   .pipe(source(path.OUT))
   .pipe(streamify(uglify(path.OUT)))
@@ -121,7 +128,7 @@ gulp.task('webserver', () => gulp.src('dist')
   .pipe(webserver({
     livereload: false,
     https: false,
-    // host: '0.0.0.0',
+    host: '0.0.0.0',
     directoryListing: false,
     open: true,
     fallback: 'index.html'

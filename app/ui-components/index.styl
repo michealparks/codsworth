@@ -1,0 +1,17 @@
+.panel
+  absolute left 50% top 50%
+  size: $widgetWidth 500px
+  margin: -250px
+  
+  @media(max-width: $widgetWidth)
+    top: 20px 
+    left: 0
+    size: 100% 100%
+    margin: 0
+
+.widget
+  width: $widgetWidth
+  max-width: calc(100% - 40px)
+  padding: 20px 20px 0
+  margin: auto
+    

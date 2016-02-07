@@ -21,7 +21,7 @@ export default class DateTimeWidgetTab extends React.Component {
         showSeconds: type === 'showSeconds' ? e.checked : data.showSeconds,
         militaryTime: type === 'militaryTime' ? e.checked : data.militaryTime
       }))
-      .then(data => console.log(data))
+      .then(console.log.bind(console))
   }
 
   render () {

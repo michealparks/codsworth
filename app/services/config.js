@@ -2,7 +2,7 @@ import localforage from 'localforage'
 import getGeolocation from './geolocation'
 
 const config = {
-  version: '1.1',
+  version: '2.0.0',
   data: [
     setConfig.bind('Panels', [
       {
@@ -34,16 +34,29 @@ const config = {
   ]
 }
 
+/*
+ * Checks if a config is absent in storage and inserts a
+ * default if so. Will also insert a config if forced.
+ */
 function setConfig (config, forceReset) {
   return localforage.get(this).then(data =>
-    !forceReset && data || localforage.set(this, config)
+    (!forceReset && data) || localforage.set(this, config)
   )
 }
 
+/*
+ *
+ */
 export default function initConfig (forceReset) {
   return localforage.get('initialized').then(initialized => {
-    if (!forceReset && initialized === config.version) {
-      return true
+    if (!forceReset && config.version === initialized) {
+      return false
+    }
+
+    const configVersion = config.version.split('.')[0]
+    const curVersion = initialized && initialized.split('.')[0]
+    if (configVersion === curVersion) {
+      forceReset = true
     }
 
     getGeolocation().then(location =>

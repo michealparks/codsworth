@@ -16,7 +16,7 @@ export default class WebsitesWidget extends React.Component {
   }
 
   renderWebsites () {
-    this.state.websites.map((website, i) =>
+    return this.state.websites.map((website, i) =>
       <div key={ i } className='widget-websites__website' >
         <a href={ website.url }>
           <img
@@ -33,7 +33,7 @@ export default class WebsitesWidget extends React.Component {
 
   render () {
     return (
-      <div className='widget-websites'>
+      <div className='widget widget-websites'>
         { this.renderWebsites() }
       </div>
     )

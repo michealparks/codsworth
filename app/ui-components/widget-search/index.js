@@ -21,7 +21,7 @@ export default class SearchWidget extends React.Component {
 
   render () {
     return (
-      <div className='widget-search'>
+      <div className='widget widget-search'>
         <input
           tabIndex='1'
           className='widget-search__input'

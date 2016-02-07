@@ -1,39 +1,27 @@
-.widget-websites
-  width: 400px
-  margin: 20px auto
-  display: flex
-  
 .widget-websites__website
   margin-right: 10px
 
 .widget-websites__icon
-  width: 60px
-  height: 60px
+  size: 60px 60px
   
 btnSize = 60px
 lineWidth = 2px
 midpoint = btnSize/2 - lineWidth/2
 .widget-websites__btn-add
   position: relative
-  width: btnSize
-  height: btnSize
-  border: 0
+  size: btnSize btnSize
   background-color: transparent
+  border: 0
   
 .widget-websites__btn-add-vertline
 .widget-websites__btn-add-horizline
-  position: absolute
+  absolute: left 25px top 25px
+  size: 10px 10px
   background-color: #fff
-  
-  width: 10px
-  height: 10px
-  left: 25px
-  top: 25px
   border-radius: 100%
   transition: 200ms
   
 .widget-websites__btn-add:hover
-  
   .widget-websites__btn-add-vertline
   .widget-websites__btn-add-horizline
     border-radius: 0
@@ -42,12 +30,9 @@ midpoint = btnSize/2 - lineWidth/2
   .widget-websites__btn-add-vertline
     left: midpoint
     top: 15px
-    height: iconSize
-    width: lineWidth
+    size: lineWidth iconSize
     
   .widget-websites__btn-add-horizline
     left: 15px
     top: midpoint
-    height: lineWidth
-    width: iconSize
-    
+    size: iconSize lineWidth

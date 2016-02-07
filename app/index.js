@@ -1,3 +1,5 @@
+require('es6-promise').polyfill()
+
 import 'whatwg-fetch'
 import ready from 'document-ready-promise'
 import React from 'react'

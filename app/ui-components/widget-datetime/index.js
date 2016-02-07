@@ -12,7 +12,7 @@ export default class DateTimeWidget extends React.Component {
     this.state = {
       time: '',
       date: '',
-      militaryTime: false,
+      militaryTime: true,
       showSeconds: true
     }
   }
@@ -39,27 +39,26 @@ export default class DateTimeWidget extends React.Component {
     const d = new Date().toString().split(' ')
 
     return {
-      time: this.formatTime(d[4]).replace(/:/g, '.'),
+      time: this.formatTime(d[4]),
       date: `${expandDay(d[0])}, ${expandMonth(d[1])} ${d[2]}, ${d[3]}`
     }
   }
 
   formatTime (time) {
-    if (this.state.militaryTime) return time
+    if (this.state.militaryTime) return time.replace(/:/g, '.')
 
     const hms = time.split(':')
     const h = +hms[0]
     const suffix = (h < 12) ? 'am' : 'pm'
     hms[0] = h % 12 || 12
-    return time.replace(/[0-9]{1,2}(:[0-9]{2}){2}/, data => {
-      
-      return hms.join(':') + suffix
-    })
+    return time.replace(/[0-9]{1,2}(:[0-9]{2}){2}/, data =>
+      hms.join('.') + suffix
+    )
   }
 
   render () {
     return (
-      <div className='widget-datetime'>
+      <div className='widget widget-datetime'>
         <div className='widget-datetime__time'>
           { this.state.time }
         </div>

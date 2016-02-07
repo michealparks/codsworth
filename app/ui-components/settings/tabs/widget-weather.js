@@ -8,9 +8,8 @@ export default class WeatherWidgetTab extends React.Component {
 
     localforage.get('Weather.user')
       .then(data => this.setState(data))
-
-    localforage.get('Weather.units')
-      .then(data => console.log(data))
+    localforage.get('Weather')
+      .then(data => this.setState(data))
 
     this.state = {
       location: '',

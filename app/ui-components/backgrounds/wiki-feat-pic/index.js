@@ -6,16 +6,13 @@ export default class FeatPicBackground extends React.Component {
   constructor (props) {
     super(props)
 
-    localforage.on('Backgrounds.FeatPic', data =>
-      this.setState(data)
-    )
+    localforage.on('Backgrounds.FeatPic', data => this.setState(data))
+    getFeatPic().then(data => this.setState(data))
 
-    getFeatPic().then(data => {
-      console.log(data)
-      this.setState(data)
-    })
-
-    this.state = {}
+    this.state = {
+      url: '',
+      description: ''
+    }
   }
 
   render () {
