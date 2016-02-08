@@ -2,7 +2,7 @@ let downX
 let downY
 
 window.addEventListener('touchstart', onPointerDown)
-//window.addEventListener('touchmove', onPointerMove)
+window.addEventListener('touchmove', onPointerMove)
 
 function onPointerDown (e) {
   const { touches } = e
@@ -13,9 +13,9 @@ function onPointerDown (e) {
   }
 }
 
-// function onPointerMove (e) {
-//   e.preventDefault()
-// }
+function onPointerMove (e) {
+
+}
 
 export function touchPointHasMoved (e) {
   const { changedTouches } = e

@@ -14,7 +14,9 @@ React.Component.prototype.hasTouch = 'ontouchend' in window
 app()
 
 function app () {
+  const root = document.querySelector('#app-root')
+  root.requestFullscreen && root.requestFullscreen()
   return Promise.all([initConfig(), ready()])
-    .then(() => render(<App />, document.querySelector('#app-root')))
+    .then(() => render(<App />, root))
     .catch(console.error.bind(console))
 }

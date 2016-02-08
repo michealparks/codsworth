@@ -46,8 +46,8 @@ let production = process.argv[2] === 'prod'
 
 bundler
   .on('update', bundleJS)
-  .on('time', e => `JS bundle time: ${console.log(e)}`)
-  .on('postbundle', e => console.log(e))
+  .on('time', e => console.log(`1 JS bundle time: ${ e }`))
+  .on('postbundle', e => console.log(`2 JS bundle time: ${ e }`))
   .on('error', mapError)
 
 function bundleJS () {
@@ -97,8 +97,7 @@ gulp.task('css', () => gulp.src(path.CSS)
   .pipe(gulpif(!production, sourcemaps.init()))
   .pipe(stylus({
     use: nib(),
-    import: ['nib', `${__dirname}/app/vars.styl`],
-    compress: true
+    import: ['nib', `${__dirname}/app/vars.styl`]
   }))
   .pipe(autoprefixer({
     browsers: ['last 1 version'],
@@ -120,7 +119,9 @@ gulp.task('buildJS', () =>
   .transform(babelify, { presets: ['es2015', 'react'] })
   .bundle()
   .pipe(source(path.OUT))
-  .pipe(streamify(uglify(path.OUT)))
+  .pipe(streamify(uglify({
+    preserveComments: false
+  })))
   .pipe(gulp.dest(path.DEST))
 )
 
@@ -130,7 +131,7 @@ gulp.task('webserver', () => gulp.src('dist')
     https: false,
     host: '0.0.0.0',
     directoryListing: false,
-    open: true,
+    open: false,
     fallback: 'index.html'
   }))
 )

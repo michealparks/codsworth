@@ -2,9 +2,8 @@ import React from 'react'
 import localforage from 'localforage'
 import classnames from 'classnames'
 import getWeather from '../../services/weather'
-import { execIfUnmoved } from './../services/touch'
+import { execIfUnmoved } from '../../services/touch'
 import icons from './icons'
-
 
 export default class WeatherWidget extends React.Component {
   constructor (props) {
