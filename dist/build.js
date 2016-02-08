@@ -104,7 +104,7 @@ function initConfig(forceReset) {
     }
 
     var configVersion = Number(config.version.split('.')[0]);
-    var curVersion = Number(initialized.split('.')[0]);
+    var curVersion = Number((initialized || '0.0.0').split('.')[0]);
 
     console.log(configVersion, curVersion);
     if (configVersion !== curVersion) {

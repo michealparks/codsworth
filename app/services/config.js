@@ -55,7 +55,7 @@ export default function initConfig (forceReset) {
     }
 
     const configVersion = Number(config.version.split('.')[0])
-    const curVersion = Number(initialized.split('.')[0])
+    const curVersion = Number((initialized || '0.0.0').split('.')[0])
 
     console.log(configVersion, curVersion)
     if (configVersion !== curVersion) {
