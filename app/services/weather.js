@@ -1,5 +1,5 @@
 import localforage from 'localforage'
-import weatherCodes from './weather-codes'
+import weatherCode from './weather-codes'
 
 let user
 let weather
@@ -44,16 +44,15 @@ function getYahooWeather ({ q }) {
     .then(response => {
       const { item, description } = response.query.results.channel
 
-      console.log(description === 'Yahoo! Weather Error')
       if (description === 'Yahoo! Weather Error') {
         return Promise.reject(item.description)
       }
 
       const data = {
         temp: item.condition.temp,
-        code: weatherCodes[item.condition.code],
+        code: weatherCode(item.condition.code),
         forecast: item.forecast.map(forecast => {
-          forecast.code = weatherCodes[forecast.code]
+          forecast.code = weatherCode(forecast.code)
           return forecast
         }),
         time: Date.now()

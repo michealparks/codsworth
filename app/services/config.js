@@ -49,6 +49,7 @@ function setConfig (config, forceReset) {
  */
 export default function initConfig (forceReset) {
   return localforage.get('initialized').then((initialized = '0.0.0') => {
+    console.log(initialized)
     if (!forceReset && config.version === initialized) {
       return true
     }

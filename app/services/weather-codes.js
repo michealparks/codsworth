@@ -49,4 +49,73 @@ let arr = [
   'Isolated thundershowers'
 ]
 
-export default arr
+function icon (description) {
+  switch (description) {
+    case 'Tornado':
+    case 'Tropical storm':
+    case 'Hurricane':
+    case 'Severe thunderstorms':
+    case 'Thunderstorms':
+    case 'Isolated thunderstorms':
+    case 'Scattered thunderstorms':
+    case 'Thundershowers':
+    case 'Isolated thundershowers':
+      return 'stormy'
+
+    case 'Mixed rain and snow':
+    case 'Mixed rain and sleet':
+    case 'Mixed snow and sleet':
+    case 'Snow flurries':
+    case 'Light snow showers':
+    case 'Blowing snow':
+    case 'Snow':
+    case 'Heavy snow':
+    case 'Scattered snow showers':
+    case 'Snow showers':
+      return 'snowy'
+
+    case 'Freezing drizzle':
+    case 'Drizzle':
+    case 'Freezing rain':
+    case 'Showers':
+    case 'Hail':
+    case 'Sleet':
+    case 'Dust':
+    case 'Mixed rain and hail':
+    case 'Scattered showers':
+      return 'rainy'
+
+    case 'Partly cloudy (night)':
+    case 'Partly cloudy (day)':
+    case 'Partly cloudy':
+      return 'cloudy'
+
+    case 'Cold':
+    case 'Cloudy':
+    case 'Mostly cloudy (night)':
+      return 'cloudy-2'
+
+    case 'Foggy':
+    case 'Haze':
+    case 'Smoky':
+    case 'Blustery':
+    case 'Windy':
+    case 'Mostly cloudy (day)':
+      return 'cloudy-3'
+
+    case 'Clear (night)':
+    case 'Fair (night)':
+      return 'clear'
+
+    case 'Sunny':
+    case 'Fair (day)':
+    case 'Hot':
+      return 'sunny'
+  }
+}
+
+export default code => ({
+  description: arr[code],
+  icon: icon(arr[code])
+})
+

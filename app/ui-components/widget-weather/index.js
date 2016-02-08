@@ -78,8 +78,10 @@ export default class WeatherWidget extends React.Component {
             { this.getTemp(this.state.temp) }
             <span className='widget-weather__units'>{ this.state.unitString }</span>
           </span>
-          <span className='widget-weather__icon'>{ icons[this.state.code] }</span>
-          <span className='widget-weather__description'>{ this.state.code }</span>
+          <span className='widget-weather__icon'>
+            { icons[this.state.code.icon + (new Date().getHours() > 17 ? '-night' : '')] }
+          </span>
+          <span className='widget-weather__description'>{ this.state.code.description }</span>
         </div>
         <div className='widget-weather__forecast'>
           { this.renderForecast() }
