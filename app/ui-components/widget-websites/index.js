@@ -5,10 +5,14 @@ export default class WebsitesWidget extends React.Component {
   constructor (props) {
     super(props)
 
-    localforage.get('Websites.list')
-      .then(websites => this.setState({ websites }))
+    localforage.get('Websites')
+      .then(websites =>
+        this.setState({ websites: websites.list })
+      )
 
-    this.state = { websites: [] }
+    this.state = {
+      websites: []
+    }
   }
 
   onAddWebsite () {

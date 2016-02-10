@@ -16,3 +16,4 @@ localforage.config({
 Mediator.installTo(localforage)
 
 window.localforage = localforage
+window.log = console.log.bind(console)

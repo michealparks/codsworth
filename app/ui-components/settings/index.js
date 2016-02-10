@@ -22,7 +22,7 @@ export default class Settings extends React.Component {
     return (
       <div className='settings'>
         <Lightbox isOpen={ this.state.isOpen } toggle={ this.toggle.bind(this) }>
-          <h2 className='settings__title'>Codsworth</h2>
+          <h2 className='settings__title'>codsworth</h2>
           <p className='settings__subtitle'>It's a pleasure to serve you, sir.</p>
           <DateTimeWidgetTab />
           <SearchWidgetTab />

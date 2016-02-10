@@ -2,7 +2,7 @@ import localforage from 'localforage'
 import getGeolocation from './geolocation'
 
 const config = {
-  version: '3.0.0',
+  version: '4.0.0',
   data: [
     setConfig.bind('Panels', [
       {
@@ -48,8 +48,7 @@ function setConfig (config, forceReset) {
  *
  */
 export default function initConfig (forceReset) {
-  return localforage.get('initialized').then((initialized = '0.0.0') => {
-    console.log(initialized)
+  return localforage.get('initialized').then((initialized) => {
     if (!forceReset && config.version === initialized) {
       return true
     }
@@ -57,7 +56,6 @@ export default function initConfig (forceReset) {
     const configVersion = Number(config.version.split('.')[0])
     const curVersion = Number((initialized || '0.0.0').split('.')[0])
 
-    console.log(configVersion, curVersion)
     if (configVersion !== curVersion) {
       forceReset = true
     }

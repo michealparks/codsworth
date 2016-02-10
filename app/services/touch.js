@@ -13,9 +13,7 @@ function onPointerDown (e) {
   }
 }
 
-function onPointerMove (e) {
-
-}
+function onPointerMove (e) {}
 
 export function touchPointHasMoved (e) {
   const { changedTouches } = e

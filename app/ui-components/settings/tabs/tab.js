@@ -8,11 +8,9 @@ export default class SettingsTab extends React.Component {
     super(props)
 
     localforage.get('Panels').then(panels =>
-      panels.forEach(panel =>
-        this.setState({
-          isActive: panel.widgets.includes(this.props.widget)
-        })
-      )
+      this.setState({ isActive: panels.filter(panel =>
+        panel.widgets.includes(this.props.widget)
+      ).length !== 0 })
     )
 
     this.state = {
@@ -22,25 +20,31 @@ export default class SettingsTab extends React.Component {
   }
 
   toggle (e) {
+    console.log(e.target.className.includes('react-toggle'))
+    if (e.target.className.includes('react-toggle')) {
+      return
+    }
     this.setState({ isOpen: !this.state.isOpen })
   }
 
   onActiveToggle (e) {
     const { checked } = e.target
-    localforage.get('Panels').then(panels => {
-      panels.forEach(panel => {
+    localforage.get('Panels').then(panels =>
+      localforage.set('Panels', panels.map(panel => {
         const index = panel.widgets.indexOf(this.props.widget)
-        if ((checked && index !== -1) || (!checked && index === -1)) {
-          return checked
-        } else if (checked) {
+
+        if (checked && index === -1) {
           panel.widgets.push(this.props.widget)
-        } else {
+        }
+
+        if (!checked && index > -1) {
           panel.widgets.splice(index, 1)
         }
-      })
 
-      return localforage.set('Panels', panels, true)
-    })
+        return panel
+      }), true)
+    )
+    .catch(console.error.bind(console))
 
     this.setState({ isActive: !this.state.isActive })
   }
@@ -48,12 +52,14 @@ export default class SettingsTab extends React.Component {
   render () {
     return (
       <div className='settings-tab'>
-        <div className='settings-tab__header'>
-          <h4
-            className='settings-tab__title'
-            onTouchEnd={ this.hasTouch && this.toggle.bind(this) }
-            onMouseUp={ !this.hasTouch && this.toggle.bind(this) }
-          >{ this.props.title }</h4>
+        <div
+          className='settings-tab__header'
+          onTouchEnd={ this.hasTouch && this.toggle.bind(this) }
+          onMouseUp={ !this.hasTouch && this.toggle.bind(this) }
+        >
+          <h4 className='settings-tab__title'>
+            { this.props.title }
+          </h4>
           <div className='react-toggle-container'>
             <Toggle
               checked={ this.state.isActive }

@@ -25,7 +25,7 @@ export default class DateTimeWidget extends React.Component {
 
     this.tickId = window.setTimeout(
       tick,
-      950 - (Date.now() % 1000)
+      1000 - (Date.now() % 1000)
     )
 
     this.setState(this.getDateTime())
@@ -39,21 +39,23 @@ export default class DateTimeWidget extends React.Component {
     const d = new Date().toString().split(' ')
 
     return {
-      time: this.formatTime(d[4]),
+      time: this.formatTime(d[4].split(':')),
       date: `${expandDay(d[0])}, ${expandMonth(d[1])} ${d[2]}, ${d[3]}`
     }
   }
 
   formatTime (time) {
-    if (this.state.militaryTime) return time.replace(/:/g, '.')
+    if (!this.state.showSeconds) {
+      time = time.slice(0, -1)
+    }
 
-    const hms = time.split(':')
-    const h = +hms[0]
-    const suffix = (h < 12) ? 'am' : 'pm'
-    hms[0] = h % 12 || 12
-    return time.replace(/[0-9]{1,2}(:[0-9]{2}){2}/, data =>
-      hms.join('.') + suffix
-    )
+    if (this.state.militaryTime) {
+      return time.join('.')
+    }
+
+    const h = +time[0]
+    time[0] = h % 12 || 12
+    return `${time.join('.')}${(h < 12) ? 'AM' : 'PM'}`
   }
 
   render () {

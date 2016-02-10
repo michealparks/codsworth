@@ -34,14 +34,12 @@ _react2.default.Component.prototype.hasTouch = 'ontouchend' in window;
 app();
 
 function app() {
-  var root = document.querySelector('#app-root');
-  root.requestFullscreen && root.requestFullscreen();
   return Promise.all([(0, _config2.default)(), (0, _documentReadyPromise2.default)()]).then(function () {
-    return (0, _reactDom.render)(_react2.default.createElement(_index2.default, null), root);
+    return (0, _reactDom.render)(_react2.default.createElement(_index2.default, null), document.querySelector('#app-root'));
   }).catch(console.error.bind(console));
 }
 
-},{"./services/config":2,"./services/storage":7,"./services/time":8,"./ui-components/app/index":13,"document-ready-promise":29,"es6-promise":30,"react":275,"react-dom":138,"whatwg-fetch":282}],2:[function(require,module,exports){
+},{"./services/config":2,"./services/storage":7,"./services/time":8,"./ui-components/app/index":13,"document-ready-promise":30,"es6-promise":31,"react":276,"react-dom":139,"whatwg-fetch":283}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -60,7 +58,7 @@ var _geolocation2 = _interopRequireDefault(_geolocation);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var config = {
-  version: '3.0.0',
+  version: '4.0.0',
   data: [setConfig.bind('Panels', [{
     name: 'home',
     widgets: ['DateTimeWidget', 'WeatherWidget', 'SearchWidget', 'WebsitesWidget']
@@ -95,10 +93,7 @@ function setConfig(config, forceReset) {
  *
  */
 function initConfig(forceReset) {
-  return _localforage2.default.get('initialized').then(function () {
-    var initialized = arguments.length <= 0 || arguments[0] === undefined ? '0.0.0' : arguments[0];
-
-    console.log(initialized);
+  return _localforage2.default.get('initialized').then(function (initialized) {
     if (!forceReset && config.version === initialized) {
       return true;
     }
@@ -106,7 +101,6 @@ function initConfig(forceReset) {
     var configVersion = Number(config.version.split('.')[0]);
     var curVersion = Number((initialized || '0.0.0').split('.')[0]);
 
-    console.log(configVersion, curVersion);
     if (configVersion !== curVersion) {
       forceReset = true;
     }
@@ -121,22 +115,15 @@ function initConfig(forceReset) {
   });
 }
 
-},{"./geolocation":4,"localforage":58}],3:[function(require,module,exports){
+},{"./geolocation":4,"localforage":59}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = readAsDataURL;
 var reader = new window.FileReader();
 
-function readAsDataURL(item) {
-  return new Promise(function (resolve, reject) {
-    addEvents(resolve, reject);
-    return reader.readAsDataURL(item);
-  });
-}
-
+var readAsDataURL = exports.readAsDataURL = readAs.bind('DataURL');
 var readAsArrayBuffer = exports.readAsArrayBuffer = readAs.bind('ArrayBuffer');
 var readAsText = exports.readAsText = readAs.bind('Text');
 
@@ -270,7 +257,7 @@ function saveImage(title, src) {
   });
 }
 
-},{"./file-reader":3,"localforage":58}],7:[function(require,module,exports){
+},{"./file-reader":3,"localforage":59}],7:[function(require,module,exports){
 'use strict';
 
 var _localforage = require('localforage');
@@ -298,8 +285,9 @@ _localforage2.default.config({
 _microMediator2.default.installTo(_localforage2.default);
 
 window.localforage = _localforage2.default;
+window.log = console.log.bind(console);
 
-},{"localforage":58,"micro-mediator":134}],8:[function(require,module,exports){
+},{"localforage":59,"micro-mediator":135}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -423,14 +411,16 @@ function icon(description) {
 
     case 'Freezing drizzle':
     case 'Drizzle':
+    case 'Dust':
+    case 'Scattered showers':
+      return 'rainy';
+
     case 'Freezing rain':
     case 'Showers':
     case 'Hail':
     case 'Sleet':
-    case 'Dust':
     case 'Mixed rain and hail':
-    case 'Scattered showers':
-      return 'rainy';
+      return 'rainy-2';
 
     case 'Partly cloudy (night)':
     case 'Partly cloudy (day)':
@@ -471,11 +461,12 @@ exports.default = function (code) {
 },{}],11:[function(require,module,exports){
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 exports.default = getWeather;
 
 var _localforage = require('localforage');
@@ -512,7 +503,7 @@ function getWeather() {
     var lastUpdate = weatherData ? Date.now() - weatherData.time : 0;
 
     if (!userData) {
-      return Promise.reject('No user data');
+      return Promise.reject('no user data');
     }
 
     if (!forceUpdate && weatherData && lastUpdate < Date.HOUR / 2) {
@@ -566,7 +557,7 @@ function getWeatherData() {
   return _localforage2.default.get('Weather.data');
 }
 
-},{"./weather-codes":10,"localforage":58}],12:[function(require,module,exports){
+},{"./weather-codes":10,"localforage":59}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -630,14 +621,14 @@ function saveImageAndAddToData(response) {
   });
 }
 
-},{"./save-image":6,"localforage":58}],13:[function(require,module,exports){
+},{"./save-image":6,"localforage":59}],13:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -655,25 +646,13 @@ var _index3 = require('../backgrounds/wiki-feat-pic/index');
 
 var _index4 = _interopRequireDefault(_index3);
 
-var _index5 = require('../widget-datetime/index');
+var _index5 = require('../settings/index');
 
 var _index6 = _interopRequireDefault(_index5);
 
-var _index7 = require('../widget-weather/index');
+var _widgets = require('./widgets');
 
-var _index8 = _interopRequireDefault(_index7);
-
-var _index9 = require('../widget-search/index');
-
-var _index10 = _interopRequireDefault(_index9);
-
-var _index11 = require('../widget-websites/index');
-
-var _index12 = _interopRequireDefault(_index11);
-
-var _index13 = require('../settings/index');
-
-var _index14 = _interopRequireDefault(_index13);
+var _widgets2 = _interopRequireDefault(_widgets);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -682,11 +661,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var panels = [{
-  name: 'home',
-  widgets: [_react2.default.createElement(_index6.default, { key: 0 }), _react2.default.createElement(_index8.default, { key: 1 }), _react2.default.createElement(_index10.default, { key: 2 }), _react2.default.createElement(_index12.default, { key: 3 })]
-}];
 
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
@@ -716,7 +690,9 @@ var App = function (_React$Component) {
         return _react2.default.createElement(
           _index2.default,
           { key: i, name: panel.name },
-          panels[i].widgets
+          panel.widgets.map(function (widgetName, ii) {
+            return (0, _react.createElement)(_widgets2.default[widgetName], { key: ii });
+          })
         );
       });
     }
@@ -728,7 +704,7 @@ var App = function (_React$Component) {
         { className: 'app' },
         _react2.default.createElement(_index4.default, null),
         this.renderPanels(),
-        _react2.default.createElement(_index14.default, null)
+        _react2.default.createElement(_index6.default, null)
       );
     }
   }]);
@@ -738,14 +714,46 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"../backgrounds/wiki-feat-pic/index":14,"../panel/index":16,"../settings/index":17,"../widget-datetime/index":23,"../widget-search/index":24,"../widget-weather/index":26,"../widget-websites/index":27,"localforage":58,"react":275}],14:[function(require,module,exports){
+},{"../backgrounds/wiki-feat-pic/index":15,"../panel/index":17,"../settings/index":18,"./widgets":14,"localforage":59,"react":276}],14:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _index = require('../widget-datetime/index');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = require('../widget-weather/index');
+
+var _index4 = _interopRequireDefault(_index3);
+
+var _index5 = require('../widget-search/index');
+
+var _index6 = _interopRequireDefault(_index5);
+
+var _index7 = require('../widget-websites/index');
+
+var _index8 = _interopRequireDefault(_index7);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  DateTimeWidget: _index2.default,
+  WeatherWidget: _index4.default,
+  SearchWidget: _index6.default,
+  WebsitesWidget: _index8.default
+};
+
+},{"../widget-datetime/index":24,"../widget-search/index":25,"../widget-weather/index":27,"../widget-websites/index":28}],15:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -814,14 +822,14 @@ exports.default = FeatPicBackground;
 
 FeatPicBackground.propTypes = {};
 
-},{"../../../services/wiki-feat-pic":12,"localforage":58,"react":275}],15:[function(require,module,exports){
+},{"../../../services/wiki-feat-pic":12,"localforage":59,"react":276}],16:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -845,11 +853,11 @@ var Lightbox = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Lightbox).call(this, props));
 
+    _this.animDuration = 450;
     _this.state = {
       isOpen: _this.props.isOpen,
       isHidden: _this.props.isHidden
     };
-    _this.animDuration = 450;
     return _this;
   }
 
@@ -874,9 +882,7 @@ var Lightbox = function (_React$Component) {
       return _react2.default.createElement(
         _velocityReact.VelocityComponent,
         {
-          animation: {
-            opacity: this.state.isOpen ? 1 : 0
-          },
+          animation: { opacity: this.state.isOpen ? 1 : 0 },
           duration: this.animDuration,
           complete: function complete() {
             return !_this2.state.isOpen && _this2.setState({ isHidden: true });
@@ -894,7 +900,7 @@ var Lightbox = function (_React$Component) {
             {
               animation: {
                 translateZ: 0,
-                translateX: this.state.isOpen ? '0' : '-300px'
+                translateX: this.state.isOpen ? 0 : 300 * this.props.slideInDirection
               },
               duration: this.animDuration,
               easing: 'easeOutQuint'
@@ -911,17 +917,13 @@ var Lightbox = function (_React$Component) {
                 'button',
                 {
                   className: 'lightbox__modal-btn-exit',
-                  onTouchEnd: function onTouchEnd() {
-                    return _this2.hasTouch ? _this2.props.toggle(false) : undefined;
-                  },
-                  onMouseUp: function onMouseUp() {
-                    return !_this2.hasTouch ? _this2.props.toggle(false) : undefined;
-                  }
+                  onTouchEnd: this.hasTouch && this.props.toggle.bind(this, false),
+                  onMouseUp: !this.hasTouch && this.props.toggle.bind(this, false)
                 },
                 _react2.default.createElement(
                   'svg',
-                  { width: '28', height: '28', viewBox: '0 0 24 24' },
-                  _react2.default.createElement('path', { fill: '#ffffff', d: 'M19 4q0.43 0 0.715 0.285t0.285 0.715q0 0.422-0.289 0.711l-6.297 6.289 6.297 6.289q0.289 0.289 0.289 0.711 0 0.43-0.285 0.715t-0.715 0.285q-0.422 0-0.711-0.289l-6.289-6.297-6.289 6.297q-0.289 0.289-0.711 0.289-0.43 0-0.715-0.285t-0.285-0.715q0-0.422 0.289-0.711l6.297-6.289-6.297-6.289q-0.289-0.289-0.289-0.711 0-0.43 0.285-0.715t0.715-0.285q0.422 0 0.711 0.289l6.289 6.297 6.289-6.297q0.289-0.289 0.711-0.289z' })
+                  { width: '24', height: '24', viewBox: '0 0 24 24' },
+                  _react2.default.createElement('path', { fill: '#555', d: 'M19 4q0.43 0 0.715 0.285t0.285 0.715q0 0.422-0.289 0.711l-6.297 6.289 6.297 6.289q0.289 0.289 0.289 0.711 0 0.43-0.285 0.715t-0.715 0.285q-0.422 0-0.711-0.289l-6.289-6.297-6.289 6.297q-0.289 0.289-0.711 0.289-0.43 0-0.715-0.285t-0.285-0.715q0-0.422 0.289-0.711l6.297-6.289-6.297-6.289q-0.289-0.289-0.289-0.711 0-0.43 0.285-0.715t0.715-0.285q0.422 0 0.711 0.289l6.289 6.297 6.289-6.297q0.289-0.289 0.711-0.289z' })
                 )
               ),
               _react2.default.createElement(
@@ -945,28 +947,31 @@ var string = _React$PropTypes.string;
 var node = _React$PropTypes.node;
 var bool = _React$PropTypes.bool;
 var func = _React$PropTypes.func;
+var number = _React$PropTypes.number;
 
 Lightbox.propTypes = {
   title: string,
   isOpen: bool,
   isHidden: bool,
+  slideInDirection: number,
   children: node.isRequired,
   toggle: func.isRequired
 };
 
 Lightbox.defaultProps = {
   isOpen: false,
-  isHidden: true
+  isHidden: true,
+  slideInDirection: -1
 };
 
-},{"react":275,"velocity-react":277}],16:[function(require,module,exports){
+},{"react":276,"velocity-react":278}],17:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1013,14 +1018,14 @@ Panel.propTypes = {
   children: node.isRequired
 };
 
-},{"react":275}],17:[function(require,module,exports){
+},{"react":276}],18:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1086,7 +1091,7 @@ var Settings = function (_React$Component) {
           _react2.default.createElement(
             'h2',
             { className: 'settings__title' },
-            'Codsworth'
+            'codsworth'
           ),
           _react2.default.createElement(
             'p',
@@ -1122,14 +1127,14 @@ var Settings = function (_React$Component) {
 
 exports.default = Settings;
 
-},{"../lightbox/index":15,"./tabs/widget-datetime":19,"./tabs/widget-search":20,"./tabs/widget-weather":21,"./tabs/widget-websites":22,"react":275}],18:[function(require,module,exports){
+},{"../lightbox/index":16,"./tabs/widget-datetime":20,"./tabs/widget-search":21,"./tabs/widget-weather":22,"./tabs/widget-websites":23,"react":276}],19:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1162,11 +1167,9 @@ var SettingsTab = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SettingsTab).call(this, props));
 
     _localforage2.default.get('Panels').then(function (panels) {
-      return panels.forEach(function (panel) {
-        return _this.setState({
-          isActive: panel.widgets.includes(_this.props.widget)
-        });
-      });
+      return _this.setState({ isActive: panels.filter(function (panel) {
+          return panel.widgets.includes(_this.props.widget);
+        }).length !== 0 });
     });
 
     _this.state = {
@@ -1179,6 +1182,10 @@ var SettingsTab = function (_React$Component) {
   _createClass(SettingsTab, [{
     key: 'toggle',
     value: function toggle(e) {
+      console.log(e.target.className.includes('react-toggle'));
+      if (e.target.className.includes('react-toggle')) {
+        return;
+      }
       this.setState({ isOpen: !this.state.isOpen });
     }
   }, {
@@ -1189,19 +1196,20 @@ var SettingsTab = function (_React$Component) {
       var checked = e.target.checked;
 
       _localforage2.default.get('Panels').then(function (panels) {
-        panels.forEach(function (panel) {
+        return _localforage2.default.set('Panels', panels.map(function (panel) {
           var index = panel.widgets.indexOf(_this2.props.widget);
-          if (checked && index !== -1 || !checked && index === -1) {
-            return checked;
-          } else if (checked) {
+
+          if (checked && index === -1) {
             panel.widgets.push(_this2.props.widget);
-          } else {
+          }
+
+          if (!checked && index > -1) {
             panel.widgets.splice(index, 1);
           }
-        });
 
-        return _localforage2.default.set('Panels', panels, true);
-      });
+          return panel;
+        }), true);
+      }).catch(console.error.bind(console));
 
       this.setState({ isActive: !this.state.isActive });
     }
@@ -1213,14 +1221,14 @@ var SettingsTab = function (_React$Component) {
         { className: 'settings-tab' },
         _react2.default.createElement(
           'div',
-          { className: 'settings-tab__header' },
+          {
+            className: 'settings-tab__header',
+            onTouchEnd: this.hasTouch && this.toggle.bind(this),
+            onMouseUp: !this.hasTouch && this.toggle.bind(this)
+          },
           _react2.default.createElement(
             'h4',
-            {
-              className: 'settings-tab__title',
-              onTouchEnd: this.hasTouch && this.toggle.bind(this),
-              onMouseUp: !this.hasTouch && this.toggle.bind(this)
-            },
+            { className: 'settings-tab__title' },
             this.props.title
           ),
           _react2.default.createElement(
@@ -1265,14 +1273,14 @@ SettingsTab.propTypes = {
   children: node.isRequired
 };
 
-},{"localforage":58,"react":275,"react-toggle":140,"velocity-react":277}],19:[function(require,module,exports){
+},{"localforage":59,"react":276,"react-toggle":141,"velocity-react":278}],20:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1382,14 +1390,14 @@ var DateTimeWidgetTab = function (_React$Component) {
 
 exports.default = DateTimeWidgetTab;
 
-},{"./tab":18,"localforage":58,"react":275,"react-toggle":140}],20:[function(require,module,exports){
+},{"./tab":19,"localforage":59,"react":276,"react-toggle":141}],21:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1435,14 +1443,14 @@ var SearchWidgetTab = function (_React$Component) {
 
 exports.default = SearchWidgetTab;
 
-},{"./tab":18,"react":275}],21:[function(require,module,exports){
+},{"./tab":19,"react":276}],22:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1568,14 +1576,14 @@ var WeatherWidgetTab = function (_React$Component) {
 
 exports.default = WeatherWidgetTab;
 
-},{"./tab":18,"localforage":58,"react":275}],22:[function(require,module,exports){
+},{"./tab":19,"localforage":59,"react":276}],23:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1666,14 +1674,14 @@ var WebsitesWidgetSettings = function (_React$Component) {
 
 exports.default = WebsitesWidgetSettings;
 
-},{"../../../services/file-reader":3,"./tab":18,"localforage":58,"react":275}],23:[function(require,module,exports){
+},{"../../../services/file-reader":3,"./tab":19,"localforage":59,"react":276}],24:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1727,7 +1735,7 @@ var DateTimeWidget = function (_React$Component) {
         _this2.tickId = window.setTimeout(tick, 1000);
       };
 
-      this.tickId = window.setTimeout(tick, 950 - Date.now() % 1000);
+      this.tickId = window.setTimeout(tick, 1000 - Date.now() % 1000);
 
       this.setState(this.getDateTime());
     }
@@ -1742,22 +1750,24 @@ var DateTimeWidget = function (_React$Component) {
       var d = new Date().toString().split(' ');
 
       return {
-        time: this.formatTime(d[4]),
+        time: this.formatTime(d[4].split(':')),
         date: (0, _time.expandDay)(d[0]) + ', ' + (0, _time.expandMonth)(d[1]) + ' ' + d[2] + ', ' + d[3]
       };
     }
   }, {
     key: 'formatTime',
     value: function formatTime(time) {
-      if (this.state.militaryTime) return time.replace(/:/g, '.');
+      if (!this.state.showSeconds) {
+        time = time.slice(0, -1);
+      }
 
-      var hms = time.split(':');
-      var h = +hms[0];
-      var suffix = h < 12 ? 'am' : 'pm';
-      hms[0] = h % 12 || 12;
-      return time.replace(/[0-9]{1,2}(:[0-9]{2}){2}/, function (data) {
-        return hms.join('.') + suffix;
-      });
+      if (this.state.militaryTime) {
+        return time.join('.');
+      }
+
+      var h = +time[0];
+      time[0] = h % 12 || 12;
+      return '' + time.join('.') + (h < 12 ? 'AM' : 'PM');
     }
   }, {
     key: 'render',
@@ -1786,14 +1796,14 @@ exports.default = DateTimeWidget;
 
 DateTimeWidget.propTypes = {};
 
-},{"../../services/time":8,"localforage":58,"react":275}],24:[function(require,module,exports){
+},{"../../services/time":8,"localforage":59,"react":276}],25:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1859,17 +1869,17 @@ exports.default = SearchWidget;
 
 SearchWidget.propTypes = {};
 
-},{"localforage":58,"react":275}],25:[function(require,module,exports){
-'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _react=require('react');var _react2=_interopRequireDefault(_react);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}exports.default={'stormy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0\' y=\'0\' width=\'64\' height=\'64\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_2_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'9.6\' y=\'12.8\' width=\'54.3\' height=\'50.68\'><feColorMatrix type=\'matrix\' values=\'1\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'9.6\' y=\'12.8\' width=\'54.3\' height=\'50.68\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'734.76\' cy=\'1153.2\' r=\'37.33\' gradientTransform=\'matrix(1 0 0 1 -705.9609 -1124.3984)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.11\' stop-color=\'#E8E8E8\'/><stop offset=\'0.35\' stop-color=\'#ADADAD\'/><stop offset=\'0.69\' stop-color=\'#4E4E4E\'/><stop offset=\'0.95\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.33\'/></g></mask><g opacity=\'0.2\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M63.9 33.99c-0.01-0.01-0.02-0.02-0.04-0.03 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.11-0.16-0.16 -0.05-0.04-0.1-0.1-0.15-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15s-0.1-0.1-0.15-0.15c-0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.09-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -1.74-1.78-4.16-2.89-6.86-2.89 -0.59 0-1.17 0.09-1.73 0.2 0 0 0-0.01-0.01-0.01 -0.06-0.06-0.12-0.1-0.17-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.1-0.06-0.16-0.1-0.21-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.09-0.15-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -2.28-2.36-5.35-3.83-8.78-3.83 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 2.4 0.99 4.55 2.58 6.1 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.13 0.16 0.18 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.04 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.01 0.01 0.02 0.02 0.02 0.03l-0.59 2.31 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.56 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.42 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4L32.09 57.8l-0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4 0.26-0.26 -0.1 0.42 0.25-0.26 -0.1 0.41 0.26-0.26L33.2 59.4l0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.44 0.26-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.4 0.26-0.26 -0.11 0.42 0.25-0.26 -0.1 0.4 0.26-0.18 -0.1 0.42 0.25-0.26 -0.1 0.41 0.25-0.26L35.59 61.9l0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.1 0.42 0.25-0.26 -0.11 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.09 0.36c0.02 0 0.03-0.01 0.05-0.01l0.2-0.2 -0.05 0.18C51.9 61.01 62.98 48.89 63.9 33.99z\'/></g><path fill=\'#6C7A89\' d=\'M44.78 18.83c-0.82 0-1.61 0.14-2.37 0.33 -1.95-3.77-5.88-6.36-10.42-6.36 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 4.71 3.82 8.53 8.53 8.53h1.29 25.12 0.24c5.3 0 9.6-4.3 9.6-9.6C54.39 23.13 50.09 18.83 44.78 18.83z\'/><polygon fill=\'#F5AB35\' points=\'37.17 46.91 33.4 46.91 35.03 40.51 26.83 48.89 30.6 48.89 28.97 55.28 \'/></svg>'}}),'cloudy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_5_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="6.4" y="10.666" width="56.67" height="53.238"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="6.4" y="10.666" width="56.67" height="53.238" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path d="M63.07 39.533l-0.104 0.023 0.039-0.19 -0.189 0.038 0.039-0.188 -0.188 0.037 0.037-0.19 -0.188 0.039 0.041-0.188 -0.19 0.037 0.038-0.188 -0.188 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.188 0.041 0.036-0.192L61.613 38.2l0.041-0.188 -0.188 0.039 0.037-0.189L61.314 37.9l0.037-0.188 -0.188 0.037 0.039-0.188 -0.188 0.041 0.036-0.19 -0.19 0.038 0.039-0.188L60.715 37.3l0.039-0.188 -0.191 0.039 0.041-0.188 -0.19 0.037 0.04-0.188 -0.188 0.037 0.039-0.188 -0.193 0.04 0.039-0.188 -0.188 0.037 0.039-0.189L59.813 36.4l0.041-0.188 -0.192 0.037 0.038-0.188L59.514 36.1l0.038-0.188 -0.188 0.038 0.041-0.188L59.213 35.8l0.037-0.19 -0.188 0.039L59.1 35.46l-0.188 0.04 0.038-0.188 -0.188 0.037 0.037-0.188L58.611 35.2l0.039-0.188 -0.188 0.038 0.038-0.19L58.313 34.9l0.037-0.192 -0.188 0.04 0.038-0.188L58.014 34.6l0.036-0.188 -0.188 0.04L57.9 34.26l-0.19 0.039 0.04-0.189 -0.191 0.039 0.039-0.188 -0.209 0.017 0.036-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.037-0.189 -0.188 0.041 0.037-0.189 -0.188 0.037 0.037-0.188 -0.188 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.189 -0.188 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.191 0.039 0.039-0.191 -0.188 0.039 0.039-0.188 -0.188 0.038 0.037-0.189 -0.191 0.038 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.188 0.039 0.04-0.189 -0.19 0.039 0.036-0.188 -0.188 0.039 0.041-0.188 -0.188 0.039 0.039-0.188 -0.19 0.037 0.037-0.189 -0.188 0.039 0.04-0.188 -0.188 0.039 0.036-0.189 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.021-0.207 -0.188 0.039 0.039-0.188 -0.189 0.038 0.039-0.19 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.189 -0.188 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.036-0.191 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.19 -0.19 0.039 0.039-0.188 -0.188 0.039 0.04-0.188 -0.188 0.039 0.039-0.189 -0.191 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.036-0.19 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.037 0.039-0.188L50.6 27.212l0.041-0.188 -0.189 0.039 0.039-0.189 -0.189 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.191 0.039 0.041-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039L49.3 25.67l-0.188 0.039 0.039-0.188 -0.188 0.039L49 25.372l-0.189 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.188 0.039 0.037-0.189 -0.189 0.037 0.041-0.188 -0.188 0.039 0.037-0.188 -0.19 0.039 0.039-0.19 -0.188 0.037 0.04-0.188 -0.191 0.039 0.037-0.189 -0.188 0.039 0.039-0.188L47.46 24.06l0.04-0.188 -0.189 0.039 0.039-0.188 -0.19 0.038 0.04-0.188 -0.188 0.039 0.038-0.188 -0.19 0.038 0.041-0.188 -0.192 0.039 0.04-0.188 -0.189 0.039 0.037-0.189 -0.188 0.039 0.037-0.189 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.189 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.188 -0.22-0.018 0.04-0.188 -0.188 0.038 0.037-0.189 -0.189 0.039 0.037-0.188 -0.188 0.038 0.036-0.19 -0.188 0.039 0.037-0.188 -0.19 0.039 0.039-0.19 -0.188 0.039 0.041-0.188 -0.192 0.039 0.04-0.19 -0.189 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.188 -0.188 0.039 0.041-0.188 -0.188 0.039 0.039-0.188 -0.191 0.039 0.037-0.188 -0.188 0.039 0.041-0.19 -0.189 0.039 0.037-0.188 -0.186 0.034 0.037-0.188 -0.188 0.038 0.028-0.202 -0.188 0.039 0.038-0.188 -0.188 0.039 0.037-0.189 -0.188 0.038 0.037-0.188 -0.191 0.037 0.04-0.188 -0.188 0.037 0.039-0.188 -0.19 0.039 0.036-0.191 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.19L40.8 17.386l0.038-0.188 -0.188 0.039 0.037-0.189L40.5 17.085l0.037-0.188 -0.188 0.04 0.039-0.189 -0.189 0.039 0.039-0.189 -0.188 0.037 0.038-0.188 -3.771 0.755 0.148 0.152 0.452 0.452 1.056 1.055 0.15 0.152 1.006 1.004 0.354 0.352 0.451 0.453 1.057 1.056 0.451 0.453 0.381 0.377 0.523 0.527 1.713 1.708 1.004 1.007 0 0 0.305 0.303 0.248 0.251 0.201 0.201 0.076 0.075 0.074 0.076 0.754 0.755 0.829 0.828c-0.546-0.096-1.104-0.169-1.677-0.169 -0.614 0-1.202 0.089-1.781 0.209 -0.033-0.028-0.059-0.063-0.09-0.09 -0.052-0.044-0.096-0.104-0.146-0.15 -0.054-0.044-0.097-0.104-0.15-0.149 -0.055-0.049-0.1-0.108-0.154-0.155 -0.054-0.045-0.094-0.103-0.146-0.148 -0.055-0.045-0.096-0.104-0.149-0.149 -0.054-0.047-0.101-0.107-0.153-0.153 -0.051-0.046-0.095-0.105-0.147-0.15 -0.052-0.044-0.097-0.104-0.152-0.149 -0.05-0.047-0.096-0.107-0.147-0.152 -0.055-0.047-0.096-0.106-0.151-0.151 -0.054-0.047-0.096-0.106-0.149-0.152 -0.053-0.044-0.092-0.102-0.146-0.145 -0.055-0.047-0.096-0.106-0.152-0.153 -0.052-0.047-0.098-0.107-0.15-0.154 -0.053-0.045-0.092-0.102-0.146-0.145 -0.056-0.047-0.102-0.108-0.157-0.158 -0.053-0.045-0.095-0.103-0.147-0.147 -0.056-0.045-0.097-0.104-0.149-0.149 -0.053-0.047-0.097-0.107-0.152-0.154 -0.053-0.045-0.092-0.102-0.145-0.147 -0.058-0.047-0.102-0.108-0.158-0.153 -0.05-0.044-0.092-0.105-0.144-0.148 -0.206-0.177-0.431-0.322-0.647-0.484l-0.033-0.044 -0.016 0.018c-0.015-0.011-0.031-0.02-0.044-0.03l-0.092-0.139 -0.024 0.039 -0.129-0.189 -0.023 0.038 -0.129-0.188 -0.023 0.038 -0.127-0.189 -0.027 0.037 -0.127-0.188 -0.025 0.039 -0.129-0.19 -0.026 0.039 -0.125-0.188 -0.024 0.037 -0.129-0.189 -0.025 0.039 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.024 0.036 -0.129-0.188 -0.023 0.038 -0.129-0.188 -0.025 0.037 -0.125-0.188 -0.025 0.039 -0.129-0.189 -0.024 0.039 -0.125-0.188 -0.024 0.039 -0.129-0.19 -0.027 0.039 -0.127-0.189 -0.025 0.035 -0.127-0.188 -0.027 0.041 -0.127-0.189 -0.025 0.037 -0.125-0.188 -0.024 0.036 -0.125-0.188 -0.027 0.039 -0.127-0.188L36.65 21.28l-0.129-0.189 -0.025 0.035 -0.125-0.188 -0.027 0.039 -0.127-0.187 -0.025 0.039 -0.125-0.189 -0.024 0.039 -0.13-0.189 -0.023 0.038 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.002 0.015 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.025 0.038 -0.129-0.189 -0.025 0.039 -0.117-0.188 -0.025 0.039 -0.129-0.191L34.7 19.298l-0.127-0.188 -0.027 0.039 -0.125-0.188 -0.024 0.038 -0.129-0.189 -0.025 0.036 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.024 0.038 -0.127-0.188 -0.024 0.037 -0.128-0.188 -0.023 0.039 -0.125-0.191 -0.02 0.037 -0.128-0.188 -0.022 0.039 -0.127-0.188 -0.025 0.036 -0.125-0.189 -0.024 0.041 -0.125-0.188 -0.026 0.035 -0.125-0.189 -0.025 0.037 -0.127-0.188 -0.024 0.039 -0.126-0.188 -0.025 0.038 -0.126-0.189 -0.024 0.037L32.162 16.7l-0.025 0.039L32.01 16.55l-0.024 0.039 -0.126-0.188 -0.026 0.039 -0.126-0.19 -0.025 0.039L31.556 16.1l-0.026 0.039 -0.125-0.188 -0.026 0.039 -0.126-0.188 -0.021 0.03 -0.126-0.188 -0.026 0.038 -0.126-0.188 -0.023 0.036 -0.126-0.189 -0.025 0.038 -0.126-0.188 -0.026 0.039 -0.126-0.19 -0.025 0.037 -0.126-0.188 -0.026 0.039 -0.128-0.19 -0.025 0.039 -0.126-0.188 -0.026 0.037 -0.125-0.188 -0.026 0.037 -0.126-0.188 -0.025 0.039 -0.126-0.188 -0.026 0.039 -0.126-0.188 -0.025 0.038 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.018 0.032 -0.126-0.188 -0.023 0.034 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.027 0.039 -0.126-0.191 -0.025 0.039 -0.124-0.189 -0.026 0.039L28.24 12.78l-0.025 0.039 -0.126-0.188 -0.026 0.038 -0.125-0.189 -0.026 0.039 -0.125-0.189 -0.025 0.037 -0.126-0.188 -0.026 0.039 -0.126-0.189 -0.025 0.035 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.026 0.039 -0.126-0.188 -0.025 0.038 -0.128-0.189 -0.018 0.032 -0.126-0.188 -0.023 0.035 -0.128-0.188 -0.025 0.039 -0.124-0.188 -0.026 0.039 -0.127-0.189 -0.025 0.036 -0.124-0.188 -2.133 3.2h0.252l-0.101 0.152h0.25l-0.1 0.15h0.253l-0.1 0.151h0.252l-0.1 0.152h0.251l-0.1 0.149h0.252l-0.101 0.151h0.254l-0.1 0.152h0.25l-0.1 0.149h0.252l-0.1 0.152h0.251l-0.1 0.151h0.25l-0.101 0.149h0.254l-0.1 0.152h0.252l-0.101 0.151h0.252l-0.109 0.151h0.25l-0.1 0.15h0.251l-0.1 0.151h0.252l-0.1 0.152h0.251l-0.1 0.149h0.252l-0.101 0.152h0.252l-0.1 0.151h0.252l-0.101 0.149h0.252l-0.1 0.152h0.251l-0.1 0.151h0.25l-0.101 0.149h0.254l-0.1 0.152h0.252l-0.071 0.103c-0.595-0.085-1.199-0.141-1.817-0.141 -2.801 0-5.382 0.908-7.49 2.436l-0.081-0.017 0.1-0.1 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.101 -0.252-0.054 0.1-0.1 -0.252-0.048 0.1-0.1 -0.25-0.052 0.1-0.1 -0.25-0.051 0.101-0.1 -0.253-0.05 0.1-0.101 -0.251-0.05 0.102-0.102 -0.254-0.049 0.1-0.1 -0.247-0.052 0.1-0.101 -0.254-0.051 0.101-0.1 -0.252-0.049 0.1-0.104 -0.249-0.048 0.1-0.1 -0.252-0.049 0.1-0.1 -0.249-0.052 0.1-0.1 -0.254-0.051 0.101-0.1L16 17.453l0.1-0.101 -0.251-0.049 0.1-0.1 -3.771-0.755 0.755 3.772 0.1-0.1 0.051 0.251 0.101-0.1 0.049 0.25 0.1-0.101 0.051 0.252 0.1-0.1 0.05 0.252 0.1-0.101 0.049 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.05 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.051 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.051 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.051 0.252 0.114-0.109 0.049 0.252 0.1-0.1 0.049 0.249 0.101-0.1 0.049 0.252 0.1-0.101 0.049 0.252 0.1-0.1 0.018 0.081c-1.524 2.105-2.432 4.685-2.432 7.483 0 0.617 0.079 1.211 0.167 1.805l-0.13 0.088v-0.252l-0.152 0.1v-0.254l-0.149 0.101v-0.25l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.151 0.1v-0.251l-0.15 0.1v-0.249l-0.151 0.1V30.98l-0.149 0.1v-0.251l-0.152 0.1v-0.252l-0.147 0.104v-0.254l-0.149 0.1v-0.25l-0.152 0.101v-0.252l-0.149 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.1v-0.251l-0.151 0.1v-0.251l-0.152 0.1V29.47l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.101v-0.252l-0.151 0.1v-0.252l-0.15 0.101v-0.252l-0.151 0.1v-0.251l-0.15 0.1v-0.246L9.6 28.519v-0.252L6.4 30.4l0.188 0.126 -0.039 0.025 0.193 0.126 -0.039 0.026 0.188 0.126 -0.039 0.025 0.188 0.124 -0.038 0.026 0.188 0.125 -0.039 0.026 0.188 0.126L7.3 31.306l0.188 0.126 -0.037 0.026 0.188 0.126L7.6 31.609l0.188 0.126 -0.039 0.026 0.188 0.125 -0.039 0.026 0.188 0.126 -0.039 0.024 0.188 0.126 -0.039 0.026 0.188 0.126 -0.039 0.025 0.188 0.125 -0.024 0.02 0.188 0.127 -0.036 0.022 0.189 0.126 -0.041 0.025 0.188 0.125 -0.038 0.026 0.188 0.127 -0.039 0.024 0.189 0.125 -0.041 0.025 0.188 0.125 -0.039 0.026 0.188 0.127 -0.039 0.024 0.188 0.125 -0.039 0.024 0.189 0.125 -0.039 0.027 0.189 0.127 -0.041 0.024 0.188 0.125 -0.039 0.024 0.188 0.127 -0.039 0.024 0.189 0.127 -0.039 0.027 0.188 0.127 -0.038 0.025 0.19 0.125 -0.022 0.018 0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.025 0.189 0.127 -0.037 0.027 0.188 0.125 -0.039 0.024 0.075 0.05c-0.49 1.066-0.769 2.252-0.769 3.506 0 2.396 0.995 4.553 2.581 6.104 0.049 0.05 0.099 0.1 0.15 0.148 0.051 0.051 0.1 0.102 0.153 0.15 0.049 0.05 0.1 0.104 0.152 0.152 0.047 0.048 0.096 0.098 0.145 0.144 0.051 0.054 0.102 0.104 0.155 0.156 0.047 0.048 0.097 0.098 0.146 0.144 0.051 0.055 0.102 0.106 0.155 0.154 0.047 0.05 0.096 0.1 0.146 0.146 0.052 0.054 0.101 0.106 0.154 0.154 0.051 0.053 0.102 0.104 0.153 0.152 0.049 0.05 0.099 0.1 0.15 0.146 0.049 0.049 0.096 0.101 0.145 0.147 0.051 0.052 0.102 0.104 0.155 0.155 0.048 0.047 0.097 0.099 0.146 0.146 0.051 0.051 0.104 0.104 0.157 0.154 0.047 0.05 0.096 0.098 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.049 0.05 0.098 0.101 0.149 0.147 0.05 0.053 0.099 0.103 0.15 0.149 0.051 0.054 0.1 0.103 0.153 0.152 0.049 0.05 0.1 0.101 0.152 0.149 0.047 0.045 0.096 0.096 0.145 0.145 0.051 0.052 0.103 0.105 0.155 0.156 0.05 0.05 0.099 0.1 0.148 0.148 0.051 0.051 0.102 0.102 0.153 0.15 0.049 0.05 0.1 0.102 0.15 0.15 0.049 0.049 0.098 0.1 0.147 0.146 0.051 0.052 0.102 0.104 0.153 0.153 0.049 0.051 0.099 0.101 0.15 0.149 0.049 0.052 0.1 0.103 0.151 0.15 0.049 0.05 0.098 0.1 0.149 0.147 0.052 0.053 0.103 0.105 0.156 0.155 0.049 0.052 0.098 0.099 0.147 0.146 0.049 0.051 0.101 0.101 0.152 0.149 0.049 0.052 0.1 0.101 0.151 0.149 0.049 0.051 0.1 0.103 0.151 0.15 0.05 0.053 0.101 0.104 0.152 0.153 0.049 0.046 0.098 0.097 0.149 0.146 0.051 0.051 0.103 0.103 0.156 0.154 0.047 0.049 0.096 0.096 0.145 0.146 0.051 0.05 0.102 0.104 0.153 0.152 0.05 0.047 0.099 0.1 0.15 0.146 0.049 0.05 0.1 0.102 0.151 0.154 0.049 0.047 0.098 0.1 0.15 0.146 0.049 0.052 0.1 0.104 0.153 0.154 0.049 0.05 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.15 0.147 0.049 0.053 0.098 0.103 0.149 0.147 0.049 0.051 0.098 0.103 0.149 0.149 0.062 0.069 0.113 0.122 0.164 0.172 0.049 0.05 0.1 0.104 0.151 0.152 0.049 0.048 0.099 0.098 0.15 0.147 0.049 0.047 0.1 0.101 0.151 0.149 0.049 0.05 0.1 0.101 0.152 0.149 0.049 0.052 0.098 0.102 0.147 0.147 0.051 0.052 0.102 0.104 0.153 0.154 0.049 0.052 0.101 0.104 0.152 0.151 0.049 0.049 0.098 0.099 0.147 0.145 0.051 0.054 0.102 0.105 0.156 0.158C22.204 53.95 22.251 54 22.3 54.046c0.051 0.054 0.104 0.106 0.158 0.158 0.049 0.05 0.101 0.101 0.15 0.149 0.049 0.047 0.096 0.097 0.145 0.145 0.051 0.052 0.102 0.105 0.155 0.154 0.05 0.048 0.097 0.1 0.148 0.146 0.051 0.051 0.104 0.104 0.157 0.154 0.049 0.052 0.101 0.1 0.152 0.15 0.047 0.049 0.096 0.098 0.145 0.146 0.049 0.05 0.1 0.101 0.151 0.149 0.049 0.053 0.101 0.104 0.152 0.151 0.048 0.05 0.098 0.103 0.146 0.15 0.051 0.05 0.102 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.145 0.145 0.051 0.052 0.104 0.105 0.159 0.16 0.047 0.046 0.095 0.096 0.144 0.142 0.051 0.054 0.102 0.104 0.153 0.154 0.049 0.05 0.1 0.104 0.151 0.151 0.05 0.053 0.101 0.101 0.152 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.051 0.051 0.1 0.104 0.154 0.154 0.049 0.051 0.096 0.1 0.146 0.145 0.051 0.053 0.102 0.105 0.155 0.158 0.05 0.049 0.101 0.101 0.152 0.147 0.049 0.048 0.1 0.101 0.151 0.147 0.047 0.049 0.092 0.097 0.141 0.143 0.054 0.055 0.105 0.107 0.161 0.16 0.049 0.048 0.098 0.102 0.146 0.148 0.051 0.049 0.101 0.102 0.154 0.153 0.049 0.045 0.096 0.097 0.147 0.144 0.051 0.053 0.102 0.104 0.154 0.151 0.049 0.056 0.1 0.104 0.151 0.154 0.049 0.048 0.096 0.096 0.147 0.146 0.051 0.051 0.101 0.104 0.154 0.151 0.049 0.054 0.1 0.101 0.151 0.147 0.049 0.053 0.098 0.104 0.149 0.149 0.05 0.052 0.099 0.101 0.148 0.149 0.051 0.051 0.102 0.105 0.155 0.154 0.049 0.051 0.099 0.101 0.15 0.15 0.051 0.051 0.102 0.104 0.155 0.15 0.047 0.049 0.094 0.095 0.141 0.141 0.051 0.055 0.103 0.107 0.156 0.158 0.049 0.051 0.098 0.102 0.147 0.146 0.049 0.049 0.1 0.104 0.152 0.153 0.049 0.05 0.098 0.099 0.147 0.146 0.051 0.053 0.104 0.104 0.157 0.156 0.05 0.049 0.097 0.098 0.148 0.147 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.052 0.05 0.101 0.104 0.154 0.15 0.049 0.049 0.096 0.1 0.147 0.145 0.049 0.053 0.101 0.104 0.152 0.154 0.051 0.053 0.102 0.104 0.155 0.154 0.047 0.049 0.094 0.096 0.143 0.142 0.052 0.053 0.104 0.104 0.156 0.153 0.049 0.053 0.1 0.104 0.151 0.152 0.049 0.049 0.099 0.098 0.148 0.146 0.049 0.049 0.098 0.102 0.146 0.146 0.051 0.055 0.104 0.108 0.158 0.158 0.05 0.051 0.097 0.098 0.148 0.146 0.051 0.055 0.102 0.104 0.153 0.154 0.047 0.047 0.096 0.096 0.148 0.145 0.047 0.052 0.096 0.1 0.145 0.146 0.053 0.055 0.106 0.11 0.161 0.162 0.048 0.049 0.097 0.096 0.146 0.145 0.049 0.047 0.1 0.103 0.151 0.149 0.035 0.035 0.068 0.068 0.102 0.104C47.193 63.889 59.691 53.496 63.07 39.533z"/></g><path fill="#F5D76E" d="M38.934 30.398c0 7.069-5.729 12.802-12.8 12.802 -7.068 0-12.8-5.733-12.8-12.802 0-7.068 5.732-12.8 12.8-12.8C33.204 17.598 38.934 23.33 38.934 30.398zM28.265 13.867l-2.133-3.2 -2.133 3.2H28.265zM9.6 28.267L6.4 30.4l3.2 2.131V28.267zM39.329 20.218l0.756-3.772 -3.772 0.755L39.329 20.218zM15.951 17.201l-3.774-0.753 0.755 3.772L15.951 17.201z"/><path fill="#FFFFFF" d="M45.866 28.265c-0.824 0-1.612 0.136-2.375 0.33 -1.949-3.778-5.884-6.363-10.425-6.363 -5.391 0-9.924 3.644-11.295 8.598 -0.811-0.256-1.657-0.431-2.552-0.431 -4.712 0-8.533 3.824-8.533 8.537 0 4.711 3.821 8.533 8.533 8.533h1.289 25.118 0.241c5.305 0 9.601-4.301 9.601-9.602C55.467 32.563 51.171 28.265 45.866 28.265z"/></svg>'}}),'cloudy-2':_react2.default.createElement('svg',{x:'0px',y:'0px',width:'64px',height:'64px',viewBox:'0 0 64 64','enable-background':'new 0 0 64 64'},_react2.default.createElement('g',{id:'day_bg'},_react2.default.createElement('circle',{fill:'#89C4F4',cx:'32',cy:'32',r:'32'}),_react2.default.createElement('path',{fill:'#6BB9F0',d:'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z'})),_react2.default.createElement('defs',null,_react2.default.createElement('filter',{id:'Adobe_OpacityMaskFilter',filterUnits:'userSpaceOnUse',x:'9.681',y:'19.434',width:'53.348',height:'44.407'},_react2.default.createElement('feColorMatrix',{type:'matrix',values:'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0'}))),_react2.default.createElement('mask',{maskUnits:'userSpaceOnUse',x:'9.681',y:'19.434',width:'53.348',height:'44.407',id:'SVGID_1_'},_react2.default.createElement('g',{filter:'url(#Adobe_OpacityMaskFilter)'},_react2.default.createElement('radialGradient',{id:'SVGID_2_',cx:'70.7803',cy:'590.999',r:'37.333',gradientTransform:'matrix(1 0 0 1 -41.9805 -562.1992)',gradientUnits:'userSpaceOnUse'},_react2.default.createElement('stop',{offset:'0',stopColor:'#FFFFFF'}),_react2.default.createElement('stop',{offset:'0.1126',stopColor:'#E8E8E8'}),_react2.default.createElement('stop',{offset:'0.3492',stopColor:'#ADADAD'}),_react2.default.createElement('stop',{offset:'0.6869',stopColor:'#4E4E4E'}),_react2.default.createElement('stop',{offset:'0.9519',stopColor:'#000000'})),_react2.default.createElement('circle',{fill:'url(#SVGID_2_)',cx:'28.8',cy:'28.8',r:'37.333'}))),_react2.default.createElement('g',{opacity:'0.2',mask:'url(#SVGID_1_)'},_react2.default.createElement('path',{fill:'#1A171B',d:'M63.029 39.695c-0.021-0.021-0.043-0.041-0.063-0.061 -0.048-0.048-0.101-0.104-0.149-0.148 -0.049-0.049-0.101-0.102-0.149-0.148 -0.051-0.053-0.101-0.104-0.149-0.152 -0.05-0.047-0.101-0.098-0.15-0.147 -0.049-0.05-0.1-0.103-0.149-0.149 -0.05-0.053-0.101-0.104-0.151-0.154 -0.049-0.045-0.096-0.096-0.145-0.144 -0.052-0.053-0.104-0.106-0.158-0.161 -0.05-0.048-0.101-0.096-0.147-0.146 -0.048-0.05-0.101-0.101-0.151-0.149 -0.048-0.051-0.097-0.101-0.146-0.15 -0.051-0.049-0.104-0.103-0.153-0.153 -0.05-0.048-0.101-0.101-0.149-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.048-0.051-0.097-0.1-0.144-0.146 -0.053-0.055-0.109-0.107-0.16-0.162 -0.051-0.051-0.104-0.101-0.154-0.149 -0.045-0.046-0.092-0.095-0.139-0.138 -0.049-0.055-0.104-0.108-0.158-0.158 -0.045-0.051-0.098-0.102-0.146-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.051-0.051-0.104-0.104-0.154-0.157 -0.051-0.048-0.1-0.101-0.148-0.147 -0.05-0.049-0.102-0.099-0.148-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.046-0.048-0.096-0.097-0.143-0.144 -0.051-0.053-0.1-0.104-0.153-0.152 -0.05-0.051-0.101-0.104-0.151-0.154 -0.049-0.048-0.099-0.1-0.148-0.146 -0.049-0.047-0.102-0.104-0.153-0.152 -0.048-0.05-0.101-0.1-0.147-0.15 -0.047-0.049-0.101-0.1-0.147-0.146 -0.054-0.055-0.106-0.105-0.158-0.156 -0.046-0.046-0.096-0.096-0.142-0.142 -0.051-0.052-0.1-0.104-0.152-0.154 -0.052-0.05-0.102-0.104-0.152-0.151 -0.047-0.049-0.1-0.099-0.146-0.147 -0.048-0.056-0.104-0.104-0.154-0.153 -0.048-0.051-0.098-0.101-0.146-0.148 -0.051-0.053-0.102-0.102-0.154-0.151 -0.048-0.056-0.102-0.104-0.152-0.153 -0.048-0.049-0.094-0.097-0.14-0.143 -0.052-0.055-0.106-0.104-0.158-0.156 -0.048-0.053-0.1-0.101-0.147-0.15 -0.049-0.051-0.1-0.101-0.151-0.152 -0.05-0.051-0.101-0.1-0.149-0.148 -0.049-0.051-0.101-0.103-0.149-0.15 -0.052-0.049-0.099-0.1-0.149-0.149 -0.051-0.051-0.101-0.103-0.15-0.153 -0.051-0.052-0.1-0.101-0.149-0.149 -0.05-0.052-0.101-0.101-0.151-0.152 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.096-0.099-0.146-0.147 -0.05-0.051-0.104-0.104-0.156-0.155 -0.047-0.049-0.096-0.096-0.144-0.145 -0.05-0.051-0.103-0.103-0.153-0.154 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.098-0.098-0.147-0.15 -0.05-0.051-0.101-0.098-0.149-0.149 -0.049-0.051-0.101-0.103-0.152-0.153 -0.048-0.05-0.098-0.099-0.146-0.148 -0.051-0.053-0.104-0.104-0.154-0.155 -0.049-0.049-0.096-0.097-0.146-0.145 -0.05-0.05-0.101-0.101-0.15-0.15 -0.049-0.053-0.104-0.104-0.157-0.158 -0.046-0.049-0.097-0.096-0.146-0.145 -0.049-0.051-0.102-0.1-0.148-0.151 -0.053-0.051-0.102-0.102-0.152-0.154 -0.048-0.049-0.1-0.098-0.148-0.149 -0.049-0.051-0.102-0.1-0.15-0.151 -0.05-0.052-0.1-0.101-0.148-0.15 -0.052-0.051-0.102-0.1-0.15-0.149 -0.051-0.051-0.1-0.102-0.152-0.153 -0.048-0.05-0.096-0.099-0.145-0.148 -0.053-0.053-0.105-0.104-0.157-0.155 -1.741-1.781-4.167-2.891-6.854-2.891 -0.6 0-1.175 0.088-1.736 0.2 -0.002-0.002-0.004-0.004-0.006-0.006 -0.051-0.053-0.106-0.1-0.154-0.154 -0.049-0.051-0.102-0.096-0.148-0.147 -0.046-0.051-0.1-0.098-0.148-0.149 -0.049-0.055-0.104-0.102-0.152-0.156 -0.048-0.049-0.098-0.094-0.145-0.145 -0.049-0.055-0.109-0.104-0.162-0.159 -0.043-0.05-0.096-0.095-0.145-0.146 -0.048-0.053-0.102-0.1-0.148-0.151 -0.049-0.053-0.104-0.101-0.152-0.154 -0.048-0.051-0.1-0.096-0.148-0.145 -0.047-0.053-0.102-0.102-0.15-0.153 -0.046-0.051-0.104-0.099-0.15-0.15 -0.046-0.051-0.1-0.096-0.146-0.147 -0.05-0.055-0.108-0.104-0.158-0.158 -0.046-0.049-0.097-0.094-0.142-0.143 -0.051-0.055-0.108-0.104-0.159-0.157 -2.146-2.338-5.216-3.806-8.636-3.806 -5.391 0-9.924 3.644-11.296 8.598 -0.811-0.256-1.658-0.432-2.552-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 2.396 0.995 4.555 2.584 6.104 0.049 0.052 0.098 0.102 0.149 0.15 0.047 0.051 0.096 0.098 0.146 0.146 0.051 0.053 0.104 0.104 0.156 0.156 0.049 0.047 0.098 0.099 0.149 0.147 0.049 0.05 0.1 0.103 0.151 0.149 0.05 0.051 0.101 0.101 0.152 0.15 0.049 0.049 0.098 0.1 0.149 0.149 0.049 0.05 0.101 0.103 0.154 0.153 0.049 0.049 0.098 0.101 0.151 0.149 0.047 0.048 0.096 0.097 0.147 0.144 0.052 0.054 0.105 0.108 0.158 0.162 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.103 0.104 0.156 0.155 0.049 0.049 0.1 0.101 0.151 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.052 0.054 0.105 0.104 0.158 0.156 0.049 0.053 0.1 0.104 0.151 0.15 0.047 0.048 0.096 0.098 0.146 0.145 0.051 0.053 0.102 0.104 0.155 0.155 0.051 0.048 0.1 0.103 0.154 0.152 0.047 0.05 0.096 0.098 0.147 0.146 0.051 0.053 0.1 0.104 0.153 0.154 0.047 0.048 0.096 0.096 0.146 0.145 0.051 0.053 0.103 0.105 0.158 0.156 0.049 0.051 0.098 0.1 0.15 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.149 0.051 0.05 0.103 0.104 0.154 0.153 0.047 0.049 0.096 0.097 0.145 0.145 0.051 0.053 0.104 0.105 0.159 0.158 0.047 0.048 0.094 0.096 0.143 0.141 0.051 0.055 0.102 0.107 0.157 0.157 0.047 0.052 0.096 0.101 0.148 0.146 0.051 0.055 0.102 0.104 0.155 0.154 0.047 0.051 0.094 0.1 0.143 0.145 0.054 0.052 0.105 0.105 0.158 0.16 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.104 0.104 0.158 0.158 0.047 0.048 0.096 0.096 0.145 0.142 0.051 0.055 0.104 0.108 0.16 0.158 0.047 0.051 0.094 0.1 0.143 0.146 0.051 0.049 0.102 0.104 0.153 0.151 0.049 0.048 0.098 0.101 0.148 0.147 0.051 0.054 0.104 0.105 0.157 0.158 0.049 0.047 0.096 0.096 0.147 0.144 0.049 0.048 0.099 0.103 0.15 0.149 0.049 0.049 0.098 0.101 0.147 0.147 0.053 0.054 0.104 0.104 0.16 0.159 0.047 0.048 0.094 0.096 0.143 0.145 0.051 0.051 0.104 0.104 0.157 0.155 0.047 0.048 0.097 0.097 0.146 0.146 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.098 0.098 0.148 0.146 0.049 0.05 0.1 0.104 0.151 0.15 0.049 0.051 0.098 0.104 0.149 0.151 0.051 0.052 0.103 0.103 0.156 0.153 0.049 0.049 0.096 0.099 0.145 0.145 0.051 0.053 0.1 0.104 0.153 0.154 0.05 0.05 0.101 0.1 0.152 0.148 0.051 0.051 0.102 0.104 0.153 0.154 0.049 0.049 0.099 0.096 0.148 0.146 0.031 0.043 0.078 0.094 0.129 0.14 0.051 0.054 0.102 0.104 0.155 0.153 0.05 0.053 0.101 0.104 0.152 0.154 0.049 0.047 0.098 0.101 0.149 0.147 0.049 0.053 0.101 0.103 0.152 0.153 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.053 0.103 0.103 0.155 0.152 0.047 0.051 0.096 0.1 0.145 0.146 0.051 0.05 0.1 0.104 0.154 0.15 0.051 0.054 0.102 0.106 0.153 0.156 0.051 0.051 0.102 0.102 0.154 0.15 0.047 0.048 0.096 0.096 0.145 0.145 0.051 0.053 0.104 0.105 0.157 0.155 0.049 0.05 0.099 0.099 0.148 0.146 0.051 0.053 0.102 0.104 0.153 0.154 0.047 0.049 0.094 0.096 0.143 0.145 0.054 0.052 0.107 0.107 0.16 0.16 0.047 0.049 0.096 0.096 0.143 0.142 0.051 0.052 0.102 0.104 0.156 0.155 0.047 0.049 0.094 0.097 0.143 0.145 0.053 0.055 0.104 0.105 0.159 0.158 0.05 0.048 0.097 0.096 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.047 0.05 0.096 0.097 0.145 0.146 0.054 0.051 0.105 0.104 0.158 0.158 0.047 0.047 0.094 0.096 0.143 0.141 0.053 0.052 0.105 0.107 0.16 0.16 0.049 0.048 0.098 0.096 0.147 0.146 0.049 0.048 0.096 0.101 0.147 0.146 0.05 0.051 0.101 0.103 0.152 0.154 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.048 0.097 0.096 0.148 0.146 0.051 0.049 0.1 0.102 0.151 0.149 0.049 0.05 0.098 0.101 0.147 0.149 0.052 0.052 0.105 0.104 0.158 0.156 0.049 0.047 0.096 0.098 0.145 0.144 0.051 0.051 0.103 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.147 0.146 0.051 0.051 0.104 0.104 0.158 0.156 0.047 0.048 0.096 0.098 0.145 0.145 0.051 0.051 0.104 0.104 0.157 0.157 0.047 0.046 0.094 0.097 0.144 0.142 0.053 0.055 0.104 0.106 0.159 0.158 0.049 0.051 0.1 0.104 0.152 0.15 0.047 0.048 0.094 0.096 0.143 0.145 0.049 0.047 0.1 0.102 0.151 0.151s0.104 0.104 0.156 0.153c0.047 0.051 0.096 0.101 0.145 0.146 0.053 0.054 0.104 0.108 0.16 0.158 0.047 0.046 0.094 0.095 0.141 0.142 0.051 0.053 0.104 0.104 0.158 0.158 0.051 0.051 0.101 0.102 0.154 0.15 0.047 0.046 0.096 0.096 0.145 0.142 0.049 0.052 0.098 0.104 0.149 0.154 0.052 0.05 0.105 0.104 0.158 0.153 0.047 0.051 0.096 0.099 0.145 0.146 0.051 0.051 0.1 0.1 0.154 0.154 0.051 0.048 0.1 0.1 0.151 0.148 0.051 0.051 0.1 0.102 0.151 0.15 0.05 0.05 0.099 0.1 0.15 0.15 0.049 0.047 0.098 0.1 0.149 0.146 0.051 0.049 0.1 0.104 0.152 0.152 0.051 0.05 0.1 0.102 0.153 0.148 0.049 0.053 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.146 0.049 0.053 0.098 0.103 0.149 0.151 0.051 0.05 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.053 0.098 0.1 0.149 0.147 0.052 0.052 0.101 0.104 0.152 0.153 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.052 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.149 0.146 0.049 0.053 0.098 0.104 0.148 0.152 0.053 0.052 0.104 0.105 0.159 0.158 0.048 0.048 0.097 0.098 0.146 0.144 0.049 0.052 0.099 0.101 0.147 0.147 0.05 0.053 0.104 0.107 0.158 0.158 0.046 0.049 0.092 0.094 0.14 0.141 0.053 0.054 0.106 0.107 0.164 0.162 0.047 0.046 0.096 0.096 0.144 0.142 0.04 0.042 0.083 0.084 0.125 0.125C48.063 63.07 59.725 53.05 63.029 39.695z'})),_react2.default.createElement('path',{fill:'#FFFFFF',d:'M44.783 25.417c-0.825 0-1.612 0.137-2.375 0.331 -1.95-3.778-5.883-6.364-10.425-6.364 -5.392 0-9.925 3.644-11.297 8.598 -0.811-0.256-1.657-0.432-2.551-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.289 25.12 0.241c5.303 0 9.602-4.3 9.602-9.601C54.387 29.716 50.088 25.417 44.783 25.417z'})),'cloudy-3':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDS" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_7_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="8.078" y="20.48" width="54.826" height="43.129"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.078" y="20.48" width="54.826" height="43.129" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M62.904 40.171c-0.033-0.032-0.064-0.067-0.102-0.104 -0.048-0.047-0.096-0.096-0.144-0.144 -0.052-0.052-0.106-0.106-0.16-0.159 -0.046-0.047-0.099-0.097-0.146-0.146 -0.052-0.049-0.102-0.1-0.152-0.148 -0.051-0.051-0.104-0.104-0.154-0.15 -0.044-0.051-0.094-0.098-0.145-0.146 -0.047-0.05-0.101-0.104-0.149-0.154 -0.049-0.049-0.101-0.1-0.151-0.149 -0.049-0.05-0.101-0.103-0.151-0.149 -0.048-0.05-0.101-0.101-0.15-0.15 -0.048-0.049-0.1-0.1-0.147-0.148 -0.047-0.051-0.101-0.104-0.151-0.15 -0.05-0.049-0.101-0.104-0.149-0.151 -0.051-0.048-0.101-0.103-0.149-0.149 -0.05-0.053-0.101-0.101-0.15-0.148 -0.05-0.051-0.1-0.104-0.149-0.148 -0.051-0.053-0.101-0.104-0.151-0.154 -0.048-0.049-0.099-0.098-0.147-0.146 -0.051-0.052-0.103-0.104-0.153-0.153 -0.05-0.053-0.097-0.101-0.146-0.15 -0.053-0.049-0.104-0.1-0.154-0.149 -0.051-0.054-0.101-0.104-0.154-0.153 -0.043-0.049-0.094-0.097-0.143-0.143 -0.049-0.051-0.1-0.104-0.15-0.152 -0.049-0.052-0.104-0.104-0.154-0.154 -0.048-0.051-0.102-0.102-0.152-0.148 -0.045-0.048-0.096-0.102-0.144-0.146 -0.052-0.051-0.103-0.104-0.151-0.154 -0.051-0.049-0.101-0.1-0.149-0.15 -0.052-0.048-0.101-0.1-0.15-0.146 -0.05-0.053-0.104-0.104-0.153-0.152 -0.047-0.05-0.099-0.1-0.146-0.148 -0.05-0.051-0.102-0.102-0.154-0.15 -0.048-0.051-0.101-0.1-0.147-0.15 -0.048-0.05-0.101-0.102-0.151-0.148 -0.048-0.053-0.102-0.104-0.15-0.152s-0.1-0.104-0.149-0.15 -0.101-0.1-0.149-0.146c-0.05-0.053-0.101-0.1-0.149-0.15 -0.048-0.05-0.101-0.104-0.151-0.154 -0.049-0.049-0.099-0.098-0.148-0.146 -0.049-0.052-0.102-0.104-0.153-0.153 -0.046-0.051-0.097-0.101-0.146-0.147 -0.051-0.054-0.104-0.103-0.154-0.151 -0.051-0.055-0.104-0.105-0.154-0.154 -0.046-0.051-0.092-0.096-0.143-0.145 -0.049-0.052-0.1-0.104-0.149-0.152 -0.05-0.055-0.104-0.105-0.153-0.156 -0.048-0.049-0.097-0.098-0.146-0.146 -0.052-0.054-0.104-0.105-0.158-0.156 -0.046-0.049-0.094-0.097-0.142-0.146 -0.053-0.053-0.106-0.105-0.158-0.158 -0.049-0.049-0.096-0.096-0.146-0.145 -0.051-0.053-0.103-0.104-0.154-0.155 -0.045-0.05-0.096-0.096-0.146-0.146 -0.048-0.051-0.1-0.102-0.147-0.151 -0.051-0.053-0.105-0.104-0.155-0.155 -0.046-0.05-0.099-0.099-0.146-0.146 -0.052-0.053-0.104-0.104-0.154-0.155 -1.327-1.366-3.178-2.221-5.231-2.221 -0.456 0-0.894 0.065-1.323 0.153 -0.008-0.006-0.017-0.015-0.021-0.021 -0.051-0.057-0.105-0.105-0.158-0.159 -0.044-0.049-0.096-0.091-0.145-0.141 -0.045-0.053-0.103-0.102-0.149-0.155 -0.05-0.052-0.104-0.099-0.151-0.152 -0.049-0.053-0.103-0.1-0.152-0.153 -0.047-0.051-0.1-0.097-0.146-0.147 -0.05-0.053-0.104-0.103-0.156-0.155 -0.047-0.051-0.102-0.096-0.146-0.148 -0.046-0.051-0.102-0.098-0.15-0.149 -0.046-0.053-0.104-0.1-0.152-0.153 -0.047-0.054-0.102-0.1-0.15-0.152 -0.046-0.049-0.1-0.096-0.146-0.145 -1.631-1.785-3.971-2.907-6.578-2.907 -1.254 0-2.435 0.283-3.514 0.75 -0.203-0.017-0.398-0.062-0.609-0.062 -0.456 0-0.893 0.067-1.322 0.153 -0.007-0.008-0.016-0.015-0.023-0.021 -0.047-0.055-0.105-0.104-0.158-0.158 -0.06-0.065-0.113-0.11-0.159-0.159 -0.05-0.053-0.104-0.102-0.154-0.155 -0.048-0.051-0.103-0.098-0.149-0.15 -0.047-0.053-0.103-0.1-0.15-0.153 -0.047-0.051-0.102-0.098-0.15-0.149 -0.047-0.052-0.101-0.099-0.146-0.147 -0.049-0.053-0.102-0.103-0.152-0.155 -0.047-0.051-0.102-0.096-0.148-0.147 -0.049-0.054-0.104-0.103-0.155-0.156 -0.047-0.051-0.098-0.096-0.147-0.147 -0.05-0.053-0.105-0.103-0.156-0.156 -1.635-1.783-3.974-2.905-6.58-2.905 -4.102 0-7.552 2.771-8.597 6.541 -0.617-0.194-1.259-0.328-1.944-0.328 -3.584 0-6.492 2.907-6.492 6.495 0 1.83 0.766 3.479 1.985 4.66 0.05 0.049 0.097 0.1 0.148 0.145 0.049 0.053 0.1 0.104 0.151 0.152 0.049 0.053 0.1 0.105 0.154 0.153 0.049 0.052 0.1 0.103 0.151 0.152 0.047 0.048 0.096 0.096 0.146 0.144 0.049 0.053 0.101 0.104 0.154 0.154 0.049 0.052 0.1 0.102 0.151 0.152 0.049 0.047 0.098 0.1 0.152 0.148 0.049 0.049 0.098 0.102 0.147 0.146 0.051 0.05 0.102 0.104 0.153 0.152 0.047 0.051 0.097 0.1 0.148 0.146 0.051 0.052 0.102 0.104 0.155 0.156 0.049 0.047 0.096 0.098 0.148 0.144 0.049 0.054 0.1 0.104 0.151 0.153 0.049 0.051 0.098 0.101 0.149 0.148 0.051 0.053 0.101 0.105 0.154 0.153 0.049 0.052 0.098 0.101 0.149 0.147 0.049 0.051 0.1 0.101 0.152 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.099 0.101 0.15 0.149 0.049 0.048 0.098 0.101 0.147 0.146 0.049 0.051 0.098 0.101 0.146 0.149 0.052 0.056 0.105 0.106 0.159 0.158 0.049 0.051 0.1 0.101 0.153 0.149 0.047 0.047 0.094 0.096 0.146 0.143 0.049 0.054 0.1 0.104 0.153 0.154 0.049 0.052 0.1 0.104 0.152 0.151 0.049 0.048 0.1 0.103 0.151 0.149 0.049 0.048 0.098 0.101 0.147 0.148 0.049 0.049 0.1 0.1 0.152 0.148 0.049 0.05 0.098 0.104 0.149 0.152 0.051 0.052 0.102 0.103 0.156 0.151 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.048 0.098 0.101 0.149 0.148 0.049 0.047 0.098 0.1 0.148 0.146 0.051 0.053 0.102 0.105 0.155 0.158 0.049 0.048 0.098 0.097 0.149 0.146 0.05 0.05 0.099 0.101 0.15 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.049 0.102 0.104 0.156 0.153 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.047 0.098 0.101 0.147 0.147 0.049 0.05 0.098 0.101 0.148 0.147 0.053 0.053 0.104 0.105 0.159 0.16 0.049 0.051 0.098 0.099 0.15 0.146 0.049 0.05 0.096 0.101 0.147 0.146 0.049 0.053 0.1 0.104 0.151 0.152 0.051 0.053 0.103 0.104 0.154 0.152 0.049 0.054 0.1 0.102 0.151 0.148 0.049 0.053 0.098 0.102 0.15 0.15 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.051 0.098 0.102 0.149 0.15 0.051 0.053 0.105 0.104 0.158 0.156 0.049 0.048 0.098 0.098 0.147 0.146 0.049 0.047 0.1 0.101 0.152 0.147 0.049 0.05 0.098 0.101 0.147 0.149 0.051 0.051 0.102 0.104 0.155 0.153 0.049 0.05 0.099 0.101 0.15 0.15 0.049 0.048 0.098 0.1 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.147 0.05 0.052 0.101 0.104 0.152 0.151 0.049 0.051 0.1 0.101 0.151 0.149 0.049 0.05 0.099 0.101 0.15 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.055 0.102 0.104 0.156 0.153 0.049 0.052 0.098 0.101 0.149 0.147 0.047 0.049 0.096 0.099 0.145 0.145 0.051 0.055 0.105 0.107 0.158 0.162 0.047 0.046 0.096 0.098 0.145 0.143 0.051 0.051 0.103 0.104 0.153 0.153 0.052 0.052 0.103 0.103 0.154 0.149 0.047 0.051 0.094 0.101 0.143 0.145 0.049 0.053 0.1 0.105 0.152 0.154 0.051 0.052 0.102 0.104 0.153 0.152 0.051 0.051 0.102 0.105 0.155 0.153 0.048 0.048 0.095 0.097 0.142 0.142 0.051 0.051 0.102 0.104 0.153 0.154 0.051 0.051 0.1 0.104 0.154 0.153 0.049 0.048 0.1 0.101 0.151 0.147 0.047 0.049 0.096 0.101 0.145 0.147 0.051 0.051 0.1 0.103 0.154 0.153 0.049 0.049 0.1 0.102 0.151 0.15 0.049 0.051 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.145 0.049 0.051 0.1 0.104 0.151 0.153 0.049 0.052 0.101 0.104 0.152 0.151 0.049 0.053 0.1 0.103 0.151 0.152 0.049 0.047 0.1 0.1 0.149 0.146 0.05 0.051 0.099 0.101 0.15 0.147 0.049 0.053 0.098 0.103 0.149 0.152 0.051 0.051 0.102 0.104 0.156 0.152 0.049 0.052 0.1 0.102 0.153 0.152 0.045 0.049 0.092 0.094 0.141 0.141 0.051 0.055 0.103 0.105 0.154 0.154 0.051 0.053 0.102 0.104 0.155 0.153 0.049 0.05 0.1 0.104 0.152 0.151 0.049 0.049 0.096 0.099 0.147 0.145 0.049 0.053 0.1 0.104 0.151 0.152 0.052 0.052 0.101 0.105 0.154 0.152 0.049 0.054 0.1 0.104 0.151 0.152 0.047 0.047 0.096 0.096 0.145 0.143 0.05 0.055 0.101 0.104 0.154 0.156 0.049 0.047 0.1 0.103 0.151 0.151 0.049 0.05 0.101 0.103 0.154 0.149 0.047 0.051 0.096 0.101 0.146 0.146 0.049 0.051 0.1 0.104 0.154 0.154 0.049 0.05 0.098 0.1 0.149 0.148 0.051 0.051 0.102 0.102 0.153 0.152 0.049 0.048 0.099 0.098 0.15 0.148 0.049 0.049 0.098 0.1 0.149 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.052 0.103 0.104 0.158 0.156 0.049 0.049 0.1 0.102 0.153 0.148 0.045 0.048 0.093 0.096 0.142 0.141 0.051 0.051 0.102 0.105 0.153 0.155 0.051 0.056 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.103 0.149 0.149 0.049 0.051 0.096 0.101 0.147 0.146 0.049 0.05 0.101 0.102 0.154 0.154 0.049 0.05 0.098 0.1 0.151 0.148 0.051 0.053 0.102 0.104 0.156 0.154 0.047 0.046 0.094 0.096 0.143 0.143 0.049 0.051 0.1 0.104 0.151 0.153 0.051 0.05 0.103 0.104 0.156 0.151 0.049 0.053 0.098 0.103 0.149 0.15 0.049 0.049 0.098 0.1 0.149 0.146 0.052 0.053 0.104 0.105 0.156 0.154 0.047 0.051 0.096 0.101 0.145 0.145 0.051 0.052 0.103 0.105 0.156 0.156 0.049 0.05 0.1 0.103 0.151 0.15 0.047 0.047 0.096 0.1 0.147 0.145 0.05 0.051 0.099 0.104 0.15 0.15 0.051 0.055 0.104 0.105 0.157 0.158 0.049 0.051 0.101 0.1 0.152 0.146 0.047 0.049 0.094 0.097 0.143 0.145 0.049 0.051 0.1 0.104 0.151 0.154 0.052 0.053 0.105 0.104 0.159 0.158 0.049 0.045 0.098 0.097 0.149 0.146 0.049 0.05 0.096 0.099 0.146 0.146 0.049 0.049 0.098 0.101 0.149 0.148 0.051 0.055 0.104 0.105 0.158 0.158 0.049 0.048 0.098 0.1 0.147 0.146 0.049 0.051 0.1 0.102 0.151 0.15 0.049 0.051 0.096 0.1 0.148 0.146 0.051 0.055 0.103 0.104 0.153 0.154 0.049 0.049 0.1 0.102 0.15 0.149 0.051 0.05 0.1 0.101 0.148 0.147 0.049 0.051 0.098 0.1 0.146 0.146 0.053 0.055 0.104 0.107 0.158 0.158 0.051 0.051 0.102 0.101 0.151 0.15 0.049 0.049 0.097 0.1 0.146 0.146 0.051 0.05 0.102 0.103 0.152 0.149 0.049 0.049 0.098 0.101 0.148 0.149 0.05 0.05 0.1 0.104 0.15 0.153 0.051 0.051 0.104 0.101 0.152 0.15 0.05 0.047 0.098 0.1 0.146 0.146 0.053 0.052 0.101 0.104 0.153 0.153 0.052 0.051 0.101 0.103 0.152 0.149 0.048 0.05 0.098 0.103 0.147 0.149 0.051 0.053 0.104 0.104 0.153 0.152 0.048 0.047 0.101 0.1 0.147 0.147 0.049 0.05 0.101 0.103 0.152 0.153 0.051 0.049 0.1 0.101 0.149 0.147 0.048 0.048 0.101 0.103 0.149 0.149 0.051 0.053 0.101 0.103 0.149 0.152 0.052 0.051 0.101 0.1 0.149 0.149 0.05 0.049 0.101 0.101 0.15 0.149 0.051 0.051 0.1 0.101 0.151 0.149 0.048 0.05 0.099 0.101 0.147 0.149 0.049 0.05 0.104 0.104 0.154 0.154 0.033 0.033 0.063 0.063 0.096 0.094C49.009 62.129 59.611 52.646 62.904 40.171z"/></g><path fill="#DFE0E1" d="M34.8 25.039c-0.625 0-1.225 0.105-1.806 0.252 -1.485-2.874-4.478-4.843-7.934-4.843 -4.102 0-7.552 2.771-8.598 6.541 -0.616-0.194-1.258-0.328-1.942-0.328 -3.584 0-6.492 2.907-6.492 6.493 0 3.584 2.907 6.492 6.492 6.492h0.983 19.113H34.8c4.035 0 7.31-3.271 7.31-7.305C42.107 28.307 38.838 25.039 34.8 25.039z"/><path fill="#FFFFFF" d="M48.667 28.938c-0.63 0-1.229 0.104-1.812 0.252 -1.48-2.874-4.476-4.842-7.932-4.842 -4.102 0-7.552 2.771-8.598 6.541 -0.617-0.194-1.26-0.328-1.943-0.328 -3.584 0-6.492 2.906-6.492 6.494 0 3.584 2.907 6.491 6.492 6.491h0.981 19.115 0.183c4.036 0 7.305-3.271 7.305-7.305C55.967 32.211 52.698 28.938 48.667 28.938z"/></svg>'}}),'cloudy-2-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="night_bg_6_"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="9.681" y="19.434" width="53.348" height="44.407"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.681" y="19.434" width="53.348" height="44.407" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.029 39.695c-0.021-0.021-0.043-0.041-0.063-0.061 -0.048-0.048-0.101-0.104-0.149-0.148 -0.049-0.049-0.101-0.102-0.149-0.148 -0.051-0.053-0.101-0.104-0.149-0.152 -0.05-0.047-0.101-0.098-0.15-0.147 -0.049-0.05-0.1-0.103-0.149-0.149 -0.05-0.053-0.101-0.104-0.151-0.154 -0.049-0.045-0.096-0.096-0.145-0.144 -0.052-0.053-0.104-0.106-0.158-0.161 -0.05-0.048-0.101-0.096-0.147-0.146 -0.048-0.05-0.101-0.101-0.151-0.149 -0.048-0.051-0.097-0.101-0.146-0.15 -0.051-0.049-0.104-0.103-0.153-0.153 -0.05-0.048-0.101-0.101-0.149-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.048-0.051-0.097-0.1-0.144-0.146 -0.053-0.055-0.109-0.107-0.16-0.162 -0.051-0.051-0.104-0.101-0.154-0.149 -0.045-0.046-0.092-0.095-0.139-0.138 -0.049-0.055-0.104-0.108-0.158-0.158 -0.045-0.051-0.098-0.102-0.146-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.051-0.051-0.104-0.104-0.154-0.157 -0.051-0.048-0.1-0.101-0.148-0.147 -0.05-0.049-0.102-0.099-0.148-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.046-0.048-0.096-0.097-0.143-0.144 -0.051-0.053-0.1-0.104-0.153-0.152 -0.05-0.051-0.101-0.104-0.151-0.154 -0.049-0.048-0.099-0.1-0.148-0.146 -0.049-0.047-0.102-0.104-0.153-0.152 -0.048-0.05-0.101-0.1-0.147-0.15 -0.047-0.049-0.101-0.1-0.147-0.146 -0.054-0.055-0.106-0.105-0.158-0.156 -0.046-0.046-0.096-0.096-0.142-0.142 -0.051-0.052-0.1-0.104-0.152-0.154 -0.052-0.05-0.102-0.104-0.152-0.151 -0.047-0.049-0.1-0.099-0.146-0.147 -0.048-0.056-0.104-0.104-0.154-0.153 -0.048-0.051-0.098-0.101-0.146-0.148 -0.051-0.053-0.102-0.102-0.154-0.151 -0.048-0.056-0.102-0.104-0.152-0.153 -0.048-0.049-0.094-0.097-0.14-0.143 -0.052-0.055-0.106-0.104-0.158-0.156 -0.048-0.053-0.1-0.101-0.147-0.15 -0.049-0.051-0.1-0.101-0.151-0.152 -0.05-0.051-0.101-0.1-0.149-0.148 -0.049-0.051-0.101-0.103-0.149-0.15 -0.052-0.049-0.099-0.1-0.149-0.149 -0.051-0.051-0.101-0.103-0.15-0.153 -0.051-0.052-0.1-0.101-0.149-0.149 -0.05-0.052-0.101-0.101-0.151-0.152 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.096-0.099-0.146-0.147 -0.05-0.051-0.104-0.104-0.156-0.155 -0.047-0.049-0.096-0.096-0.144-0.145 -0.05-0.051-0.103-0.103-0.153-0.154 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.098-0.098-0.147-0.15 -0.05-0.051-0.101-0.098-0.149-0.149 -0.049-0.051-0.101-0.103-0.152-0.153 -0.048-0.05-0.098-0.099-0.146-0.148 -0.051-0.053-0.104-0.104-0.154-0.155 -0.049-0.049-0.096-0.097-0.146-0.145 -0.05-0.05-0.101-0.101-0.15-0.15 -0.049-0.053-0.104-0.104-0.157-0.158 -0.046-0.049-0.097-0.096-0.146-0.145 -0.049-0.051-0.102-0.1-0.148-0.151 -0.053-0.051-0.102-0.102-0.152-0.154 -0.048-0.049-0.1-0.098-0.148-0.149 -0.049-0.051-0.102-0.1-0.15-0.151 -0.05-0.052-0.1-0.101-0.148-0.15 -0.052-0.051-0.102-0.1-0.15-0.149 -0.051-0.051-0.1-0.102-0.152-0.153 -0.048-0.05-0.096-0.099-0.145-0.148 -0.053-0.053-0.105-0.104-0.157-0.155 -1.741-1.781-4.167-2.891-6.854-2.891 -0.6 0-1.175 0.088-1.736 0.2 -0.002-0.002-0.004-0.004-0.006-0.006 -0.051-0.053-0.106-0.1-0.154-0.154 -0.049-0.051-0.102-0.096-0.148-0.147 -0.046-0.051-0.1-0.098-0.148-0.149 -0.049-0.055-0.104-0.102-0.152-0.156 -0.048-0.049-0.098-0.094-0.145-0.145 -0.049-0.055-0.109-0.104-0.162-0.159 -0.043-0.05-0.096-0.095-0.145-0.146 -0.048-0.053-0.102-0.1-0.148-0.151 -0.049-0.053-0.104-0.101-0.152-0.154 -0.048-0.051-0.1-0.096-0.148-0.145 -0.047-0.053-0.102-0.102-0.15-0.153 -0.046-0.051-0.104-0.099-0.15-0.15 -0.046-0.051-0.1-0.096-0.146-0.147 -0.05-0.055-0.108-0.104-0.158-0.158 -0.046-0.049-0.097-0.094-0.142-0.143 -0.051-0.055-0.108-0.104-0.159-0.157 -2.146-2.338-5.216-3.806-8.636-3.806 -5.391 0-9.924 3.644-11.296 8.598 -0.811-0.256-1.658-0.432-2.552-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 2.396 0.995 4.555 2.584 6.104 0.049 0.052 0.098 0.102 0.149 0.15 0.047 0.051 0.096 0.098 0.146 0.146 0.051 0.053 0.104 0.104 0.156 0.156 0.049 0.047 0.098 0.099 0.149 0.147 0.049 0.05 0.1 0.103 0.151 0.149 0.05 0.051 0.101 0.101 0.152 0.15 0.049 0.049 0.098 0.1 0.149 0.149 0.049 0.05 0.101 0.103 0.154 0.153 0.049 0.049 0.098 0.101 0.151 0.149 0.047 0.048 0.096 0.097 0.147 0.144 0.052 0.054 0.105 0.108 0.158 0.162 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.103 0.104 0.156 0.155 0.049 0.049 0.1 0.101 0.151 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.052 0.054 0.105 0.104 0.158 0.156 0.049 0.053 0.1 0.104 0.151 0.15 0.047 0.048 0.096 0.098 0.146 0.145 0.051 0.053 0.102 0.104 0.155 0.155 0.051 0.048 0.1 0.103 0.154 0.152 0.047 0.05 0.096 0.098 0.147 0.146 0.051 0.053 0.1 0.104 0.153 0.154 0.047 0.048 0.096 0.096 0.146 0.145 0.051 0.053 0.103 0.105 0.158 0.156 0.049 0.051 0.098 0.1 0.15 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.149 0.051 0.05 0.103 0.104 0.154 0.153 0.047 0.049 0.096 0.097 0.145 0.145 0.051 0.053 0.104 0.105 0.159 0.158 0.047 0.048 0.094 0.096 0.143 0.141 0.051 0.055 0.102 0.107 0.157 0.157 0.047 0.052 0.096 0.101 0.148 0.146 0.051 0.055 0.102 0.104 0.155 0.154 0.047 0.051 0.094 0.1 0.143 0.145 0.054 0.052 0.105 0.105 0.158 0.16 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.104 0.104 0.158 0.158 0.047 0.048 0.096 0.096 0.145 0.142 0.051 0.055 0.104 0.108 0.16 0.158 0.047 0.051 0.094 0.1 0.143 0.146 0.051 0.049 0.102 0.104 0.153 0.151 0.049 0.048 0.098 0.101 0.148 0.147 0.051 0.054 0.104 0.105 0.157 0.158 0.049 0.047 0.096 0.096 0.147 0.144 0.049 0.048 0.099 0.103 0.15 0.149 0.049 0.049 0.098 0.101 0.147 0.147 0.053 0.054 0.104 0.104 0.16 0.159 0.047 0.048 0.094 0.096 0.143 0.145 0.051 0.051 0.104 0.104 0.157 0.155 0.047 0.048 0.097 0.097 0.146 0.146 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.098 0.098 0.148 0.146 0.049 0.05 0.1 0.104 0.151 0.15 0.049 0.051 0.098 0.104 0.149 0.151 0.051 0.052 0.103 0.103 0.156 0.153 0.049 0.049 0.096 0.099 0.145 0.145 0.051 0.053 0.1 0.104 0.153 0.154 0.05 0.05 0.101 0.1 0.152 0.148 0.051 0.051 0.102 0.104 0.153 0.154 0.049 0.049 0.099 0.096 0.148 0.146 0.031 0.043 0.078 0.094 0.129 0.14 0.051 0.054 0.102 0.104 0.155 0.153 0.05 0.053 0.101 0.104 0.152 0.154 0.049 0.047 0.098 0.101 0.149 0.147 0.049 0.053 0.101 0.103 0.152 0.153 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.053 0.103 0.103 0.155 0.152 0.047 0.051 0.096 0.1 0.145 0.146 0.051 0.05 0.1 0.104 0.154 0.15 0.051 0.054 0.102 0.106 0.153 0.156 0.051 0.051 0.102 0.102 0.154 0.15 0.047 0.048 0.096 0.096 0.145 0.145 0.051 0.053 0.104 0.105 0.157 0.155 0.049 0.05 0.099 0.099 0.148 0.146 0.051 0.053 0.102 0.104 0.153 0.154 0.047 0.049 0.094 0.096 0.143 0.145 0.054 0.052 0.107 0.107 0.16 0.16 0.047 0.049 0.096 0.096 0.143 0.142 0.051 0.052 0.102 0.104 0.156 0.155 0.047 0.049 0.094 0.097 0.143 0.145 0.053 0.055 0.104 0.105 0.159 0.158 0.05 0.048 0.097 0.096 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.047 0.05 0.096 0.097 0.145 0.146 0.054 0.051 0.105 0.104 0.158 0.158 0.047 0.047 0.094 0.096 0.143 0.141 0.053 0.052 0.105 0.107 0.16 0.16 0.049 0.048 0.098 0.096 0.147 0.146 0.049 0.048 0.096 0.101 0.147 0.146 0.05 0.051 0.101 0.103 0.152 0.154 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.048 0.097 0.096 0.148 0.146 0.051 0.049 0.1 0.102 0.151 0.149 0.049 0.05 0.098 0.101 0.147 0.149 0.052 0.052 0.105 0.104 0.158 0.156 0.049 0.047 0.096 0.098 0.145 0.144 0.051 0.051 0.103 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.147 0.146 0.051 0.051 0.104 0.104 0.158 0.156 0.047 0.048 0.096 0.098 0.145 0.145 0.051 0.051 0.104 0.104 0.157 0.157 0.047 0.046 0.094 0.097 0.144 0.142 0.053 0.055 0.104 0.106 0.159 0.158 0.049 0.051 0.1 0.104 0.152 0.15 0.047 0.048 0.094 0.096 0.143 0.145 0.049 0.047 0.1 0.102 0.151 0.151s0.104 0.104 0.156 0.153c0.047 0.051 0.096 0.101 0.145 0.146 0.053 0.054 0.104 0.108 0.16 0.158 0.047 0.046 0.094 0.095 0.141 0.142 0.051 0.053 0.104 0.104 0.158 0.158 0.051 0.051 0.101 0.102 0.154 0.15 0.047 0.046 0.096 0.096 0.145 0.142 0.049 0.052 0.098 0.104 0.149 0.154 0.052 0.05 0.105 0.104 0.158 0.153 0.047 0.051 0.096 0.099 0.145 0.146 0.051 0.051 0.1 0.1 0.154 0.154 0.051 0.048 0.1 0.1 0.151 0.148 0.051 0.051 0.1 0.102 0.151 0.15 0.05 0.05 0.099 0.1 0.15 0.15 0.049 0.047 0.098 0.1 0.149 0.146 0.051 0.049 0.1 0.104 0.152 0.152 0.051 0.05 0.1 0.102 0.153 0.148 0.049 0.053 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.146 0.049 0.053 0.098 0.103 0.149 0.151 0.051 0.05 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.053 0.098 0.1 0.149 0.147 0.052 0.052 0.101 0.104 0.152 0.153 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.052 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.149 0.146 0.049 0.053 0.098 0.104 0.148 0.152 0.053 0.052 0.104 0.105 0.159 0.158 0.048 0.048 0.097 0.098 0.146 0.144 0.049 0.052 0.099 0.101 0.147 0.147 0.05 0.053 0.104 0.107 0.158 0.158 0.046 0.049 0.092 0.094 0.14 0.141 0.053 0.054 0.106 0.107 0.164 0.162 0.047 0.046 0.096 0.096 0.144 0.142 0.04 0.042 0.083 0.084 0.125 0.125C48.063 63.07 59.725 53.05 63.029 39.695z"/></g><path fill="#FFFFFF" d="M44.783 25.417c-0.825 0-1.612 0.137-2.375 0.331 -1.95-3.778-5.883-6.364-10.425-6.364 -5.392 0-9.925 3.644-11.297 8.598 -0.811-0.256-1.657-0.432-2.551-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.289 25.12 0.241c5.303 0 9.602-4.3 9.602-9.601C54.387 29.716 50.088 25.417 44.783 25.417z"/></svg>'}}),'snowy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_1_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'9.61\' y=\'12.8\' width=\'54.291\' height=\'50.821\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'9.61\' y=\'12.8\' width=\'54.291\' height=\'50.821\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'402.7705\' cy=\'-781.5986\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 -1 -373.9707 -752.7988)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.1126\' stop-color=\'#E8E8E8\'/><stop offset=\'0.3492\' stop-color=\'#ADADAD\'/><stop offset=\'0.6869\' stop-color=\'#4E4E4E\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g opacity=\'0.2\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M63.9 33.979c-0.006-0.004-0.008-0.008-0.012-0.013 -0.052-0.055-0.105-0.106-0.158-0.157 -0.047-0.049-0.101-0.102-0.147-0.15 -0.048-0.047-0.101-0.096-0.149-0.145 -0.045-0.048-0.101-0.103-0.147-0.147 -0.048-0.054-0.101-0.104-0.151-0.153 -0.046-0.051-0.103-0.102-0.15-0.152 -0.047-0.047-0.096-0.096-0.144-0.143 -0.048-0.053-0.101-0.102-0.147-0.152 -0.055-0.051-0.106-0.104-0.158-0.154 -0.047-0.051-0.1-0.104-0.146-0.154 -0.049-0.049-0.104-0.098-0.148-0.146 -0.051-0.054-0.104-0.103-0.154-0.156 -0.046-0.05-0.1-0.099-0.146-0.147 -0.049-0.051-0.1-0.1-0.149-0.151 -0.05-0.051-0.101-0.1-0.149-0.15 -0.045-0.051-0.096-0.1-0.147-0.149 -0.048-0.053-0.103-0.104-0.151-0.155 -0.046-0.052-0.101-0.101-0.15-0.152 -0.049-0.051-0.1-0.1-0.149-0.149 -0.048-0.051-0.101-0.101-0.147-0.152 -0.052-0.051-0.103-0.102-0.151-0.153 -0.048-0.049-0.101-0.098-0.149-0.147 -0.046-0.052-0.101-0.101-0.146-0.152 -0.05-0.051-0.103-0.102-0.149-0.153 -0.051-0.052-0.104-0.1-0.15-0.152 -0.049-0.051-0.1-0.102-0.153-0.151 -0.046-0.049-0.097-0.098-0.142-0.147 -0.055-0.054-0.106-0.105-0.158-0.158 -0.049-0.051-0.1-0.1-0.147-0.149 -0.049-0.049-0.099-0.099-0.146-0.146 -0.049-0.051-0.1-0.102-0.147-0.151 -0.05-0.053-0.104-0.104-0.153-0.156 -0.051-0.049-0.102-0.096-0.146-0.146 -0.051-0.053-0.104-0.104-0.159-0.155 -0.043-0.049-0.096-0.098-0.146-0.146 -0.047-0.053-0.101-0.104-0.15-0.155 -0.05-0.049-0.102-0.1-0.148-0.149 -0.047-0.052-0.102-0.101-0.146-0.15 -0.051-0.051-0.104-0.102-0.154-0.153 -0.046-0.049-0.101-0.098-0.146-0.15 -0.053-0.051-0.104-0.102-0.153-0.153 -0.048-0.049-0.101-0.096-0.147-0.145 -0.043-0.051-0.096-0.101-0.146-0.152 -0.046-0.053-0.104-0.104-0.154-0.155 -0.051-0.051-0.101-0.1-0.15-0.152 -0.045-0.049-0.096-0.096-0.146-0.145 -0.05-0.051-0.101-0.102-0.149-0.151 -0.049-0.052-0.101-0.103-0.152-0.154 -0.048-0.051-0.102-0.1-0.148-0.151 -0.049-0.049-0.102-0.098-0.145-0.146 -0.051-0.052-0.104-0.104-0.154-0.154 -0.048-0.051-0.101-0.103-0.15-0.151 -0.049-0.051-0.1-0.101-0.148-0.152 -0.049-0.051-0.098-0.1-0.145-0.149 -0.053-0.053-0.105-0.104-0.158-0.156 -0.049-0.049-0.096-0.098-0.145-0.145 -0.05-0.051-0.104-0.104-0.154-0.155 -0.049-0.05-0.1-0.099-0.148-0.148 -0.046-0.051-0.102-0.102-0.15-0.151s-0.11-0.102-0.158-0.15c-0.049-0.052-0.104-0.103-0.152-0.154 -0.048-0.049-0.102-0.098-0.145-0.146 -0.055-0.053-0.105-0.105-0.158-0.156 -0.045-0.051-0.096-0.1-0.141-0.148 -0.051-0.051-0.104-0.104-0.158-0.156C54.1 24.107 54.046 24.058 54 24.009c-0.048-0.051-0.1-0.102-0.152-0.153 -0.048-0.049-0.098-0.098-0.146-0.15 -0.052-0.051-0.104-0.102-0.152-0.153 -0.046-0.049-0.096-0.096-0.146-0.145 -0.051-0.054-0.104-0.105-0.154-0.158 -0.05-0.05-0.1-0.099-0.15-0.15 -0.048-0.051-0.1-0.103-0.148-0.152 -0.049-0.051-0.102-0.1-0.148-0.149 -0.048-0.051-0.1-0.1-0.15-0.151 -0.049-0.052-0.104-0.103-0.154-0.154 -0.048-0.049-0.098-0.098-0.145-0.147 -0.051-0.051-0.101-0.1-0.149-0.152 -0.05-0.051-0.104-0.102-0.154-0.151 -0.044-0.051-0.096-0.1-0.144-0.149 -0.049-0.054-0.104-0.105-0.154-0.156 -1.743-1.781-4.164-2.893-6.857-2.893 -0.595 0-1.172 0.087-1.735 0.201 -0.005-0.004-0.009-0.007-0.013-0.011 -0.047-0.049-0.097-0.092-0.141-0.141 -0.048-0.056-0.109-0.106-0.158-0.163 -0.043-0.049-0.096-0.092-0.144-0.141 -0.046-0.055-0.106-0.104-0.158-0.16 -0.044-0.051-0.101-0.096-0.146-0.148 -0.047-0.051-0.102-0.098-0.15-0.151 -0.044-0.051-0.1-0.1-0.15-0.151 -0.043-0.052-0.1-0.099-0.146-0.15 -0.044-0.051-0.1-0.096-0.145-0.147 -0.05-0.055-0.109-0.104-0.162-0.161 -0.043-0.051-0.101-0.096-0.146-0.147 -0.046-0.051-0.098-0.096-0.146-0.146 -0.162-0.067-0.219-0.114-0.267-0.165 -0.051-0.056-0.106-0.104-0.159-0.158 -0.043-0.052-0.1-0.099-0.144-0.15 -0.044-0.051-0.106-0.098-0.149-0.149 -2.148-2.338-5.223-3.808-8.643-3.808 -5.391 0-9.924 3.644-11.296 8.597 -0.812-0.255-1.658-0.43-2.552-0.43 -4.713 0-8.534 3.821-8.534 8.533 0 2.396 0.995 4.553 2.582 6.1 0.049 0.051 0.101 0.102 0.152 0.148 0.049 0.052 0.1 0.105 0.151 0.152 0.049 0.05 0.098 0.102 0.149 0.148 0.05 0.049 0.101 0.102 0.152 0.15 0.049 0.046 0.1 0.1 0.151 0.146 0.049 0.055 0.101 0.104 0.152 0.154 0.049 0.048 0.1 0.1 0.151 0.15 0.049 0.047 0.098 0.1 0.147 0.146 0.052 0.05 0.103 0.104 0.156 0.154 0.049 0.05 0.096 0.1 0.147 0.146 0.051 0.051 0.101 0.102 0.152 0.15 0.049 0.05 0.098 0.104 0.149 0.148 0.051 0.056 0.102 0.105 0.156 0.155 0.047 0.046 0.096 0.101 0.145 0.144 0.051 0.049 0.102 0.106 0.155 0.156 0.047 0.047 0.096 0.1 0.146 0.143 0.051 0.053 0.102 0.104 0.155 0.158 0.049 0.047 0.098 0.101 0.149 0.146 0.05 0.051 0.101 0.102 0.152 0.15 0.049 0.048 0.098 0.1 0.149 0.146 0.051 0.053 0.102 0.106 0.154 0.154 0.047 0.044 0.096 0.096 0.145 0.141 0.051 0.053 0.104 0.111 0.16 0.161 0.047 0.046 0.096 0.097 0.145 0.142 0.051 0.051 0.1 0.104 0.153 0.154 0.049 0.049 0.098 0.102 0.15 0.15 0.051 0.048 0.102 0.1 0.153 0.148 0.047 0.047 0.094 0.1 0.143 0.143 0.051 0.055 0.105 0.107 0.158 0.158 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.045 0.1 0.1 0.152 0.145 0.049 0.056 0.098 0.104 0.149 0.15 0.049 0.049 0.1 0.104 0.151 0.152 0.049 0.048 0.101 0.102 0.152 0.148 0.049 0.049 0.1 0.102 0.151 0.148 0.049 0.051 0.1 0.104 0.152 0.148 0.051 0.052 0.1 0.102 0.153 0.152 0.049 0.049 0.096 0.098 0.147 0.145 0.051 0.053 0.101 0.104 0.154 0.152 0.049 0.051 0.1 0.105 0.151 0.151 0.049 0.046 0.098 0.103 0.15 0.146 0.049 0.051 0.1 0.104 0.151 0.15 0.049 0.053 0.098 0.1 0.149 0.149 0.051 0.055 0.105 0.104 0.156 0.153 0.049 0.049 0.096 0.102 0.145 0.146 0.034 0.037 0.064 0.072 0.098 0.107 -1.118 0.125-2.013 1.035-2.013 2.17 0 0.631 0.281 1.181 0.714 1.568 0.049 0.051 0.098 0.104 0.154 0.153 0.047 0.05 0.096 0.101 0.149 0.146 0.049 0.051 0.098 0.104 0.151 0.15 0.049 0.055 0.099 0.104 0.152 0.148 0.047 0.053 0.096 0.104 0.149 0.15 0.047 0.051 0.096 0.1 0.149 0.149 0.05 0.055 0.099 0.104 0.154 0.153 0.047 0.049 0.096 0.102 0.149 0.145 0.049 0.053 0.098 0.104 0.154 0.152 0.047 0.05 0.096 0.103 0.149 0.146 0.049 0.056 0.098 0.104 0.154 0.154 0.047 0.051 0.096 0.101 0.149 0.147 0.049 0.053 0.098 0.104 0.153 0.152 0.047 0.051 0.096 0.1 0.15 0.146 0.049 0.053 0.098 0.106 0.153 0.152 0.047 0.051 0.096 0.1 0.15 0.146 0.049 0.055 0.098 0.104 0.151 0.15 0.047 0.053 0.096 0.104 0.149 0.148 0.049 0.055 0.098 0.104 0.154 0.154 0.047 0.047 0.094 0.101 0.147 0.146 0.049 0.054 0.098 0.104 0.153 0.149 0.05 0.051 0.099 0.107 0.152 0.15 0.047 0.055 0.096 0.104 0.151 0.149 0.049 0.053 0.096 0.101 0.15 0.147 0.049 0.053 0.096 0.106 0.151 0.151 0.049 0.056 0.098 0.104 0.151 0.149 0.05 0.053 0.097 0.104 0.152 0.148 0.049 0.053 0.096 0.105 0.151 0.151 0.049 0.05 0.096 0.103 0.152 0.146 0.047 0.055 0.096 0.104 0.149 0.149 0.049 0.056 0.098 0.104 0.154 0.153 0.047 0.056 0.096 0.101 0.149 0.146 0.049 0.053 0.096 0.104 0.151 0.152 0.049 0.052 0.098 0.105 0.152 0.15 0.049 0.051 0.098 0.104 0.151 0.15 0.047 0.051 0.096 0.102 0.149 0.146 0.05 0.051 0.097 0.104 0.152 0.148 0.049 0.055 0.098 0.104 0.151 0.15 0.047 0.052 0.096 0.104 0.15 0.15 0.049 0.051 0.098 0.104 0.151 0.15 0.049 0.053 0.098 0.102 0.151 0.148 0.032 0.039 0.058 0.078 0.093 0.111 0.025 0.029 0.053 0.047 0.08 0.071 0.026 0.026 0.045 0.054 0.071 0.079 0.026 0.031 0.055 0.046 0.083 0.07 0.023 0.028 0.045 0.055 0.067 0.078 0.026 0.029 0.054 0.047 0.082 0.071 0.026 0.028 0.045 0.054 0.073 0.079 0.025 0.029 0.051 0.046 0.079 0.07 0.025 0.024 0.045 0.055 0.07 0.078 0.026 0.025 0.053 0.045 0.082 0.071 0.026 0.029 0.044 0.052 0.073 0.079 0.025 0.025 0.051 0.044 0.078 0.068 0.026 0.031 0.045 0.057 0.073 0.084 0.026 0.025 0.053 0.043 0.079 0.068 0.025 0.026 0.045 0.055 0.072 0.078 0.026 0.027 0.054 0.047 0.081 0.071 0.026 0.028 0.047 0.054 0.073 0.079 0.023 0.023 0.051 0.046 0.077 0.066 0.025 0.028 0.047 0.057 0.074 0.082 0.024 0.029 0.051 0.047 0.077 0.071 0.026 0.021 0.044 0.05 0.071 0.075 0.025 0.029 0.053 0.05 0.08 0.074 0.024 0.025 0.045 0.053 0.069 0.074 0.028 0.029 0.055 0.049 0.083 0.076 0.025 0.028 0.045 0.051 0.072 0.076 0.026 0.027 0.052 0.044 0.079 0.071 0.026 0.026 0.044 0.052 0.071 0.079 0.025 0.023 0.053 0.043 0.081 0.072 0.025 0.026 0.045 0.051 0.072 0.078 0.026 0.027 0.051 0.045 0.08 0.067 0.026 0.028 0.044 0.054 0.073 0.079 0.025 0.029 0.051 0.046 0.078 0.07 0.026 0.029 0.045 0.055 0.073 0.084 0.026 0.023 0.051 0.045 0.079 0.065 0.025 0.029 0.045 0.054 0.07 0.079 0.026 0.029 0.054 0.048 0.082 0.075 0.026 0.024 0.044 0.052 0.073 0.079 0.025 0.023 0.051 0.044 0.079 0.068 0.023 0.026 0.045 0.047 0.07 0.074 0.028 0.031 0.056 0.049 0.083 0.073 0.024 0.03 0.044 0.054 0.071 0.079 0.025 0.025 0.053 0.046 0.081 0.07 0.025 0.028 0.045 0.055 0.07 0.074 0.026 0.033 0.053 0.051 0.083 0.075 0.024 0.029 0.045 0.054 0.071 0.079 0.025 0.029 0.051 0.046 0.078 0.07 0.026 0.025 0.045 0.055 0.073 0.08 0.026 0.023 0.053 0.043 0.082 0.07 0.025 0.028 0.044 0.051 0.072 0.078 0.026 0.029 0.052 0.047 0.079 0.069 0.026 0.026 0.045 0.052 0.071 0.079 0.025 0.025 0.053 0.043 0.081 0.07 0.025 0.028 0.047 0.057 0.074 0.08 0.024 0.027 0.051 0.047 0.077 0.067 0.026 0.03 0.047 0.054 0.075 0.083 0.025 0.025 0.051 0.046 0.079 0.07 0.025 0.029 0.047 0.055 0.072 0.08 0.024 0.023 0.051 0.045 0.077 0.065 0.025 0.029 0.044 0.054 0.073 0.083 0.025 0.025 0.053 0.047 0.08 0.071 0.026 0.024 0.045 0.052 0.071 0.073 0.025 0.029 0.053 0.05 0.082 0.076 0.025 0.024 0.044 0.053 0.07 0.076 0.026 0.027 0.054 0.045 0.081 0.071 0.024 0.03 0.045 0.052 0.071 0.079 0.025 0.029 0.053 0.044 0.079 0.068 0.025 0.026 0.045 0.055 0.07 0.078 0.026 0.027 0.053 0.047 0.081 0.075 0.023 0.025 0.045 0.05 0.07 0.075 0.026 0.029 0.054 0.046 0.082 0.075 0.026 0.028 0.047 0.05 0.073 0.079s0.051 0.046 0.079 0.07c0.025 0.024 0.045 0.049 0.072 0.074 0.026 0.029 0.054 0.047 0.082 0.071 0.024 0.028 0.045 0.052 0.071 0.079 0.025 0.023 0.053 0.048 0.081 0.072 0.025 0.026 0.045 0.053 0.072 0.078 0.026 0.027 0.051 0.045 0.077 0.065 0.026 0.03 0.047 0.058 0.075 0.087 0.025 0.027 0.051 0.046 0.078 0.066 0.026 0.024 0.045 0.055 0.071 0.078 0.026 0.029 0.055 0.047 0.083 0.071 0.023 0.029 0.044 0.054 0.067 0.075 0.026 0.029 0.054 0.05 0.082 0.075 0.026 0.024 0.045 0.054 0.073 0.079 0.025 0.029 0.053 0.046 0.082 0.07 0.022 0.028 0.044 0.053 0.067 0.078 0.026 0.029 0.053 0.045 0.082 0.071 0.026 0.028 0.047 0.052 0.073 0.077 0.023 0.025 0.051 0.044 0.076 0.07 0.026 0.026 0.047 0.057 0.075 0.084 0.026 0.023 0.051 0.043 0.079 0.067 0.025 0.027 0.045 0.052 0.072 0.079 0.026 0.025 0.052 0.044 0.079 0.07 0.026 0.025 0.044 0.055 0.073 0.08 0.025 0.023 0.051 0.045 0.079 0.07 0.025 0.028 0.047 0.049 0.074 0.078 0.024 0.027 0.052 0.047 0.077 0.067 0.026 0.028 0.044 0.054 0.073 0.079 0.025 0.027 0.053 0.048 0.078 0.074 0.026 0.024 0.045 0.053 0.071 0.076 0.026 0.027 0.053 0.045 0.081 0.071 0.025 0.031 0.045 0.052 0.073 0.079 0.025 0.031 0.051 0.044 0.078 0.068 0.026 0.027 0.044 0.055 0.071 0.078 0.025 0.027 0.053 0.049 0.081 0.076 0.024 0.024 0.045 0.049 0.071 0.078 0.027 0.025 0.052 0.042 0.08 0.067 0.025 0.028 0.045 0.054 0.072 0.079 0.025 0.027 0.051 0.046 0.08 0.07 0.024 0.028 0.047 0.055 0.073 0.082 0.026 0.025 0.052 0.045 0.079 0.067 0.027 0.028 0.045 0.052 0.074 0.079 0.024 0.029 0.053 0.048 0.08 0.072 0.025 0.027 0.045 0.053 0.07 0.08 0.025 0.025 0.053 0.043 0.079 0.069 0.024 0.025 0.045 0.052 0.069 0.077 0.025 0.027 0.055 0.046 0.08 0.07 0.026 0.031 0.045 0.055 0.074 0.08 0.024 0.023 0.053 0.045 0.08 0.07 0.024 0.028 0.045 0.055 0.068 0.078 0.025 0.029 0.057 0.047 0.083 0.071 0.022 0.026 0.044 0.05 0.067 0.075 0.025 0.027 0.056 0.05 0.08 0.074 0.026 0.024 0.043 0.053 0.07 0.078s0.051 0.045 0.079 0.071c0.024 0.028 0.046 0.052 0.073 0.081 0.025 0.027 0.052 0.044 0.076 0.066 0.029 0.027 0.045 0.053 0.072 0.078 0.025 0.029 0.053 0.049 0.08 0.074 0.024 0.026 0.043 0.049 0.068 0.078 0.025 0.027 0.052 0.047 0.079 0.066 0.026 0.029 0.046 0.055 0.075 0.084 0.023 0.023 0.05 0.046 0.076 0.07 0.026 0.028 0.049 0.055 0.074 0.078 0.023 0.025 0.049 0.047 0.075 0.067 0.024 0.028 0.044 0.054 0.073 0.083 0.023 0.025 0.054 0.044 0.078 0.07 0.025 0.024 0.045 0.049 0.07 0.074 0.025 0.029 0.051 0.047 0.084 0.075 0.021 0.025 0.041 0.05 0.064 0.077 0.021 0.025 0.052 0.044 0.081 0.068 0.028 0.031 0.046 0.055 0.071 0.08 0.023 0.025 0.05 0.045 0.074 0.07 0.028 0.028 0.045 0.055 0.07 0.078 0.029 0.029 0.055 0.047 0.083 0.073 0.021 0.026 0.046 0.052 0.065 0.077 0.025 0.029 0.056 0.05 0.082 0.074 0.026 0.027 0.043 0.055 0.072 0.08 0.025 0.025 0.051 0.043 0.079 0.069 0.021 0.021 0.042 0.044 0.063 0.071C50.82 62.188 62.941 49.596 63.9 33.979z\'/></g><path fill=\'#FFFFFF\' d=\'M54.393 28.433c0 5.299-4.297 9.6-9.601 9.6H44.55 19.43h-1.288c-4.712 0-8.533-3.82-8.533-8.533 0-4.712 3.821-8.533 8.533-8.533 0.894 0 1.741 0.177 2.552 0.43 1.374-4.953 5.904-8.597 11.298-8.597 4.542 0 8.475 2.588 10.425 6.364 0.763-0.194 1.55-0.33 2.375-0.33C50.096 18.833 54.393 23.132 54.393 28.433zM32 42.482c-1.18 0-2.133 0.955-2.133 2.134 0 1.18 0.956 2.134 2.133 2.134s2.134-0.954 2.134-2.134C34.134 43.438 33.18 42.482 32 42.482zM44.8 42.482c-1.179 0-2.133 0.955-2.133 2.134 0 1.18 0.954 2.134 2.133 2.134 1.181 0 2.134-0.954 2.134-2.134C46.934 43.438 45.979 42.482 44.8 42.482zM19.2 42.482c-1.177 0-2.133 0.955-2.133 2.134 0 1.18 0.956 2.134 2.133 2.134 1.18 0 2.133-0.954 2.133-2.134C21.333 43.438 20.38 42.482 19.2 42.482zM38.4 48.884c-1.18 0-2.135 0.954-2.135 2.134s0.955 2.133 2.135 2.133c1.179 0 2.133-0.953 2.133-2.133S39.579 48.884 38.4 48.884zM25.6 48.884c-1.177 0-2.133 0.954-2.133 2.134s0.956 2.133 2.133 2.133c1.18 0 2.133-0.953 2.133-2.133S26.78 48.884 25.6 48.884z\'/></svg>'}}),'clear-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'night_bg_5_\'><circle fill=\'#34495E\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#2C3E50\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'15.58\' y=\'18.142\' width=\'47.24\' height=\'44.781\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'15.58\' y=\'18.142\' width=\'47.24\' height=\'44.781\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'91.7705\' cy=\'-523.5986\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 -1 -62.9707 -494.7988)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.1126\' stop-color=\'#E8E8E8\'/><stop offset=\'0.3492\' stop-color=\'#ADADAD\'/><stop offset=\'0.6869\' stop-color=\'#4E4E4E\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g opacity=\'0.4\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M40.109 62.923c-0.026-0.03-0.058-0.057-0.084-0.085 -0.051-0.046-0.103-0.104-0.15-0.15 -0.052-0.049-0.1-0.104-0.152-0.152 -0.048-0.044-0.098-0.102-0.146-0.146 -0.05-0.047-0.103-0.104-0.15-0.152 -0.052-0.049-0.1-0.103-0.147-0.146 -0.051-0.048-0.103-0.104-0.15-0.148 -0.054-0.051-0.104-0.108-0.154-0.156 -0.05-0.045-0.096-0.098-0.144-0.145 -0.052-0.045-0.103-0.102-0.151-0.15 -0.055-0.047-0.103-0.104-0.15-0.151 -0.055-0.048-0.104-0.104-0.152-0.151 -0.05-0.045-0.102-0.103-0.148-0.148 -0.051-0.048-0.1-0.102-0.146-0.148 -0.053-0.047-0.102-0.102-0.15-0.146 -0.052-0.049-0.104-0.105-0.154-0.153 -0.049-0.048-0.1-0.104-0.152-0.153 -0.05-0.045-0.096-0.101-0.143-0.143 -0.053-0.05-0.101-0.104-0.148-0.148 -0.05-0.049-0.102-0.104-0.148-0.149 -0.056-0.052-0.106-0.108-0.158-0.158 -0.051-0.046-0.098-0.101-0.146-0.146 -0.055-0.047-0.104-0.104-0.151-0.149 -0.049-0.045-0.101-0.104-0.148-0.151 -0.051-0.043-0.098-0.099-0.146-0.145 -0.054-0.051-0.106-0.109-0.16-0.162 -0.047-0.044-0.096-0.102-0.144-0.145 -0.05-0.047-0.097-0.102-0.146-0.147 -0.055-0.046-0.104-0.104-0.156-0.153 -0.049-0.045-0.096-0.101-0.146-0.146 -0.056-0.047-0.104-0.104-0.154-0.154 -0.053-0.046-0.1-0.104-0.149-0.15 -0.049-0.045-0.096-0.1-0.146-0.146 -0.049-0.05-0.101-0.104-0.153-0.153 -0.05-0.047-0.097-0.104-0.147-0.149 -0.053-0.046-0.103-0.104-0.151-0.149 -0.05-0.046-0.099-0.104-0.149-0.148 -0.048-0.045-0.097-0.1-0.142-0.144 -0.058-0.052-0.108-0.106-0.162-0.161 -0.052-0.047-0.097-0.101-0.146-0.146 -0.054-0.045-0.102-0.104-0.15-0.148 -0.051-0.047-0.1-0.104-0.149-0.15 -0.05-0.049-0.101-0.104-0.149-0.148 -0.047-0.045-0.092-0.098-0.142-0.143 -0.06-0.055-0.112-0.112-0.169-0.168 -0.053-0.045-0.098-0.1-0.146-0.144 -0.053-0.048-0.098-0.103-0.146-0.149 -0.052-0.049-0.099-0.103-0.148-0.146 -0.053-0.048-0.103-0.104-0.152-0.152 -0.051-0.043-0.098-0.103-0.148-0.146 -0.053-0.045-0.102-0.104-0.154-0.152 -0.05-0.047-0.099-0.102-0.148-0.15 -0.052-0.047-0.099-0.1-0.149-0.148 -0.051-0.046-0.099-0.102-0.15-0.15 -0.051-0.043-0.095-0.096-0.146-0.146 -0.058-0.052-0.112-0.112-0.167-0.163 -0.047-0.046-0.092-0.098-0.139-0.143 -0.049-0.045-0.096-0.098-0.145-0.146 -0.053-0.049-0.104-0.104-0.158-0.153 -0.051-0.047-0.1-0.104-0.151-0.15 -0.051-0.045-0.096-0.1-0.146-0.146 -0.054-0.05-0.104-0.107-0.159-0.156 -0.049-0.047-0.096-0.102-0.145-0.146 -0.051-0.047-0.1-0.104-0.154-0.15 -0.053-0.047-0.098-0.104-0.149-0.149 -0.051-0.045-0.098-0.104-0.149-0.147 -0.054-0.051-0.103-0.105-0.156-0.154 -0.047-0.047-0.092-0.096-0.139-0.143 -0.051-0.046-0.1-0.104-0.151-0.148 -0.056-0.051-0.105-0.107-0.161-0.158 -0.051-0.047-0.098-0.104-0.149-0.148 -0.054-0.047-0.101-0.104-0.154-0.152 -0.049-0.045-0.096-0.098-0.145-0.145 -0.051-0.051-0.098-0.104-0.149-0.15 -0.054-0.049-0.103-0.104-0.156-0.153 -0.053-0.05-0.1-0.104-0.153-0.153 -0.05-0.046-0.095-0.099-0.146-0.146 -0.051-0.047-0.098-0.1-0.149-0.147 -0.053-0.049-0.1-0.103-0.154-0.151 -0.051-0.045-0.098-0.101-0.149-0.148 -0.053-0.047-0.1-0.102-0.151-0.148 -0.056-0.053-0.105-0.108-0.16-0.16 -0.047-0.045-0.09-0.094-0.134-0.137 -0.055-0.049-0.106-0.107-0.163-0.158 -0.049-0.045-0.094-0.102-0.143-0.145 -0.051-0.049-0.1-0.104-0.151-0.146 -0.053-0.051-0.102-0.108-0.158-0.158 -0.053-0.049-0.1-0.104-0.153-0.151 -0.047-0.045-0.089-0.099-0.138-0.142 -0.053-0.049-0.105-0.104-0.159-0.157 -0.049-0.043-0.096-0.097-0.145-0.142 -0.055-0.051-0.107-0.108-0.163-0.164 -0.049-0.045-0.092-0.096-0.141-0.143 -0.053-0.045-0.1-0.1-0.153-0.148 -0.054-0.049-0.103-0.106-0.158-0.155 -0.049-0.048-0.096-0.101-0.147-0.147 -0.051-0.045-0.098-0.101-0.15-0.148 -0.051-0.045-0.098-0.102-0.149-0.15 -0.053-0.045-0.102-0.104-0.155-0.152 -0.05-0.047-0.097-0.102-0.146-0.146 -0.047-0.047-0.09-0.096-0.139-0.139 -0.06-0.055-0.115-0.113-0.173-0.172 -0.047-0.045-0.09-0.094-0.137-0.137 -0.053-0.052-0.104-0.109-0.157-0.158 -0.052-0.047-0.097-0.101-0.148-0.146 -0.053-0.049-0.102-0.105-0.153-0.152 -0.051-0.047-0.098-0.102-0.149-0.148 -0.05-0.043-0.097-0.102-0.146-0.145 -0.051-0.048-0.1-0.104-0.151-0.152 -0.053-0.045-0.103-0.104-0.156-0.152 -0.053-0.045-0.103-0.104-0.155-0.154 -0.049-0.045-0.094-0.096-0.141-0.141 -0.051-0.047-0.099-0.102-0.15-0.15 -0.055-0.049-0.104-0.104-0.157-0.156 -0.051-0.043-0.096-0.1-0.148-0.145 -0.053-0.049-0.102-0.107-0.153-0.158 -0.049-0.043-0.094-0.096-0.143-0.139 -0.053-0.049-0.105-0.105-0.159-0.158 -0.051-0.049-0.098-0.104-0.149-0.148 -0.053-0.049-0.102-0.106-0.156-0.158 -0.049-0.041-0.096-0.096-0.145-0.143 -0.049-0.045-0.094-0.098-0.143-0.141 -0.053-0.051-0.102-0.107-0.156-0.156 -0.053-0.049-0.102-0.105-0.155-0.156 -0.049-0.045-0.094-0.098-0.143-0.143 -0.056-0.049-0.105-0.107-0.16-0.158 -0.049-0.045-0.094-0.1-0.145-0.145 -0.053-0.047-0.1-0.105-0.154-0.154 -0.051-0.045-0.098-0.102-0.149-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.049-0.048-0.096-0.101-0.145-0.146 -0.049-0.048-0.094-0.097-0.143-0.144 -0.058-0.052-0.108-0.106-0.165-0.16 -0.049-0.043-0.094-0.099-0.143-0.146 -0.055-0.049-0.104-0.105-0.157-0.156 -0.05-0.047-0.093-0.096-0.142-0.141 -0.935-0.857-1.755-1.871-2.423-3.025 -3.54-6.139-1.44-13.968 4.68-17.503 1.649-0.953 3.424-1.482 5.203-1.649 -0.043 0.06-0.072 0.128-0.115 0.188 0.09-0.01 0.177-0.029 0.267-0.039 -0.042 0.063-0.075 0.13-0.116 0.191 0.09-0.008 0.177-0.03 0.267-0.039 -0.043 0.059-0.072 0.128-0.115 0.188 0.089-0.01 0.177-0.03 0.265-0.039 -0.043 0.061-0.073 0.128-0.116 0.189 0.089-0.01 0.177-0.029 0.267-0.038 -0.042 0.06-0.073 0.127-0.116 0.19 0.09-0.008 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.114 0.189 0.089-0.01 0.177-0.029 0.267-0.039 -0.043 0.061-0.073 0.128-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.038 -0.042 0.059-0.072 0.128-0.114 0.189 0.089-0.011 0.177-0.03 0.267-0.039 -0.043 0.059-0.073 0.128-0.116 0.19 0.089-0.011 0.177-0.03 0.265-0.039 -0.043 0.06-0.073 0.128-0.116 0.19 0.089-0.011 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.115 0.188 0.09-0.011 0.177-0.029 0.265-0.039 -0.042 0.06-0.073 0.128-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.039 -0.045 0.062-0.075 0.13-0.115 0.189 0.089-0.008 0.176-0.03 0.267-0.038 -0.042 0.06-0.073 0.128-0.113 0.188 0.087-0.011 0.175-0.029 0.264-0.038 -0.042 0.059-0.075 0.127-0.115 0.189 0.089-0.008 0.177-0.03 0.267-0.039 -0.043 0.06-0.072 0.128-0.115 0.188 0.09-0.01 0.177-0.03 0.265-0.039 -0.043 0.063-0.075 0.13-0.116 0.191 0.09-0.01 0.177-0.03 0.267-0.039 -0.042 0.059-0.073 0.128-0.116 0.189 0.091-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.115 0.188 0.089-0.01 0.177-0.029 0.267-0.039 -0.045 0.063-0.075 0.131-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.114 0.19 0.089-0.011 0.177-0.029 0.267-0.039 -0.046 0.069-0.076 0.137-0.119 0.197 0.09-0.012 0.177-0.03 0.265-0.039 -0.043 0.06-0.073 0.128-0.116 0.188 0.091-0.01 0.177-0.03 0.267-0.039 -0.042 0.061-0.072 0.128-0.114 0.19 0.089-0.011 0.177-0.029 0.267-0.038 -0.043 0.059-0.073 0.127-0.116 0.188 0.089-0.011 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.115 0.189 0.09-0.01 0.177-0.03 0.267-0.039 -0.043 0.061-0.073 0.128-0.116 0.189 0.087-0.01 0.177-0.029 0.265-0.037 -0.043 0.059-0.073 0.128-0.116 0.189 0.089-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.115 0.189 0.09-0.008 0.177-0.029 0.267-0.039 -0.042 0.061-0.073 0.128-0.115 0.188 0.089-0.011 0.177-0.03 0.267-0.038 -0.043 0.061-0.074 0.13-0.115 0.189 0.09-0.011 0.177-0.029 0.267-0.039 -0.042 0.061-0.073 0.128-0.116 0.188 0.09-0.011 0.177-0.03 0.265-0.039 -0.042 0.06-0.073 0.128-0.116 0.189 0.09-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.114 0.19 0.089-0.008 0.177-0.029 0.266-0.038 -0.042 0.059-0.072 0.127-0.115 0.189 0.09-0.01 0.178-0.03 0.265-0.039 -0.042 0.06-0.071 0.128-0.114 0.188 0.09-0.01 0.177-0.03 0.267-0.039 -0.043 0.061-0.072 0.128-0.115 0.19 0.09-0.009 0.178-0.029 0.268-0.038 -0.043 0.062-0.073 0.129-0.114 0.189 0.09-0.008 0.177-0.03 0.267-0.039 -0.041 0.06-0.07 0.128-0.113 0.188 0.09-0.01 0.178-0.029 0.266-0.039 -0.043 0.061-0.073 0.128-0.116 0.188 0.091-0.011 0.179-0.03 0.267-0.039 -0.041 0.06-0.069 0.128-0.112 0.19 0.088-0.011 0.176-0.03 0.269-0.039 -0.047 0.063-0.076 0.13-0.117 0.19 0.09-0.009 0.178-0.03 0.268-0.039 -0.041 0.06-0.072 0.128-0.117 0.188 0.094-0.011 0.182-0.03 0.268-0.039 -0.043 0.06-0.071 0.128-0.114 0.189 0.092-0.01 0.178-0.029 0.266-0.038 -0.043 0.06-0.073 0.128-0.114 0.188 0.088-0.012 0.176-0.03 0.268-0.039 -0.047 0.062-0.076 0.13-0.115 0.189 0.09-0.008 0.178-0.03 0.268-0.039 -0.043 0.061-0.071 0.128-0.115 0.188 0.041-0.004 0.08-0.013 0.121-0.017 0.011-0.032 0.037-0.064 0.048-0.094 0.206-0.686 0.522-0.804 0.774-0.405 0.053 0.037 0.103 0.072 0.148 0.145 0.049 0.039 0.104 0.077 0.152 0.154 0.049 0.036 0.102 0.074 0.146 0.149 0.051 0.037 0.104 0.074 0.152 0.151 0.053 0.036 0.104 0.077 0.152 0.154 0.049 0.036 0.1 0.074 0.146 0.149 0.051 0.036 0.104 0.075 0.151 0.151 0.052 0.037 0.103 0.075 0.146 0.15 0.053 0.037 0.105 0.077 0.154 0.153 0.049 0.036 0.1 0.075 0.146 0.15 0.054 0.035 0.104 0.074 0.148 0.149 0.051 0.037 0.104 0.075 0.153 0.149 0.049 0.037 0.104 0.075 0.15 0.154 0.049 0.036 0.102 0.076 0.15 0.151 0.047 0.037 0.1 0.075 0.146 0.15 0.051 0.036 0.102 0.074 0.147 0.149 0.051 0.037 0.104 0.077 0.151 0.151 0.045 0.032 0.092 0.052 0.133 0.115 0.037 0.023 0.054 0.047 0.076 0.072 0.027 0.026 0.053 0.043 0.078 0.079 0.031 0.024 0.045 0.047 0.072 0.073 0.027 0.025 0.048 0.041 0.072 0.077 0.037 0.025 0.055 0.049 0.08 0.076 0.025 0.026 0.047 0.041 0.072 0.075 0.033 0.024 0.049 0.047 0.075 0.073 0.025 0.025 0.048 0.042 0.072 0.078 0.035 0.024 0.049 0.048 0.076 0.073 0.024 0.026 0.051 0.042 0.075 0.079 0.035 0.023 0.052 0.049 0.074 0.075 0.027 0.025 0.049 0.04 0.075 0.074 0.034 0.026 0.048 0.049 0.075 0.075 0.025 0.026 0.048 0.042 0.072 0.077 0.035 0.023 0.053 0.047 0.078 0.072 0.022 0.026 0.049 0.042 0.072 0.079 0.038 0.024 0.053 0.047 0.075 0.073 0.027 0.025 0.05 0.043 0.074 0.077 0.034 0.023 0.051 0.046 0.075 0.072 0.029 0.026 0.052 0.045 0.078 0.082 0.033 0.023 0.05 0.047 0.072 0.072 0.027 0.026 0.049 0.044 0.073 0.077 0.032 0.024 0.05 0.047 0.075 0.073 0.023 0.025 0.05 0.043 0.074 0.079 0.035 0.023 0.051 0.047 0.074 0.072 0.028 0.026 0.053 0.044 0.074 0.079 0.038 0.024 0.055 0.047 0.077 0.071 0.026 0.025 0.048 0.044 0.074 0.08 0.034 0.024 0.049 0.048 0.075 0.073 0.023 0.026 0.048 0.043 0.072 0.079 0.037 0.023 0.051 0.047 0.074 0.073 0.027 0.025 0.051 0.042 0.075 0.076 0.038 0.024 0.052 0.049 0.077 0.075 0.027 0.026 0.048 0.043 0.072 0.077 0.037 0.025 0.051 0.049 0.08 0.076 0.021 0.025 0.045 0.043 0.068 0.074 0.036 0.027 0.057 0.05 0.079 0.076 0.024 0.024 0.046 0.042 0.069 0.076 0.037 0.025 0.054 0.051 0.08 0.076 0.024 0.025 0.05 0.043 0.072 0.076 0.035 0.023 0.049 0.047 0.074 0.072 0.027 0.025 0.049 0.045 0.075 0.076 0.036 0.024 0.053 0.051 0.077 0.076 0.023 0.022 0.048 0.041 0.074 0.076 0.033 0.022 0.049 0.047 0.074 0.071 0.024 0.024 0.049 0.041 0.072 0.078 0.036 0.024 0.053 0.047 0.077 0.073 0.024 0.023 0.051 0.043 0.073 0.076 0.033 0.023 0.052 0.051 0.076 0.07 0.024 0.027 0.049 0.045 0.074 0.084 0.033 0.021 0.049 0.043 0.07 0.07 0.029 0.023 0.055 0.041 0.079 0.078 0.034 0.025 0.051 0.047 0.075 0.072 0.023 0.026 0.05 0.045 0.074 0.08 0.037 0.021 0.051 0.047 0.076 0.071 0.025 0.026 0.049 0.043 0.073 0.08 0.035 0.021 0.05 0.047 0.079 0.073 0.021 0.025 0.046 0.041 0.068 0.074 0.033 0.025 0.052 0.049 0.076 0.074s0.049 0.043 0.074 0.078c0.033 0.021 0.051 0.049 0.075 0.072s0.05 0.041 0.073 0.074c0.037 0.027 0.052 0.051 0.08 0.074 0.023 0.026 0.049 0.047 0.07 0.08 0.037 0.024 0.053 0.047 0.078 0.071 0.025 0.026 0.047 0.045 0.071 0.076 0.037 0.026 0.054 0.047 0.079 0.075 0.023 0.025 0.046 0.041 0.068 0.076 0.033 0.021 0.052 0.045 0.076 0.07 0.026 0.025 0.051 0.043 0.078 0.078 0.033 0.025 0.049 0.049 0.075 0.074 0.021 0.025 0.046 0.043 0.067 0.074 0.041 0.025 0.054 0.047 0.08 0.072 0.025 0.026 0.053 0.045 0.076 0.08 0.032 0.022 0.047 0.043 0.07 0.067 0.025 0.026 0.051 0.045 0.075 0.08 0.039 0.024 0.054 0.047 0.079 0.073 0.023 0.025 0.048 0.045 0.068 0.076 0.033 0.023 0.051 0.045 0.076 0.069 0.028 0.028 0.053 0.046 0.078 0.081 0.033 0.025 0.047 0.049 0.073 0.072 0.024 0.025 0.048 0.039 0.071 0.076 0.039 0.022 0.056 0.047 0.08 0.074 0.025 0.022 0.049 0.043 0.069 0.073 0.037 0.025 0.056 0.048 0.079 0.072 0.023 0.026 0.051 0.045 0.075 0.082 0.032 0.024 0.05 0.045 0.073 0.065 0.025 0.028 0.052 0.045 0.074 0.084 0.037 0.021 0.051 0.043 0.071 0.069 0.029 0.024 0.052 0.042 0.079 0.079 0.033 0.021 0.049 0.044 0.073 0.068 0.026 0.027 0.052 0.045 0.077 0.08 0.033 0.025 0.05 0.047 0.074 0.072 0.023 0.022 0.051 0.041 0.073 0.073 0.036 0.026 0.052 0.052 0.075 0.074 0.025 0.026 0.048 0.045 0.075 0.075 0.034 0.025 0.05 0.05 0.079 0.078 0.023 0.025 0.046 0.043 0.066 0.074 0.037 0.025 0.053 0.047 0.078 0.071 0.024 0.024 0.049 0.042 0.074 0.075 0.035 0.027 0.051 0.05 0.079 0.078 0.024 0.025 0.046 0.043 0.071 0.076 0.033 0.021 0.05 0.045 0.074 0.07 0.023 0.022 0.053 0.041 0.075 0.08 0.036 0.021 0.05 0.045 0.071 0.064 0.025 0.027 0.052 0.046 0.076 0.082 0.037 0.023 0.051 0.05 0.078 0.074 0.023 0.025 0.047 0.043 0.07 0.076 0.034 0.021 0.049 0.045 0.075 0.069 0.024 0.024 0.054 0.044 0.079 0.079 0.033 0.025 0.049 0.046 0.072 0.072 0.027 0.027 0.049 0.045 0.076 0.078 0.035 0.023 0.047 0.045 0.074 0.069 0.025 0.027 0.053 0.046 0.071 0.079 0.036 0.023 0.051 0.046 0.075 0.068 0.027 0.025 0.052 0.048 0.078 0.084 0.035 0.021 0.049 0.046 0.074 0.07 0.025 0.025 0.049 0.043 0.07 0.075 0.039 0.024 0.051 0.05 0.08 0.075 0.023 0.023 0.045 0.041 0.07 0.074 0.037 0.025 0.05 0.051 0.074 0.074 0.028 0.024 0.051 0.043 0.076 0.076 0.036 0.023 0.051 0.049 0.077 0.073 0.024 0.022 0.05 0.041 0.072 0.077 0.036 0.021 0.049 0.048 0.077 0.07 0.023 0.025 0.052 0.043 0.074 0.08 0.033 0.022 0.051 0.045 0.07 0.066 0.029 0.029 0.055 0.047 0.08 0.083 0.032 0.021 0.047 0.044 0.069 0.065 0.028 0.029 0.054 0.047 0.079 0.082 0.033 0.021 0.051 0.049 0.076 0.072 0.026 0.024 0.049 0.047 0.074 0.08 0.032 0.021 0.049 0.045 0.073 0.065 0.024 0.026 0.052 0.045 0.075 0.083 0.035 0.021 0.05 0.046 0.074 0.068 0.027 0.025 0.054 0.045 0.074 0.078 0.033 0.022 0.051 0.047 0.074 0.07 0.025 0.027 0.051 0.044 0.078 0.081 0.035 0.022 0.047 0.046 0.072 0.071 0.023 0.023 0.051 0.043 0.074 0.078 0.035 0.025 0.051 0.049 0.074 0.07 0.026 0.028 0.051 0.047 0.076 0.08 0.032 0.023 0.049 0.047 0.073 0.071 0.024 0.026 0.052 0.044 0.075 0.077 0.037 0.023 0.05 0.046 0.076 0.072 0.023 0.023 0.049 0.043 0.072 0.076 0.035 0.024 0.051 0.045 0.074 0.07 0.027 0.025 0.051 0.044 0.076 0.079 0.037 0.024 0.049 0.046 0.074 0.071 0.027 0.023 0.053 0.046 0.076 0.078 0.035 0.023 0.049 0.047 0.072 0.07 0.026 0.026 0.051 0.043 0.077 0.078 0.037 0.025 0.052 0.051 0.076 0.075 0.024 0.026 0.049 0.044 0.071 0.079 0.037 0.021 0.052 0.044 0.078 0.07 0.023 0.023 0.049 0.041 0.07 0.074 0.037 0.024 0.051 0.045 0.076 0.072 0.027 0.025 0.049 0.044 0.076 0.079 0.034 0.024 0.051 0.048 0.076 0.073 0.023 0.023 0.047 0.041 0.07 0.074 0.037 0.025 0.053 0.051 0.078 0.08 0.024 0.021 0.049 0.039 0.071 0.068 0.037 0.023 0.054 0.046 0.078 0.075 0.024 0.024 0.051 0.046 0.075 0.079 0.033 0.021 0.046 0.046 0.07 0.064 0.027 0.027 0.055 0.045 0.078 0.084 0.035 0.022 0.049 0.045 0.07 0.066 0.029 0.029 0.055 0.046 0.08 0.083 0.031 0.024 0.047 0.046 0.072 0.071 0.025 0.022 0.049 0.041 0.074 0.074 0.035 0.023 0.053 0.051 0.08 0.078 0.022 0.022 0.047 0.043 0.067 0.07 0.037 0.025 0.051 0.048 0.078 0.074 0.026 0.025 0.049 0.043 0.075 0.074 0.035 0.025 0.05 0.051 0.076 0.076 0.025 0.028 0.051 0.045 0.072 0.078 0.033 0.024 0.051 0.047 0.072 0.068 0.027 0.027 0.053 0.044 0.08 0.081 0.031 0.022 0.047 0.044 0.072 0.071 0.027 0.022 0.051 0.043 0.074 0.078 0.037 0.024 0.051 0.049 0.073 0.075 0.025 0.022 0.052 0.041 0.076 0.074 0.033 0.022 0.049 0.045 0.074 0.069 0.028 0.027 0.051 0.043 0.077 0.078 0.033 0.023 0.048 0.047 0.072 0.072 0.025 0.025 0.053 0.043 0.08 0.078 0.029 0.023 0.045 0.047 0.068 0.07 0.025 0.025 0.051 0.042 0.078 0.078 0.033 0.025 0.049 0.052 0.076 0.076 0.024 0.024 0.047 0.041 0.07 0.076 0.037 0.022 0.051 0.045 0.073 0.067 0.026 0.026 0.052 0.045 0.076 0.08 0.034 0.022 0.049 0.045 0.073 0.069 0.025 0.025 0.054 0.045 0.08 0.084 0.033 0.021 0.047 0.041 0.072 0.068 0.025 0.026 0.049 0.043 0.074 0.076 0.035 0.023 0.053 0.047 0.076 0.07 0.025 0.029 0.052 0.046 0.076 0.078 0.031 0.024 0.047 0.049 0.074 0.076 0.024 0.024 0.049 0.041 0.074 0.073 0.032 0.025 0.049 0.05 0.069 0.07 0.028 0.028 0.052 0.047 0.08 0.08 0.032 0.022 0.051 0.045 0.073 0.071 0.025 0.027 0.052 0.045 0.076 0.08 0.033 0.023 0.049 0.045 0.074 0.072 0.023 0.023 0.049 0.041 0.074 0.078 0.033 0.021 0.049 0.045 0.07 0.066 0.029 0.029 0.055 0.045 0.08 0.08 0.031 0.022 0.045 0.045 0.07 0.07 0.028 0.025 0.055 0.045 0.08 0.081 0.032 0.022 0.049 0.048 0.073 0.066 0.022 0.028 0.05 0.047 0.074 0.084 0.034 0.021 0.049 0.047 0.073 0.069 0.025 0.025 0.052 0.043 0.076 0.078 0.032 0.025 0.049 0.047 0.072 0.07 0.025 0.025 0.053 0.043 0.078 0.08 0.031 0.021 0.049 0.047 0.068 0.066 0.029 0.029 0.055 0.045 0.078 0.084 0.039 0.021 0.055 0.047 0.08 0.074 0.024 0.024 0.045 0.041 0.068 0.071 0.034 0.022 0.055 0.05 0.079 0.073 0.026 0.029 0.048 0.046 0.074 0.078 0.034 0.021 0.053 0.052 0.077 0.076 0.021 0.023 0.045 0.039 0.07 0.068 0.032 0.027 0.049 0.049 0.074 0.076 0.027 0.023 0.053 0.043 0.078 0.078 0.029 0.025 0.047 0.047 0.068 0.068 0.027 0.026 0.053 0.043 0.078 0.084 0.037 0.021 0.049 0.047 0.076 0.067 0.024 0.026 0.047 0.046 0.072 0.078 0.034 0.024 0.051 0.047 0.075 0.071 0.028 0.023 0.052 0.046 0.077 0.078 0.033 0.023 0.05 0.049 0.072 0.072 0.027 0.027 0.051 0.045 0.076 0.08 0.034 0.021 0.047 0.043 0.072 0.068 0.027 0.025 0.05 0.045 0.076 0.078 0.035 0.025 0.053 0.047 0.078 0.07 0.023 0.028 0.047 0.045 0.074 0.08 0.035 0.022 0.049 0.049 0.074 0.073 0.024 0.024 0.047 0.041 0.069 0.074 0.037 0.024 0.051 0.051 0.08 0.075 0.024 0.025 0.05 0.046 0.071 0.076 0.035 0.025 0.054 0.049 0.078 0.074 0.023 0.025 0.047 0.043 0.069 0.072 0.035 0.025 0.05 0.049 0.075 0.072 0.029 0.027 0.054 0.045 0.078 0.08 0.033 0.023 0.049 0.045 0.07 0.068 0.028 0.028 0.055 0.045 0.08 0.082 0.032 0.021 0.051 0.047 0.073 0.067 0.025 0.028 0.052 0.045 0.075 0.082 0.034 0.022 0.048 0.047 0.075 0.071 0.024 0.023 0.048 0.043 0.073 0.078 0.033 0.025 0.052 0.047 0.076 0.07 0.023 0.025 0.049 0.041 0.073 0.08 0.033 0.021 0.052 0.045 0.073 0.066 0.027 0.027 0.052 0.045 0.076 0.082 0.033 0.023 0.049 0.045 0.07 0.066 0.028 0.028 0.055 0.045 0.08 0.084 0.036 0.022 0.053 0.047 0.075 0.071 0.022 0.026 0.05 0.043 0.07 0.074 0.034 0.022 0.053 0.049 0.077 0.069 0.027 0.027 0.051 0.045 0.074 0.082 0.035 0.025 0.051 0.047 0.076 0.07 0.025 0.025 0.049 0.043 0.078 0.08 0.031 0.023 0.047 0.045 0.068 0.068 0.027 0.025 0.054 0.043 0.078 0.08 0.035 0.024 0.049 0.047 0.076 0.072 0.025 0.024 0.047 0.045 0.074 0.077 0.032 0.021 0.049 0.046 0.071 0.07 0.026 0.026 0.054 0.043 0.079 0.077 0.033 0.025 0.046 0.048 0.07 0.072 0.024 0.023 0.053 0.041 0.076 0.078 0.035 0.025 0.049 0.047 0.075 0.072 0.022 0.021 0.043 0.039 0.063 0.068C53.969 56.417 47.57 60.971 40.109 62.923zM54.486 31.554c-0.023-0.026-0.041-0.049-0.076-0.075 -0.021-0.036-0.049-0.051-0.072-0.076 -0.025-0.026-0.042-0.05-0.074-0.075 -0.027-0.037-0.051-0.051-0.076-0.077 -0.023-0.025-0.043-0.049-0.078-0.075 -0.021-0.034-0.047-0.049-0.07-0.074 -0.023-0.026-0.046-0.051-0.079-0.077 -0.021-0.034-0.046-0.049-0.071-0.075 -0.025-0.025-0.045-0.051-0.076-0.074 -0.025-0.037-0.047-0.052-0.072-0.077 -0.028-0.026-0.043-0.049-0.078-0.075 -0.023-0.034-0.047-0.051-0.07-0.076 -0.029-0.026-0.046-0.049-0.078-0.075 -0.025-0.034-0.047-0.051-0.072-0.077 -0.025-0.025-0.045-0.051-0.078-0.077 -0.024-0.034-0.051-0.049-0.07-0.074 -0.027-0.026-0.046-0.049-0.079-0.075 -0.022-0.035-0.048-0.049-0.071-0.075 -0.027-0.025-0.043-0.051-0.076-0.076 -0.025-0.034-0.047-0.049-0.073-0.075 -0.025-0.026-0.044-0.049-0.077-0.075 -0.023-0.034-0.046-0.051-0.07-0.076 -0.029-0.026-0.046-0.05-0.078-0.075 -0.024-0.035-0.05-0.051-0.076-0.077 -0.023-0.025-0.041-0.049-0.073-0.075 -0.025-0.035-0.048-0.051-0.075-0.078 -0.023-0.026-0.042-0.049-0.075-0.075 -0.022-0.037-0.05-0.051-0.073-0.077 -0.025-0.025-0.041-0.049-0.074-0.072 -0.025-0.035-0.049-0.049-0.076-0.075 -0.023-0.026-0.041-0.051-0.076-0.077 -0.021-0.033-0.046-0.049-0.07-0.074 -0.027-0.026-0.043-0.052-0.08-0.077 -0.022-0.035-0.047-0.049-0.072-0.075 -0.023-0.025-0.041-0.049-0.073-0.074 -0.026-0.035-0.049-0.052-0.075-0.077 -0.023-0.026-0.044-0.049-0.079-0.075 -0.021-0.034-0.046-0.049-0.067-0.075 -0.026-0.025-0.043-0.051-0.078-0.076 -0.027-0.037-0.049-0.051-0.075-0.077 -0.024-0.026-0.044-0.049-0.077-0.075 -0.023-0.036-0.046-0.051-0.07-0.076 -0.026-0.024-0.041-0.05-0.074-0.073 -0.024-0.036-0.051-0.051-0.077-0.079 -0.026-0.025-0.039-0.049-0.074-0.073 -0.026-0.036-0.049-0.053-0.075-0.078 -0.023-0.026-0.044-0.049-0.076-0.073 -0.021-0.035-0.047-0.049-0.07-0.075 -0.026-0.025-0.043-0.051-0.08-0.076 -0.023-0.034-0.045-0.049-0.069-0.075 -0.024-0.026-0.042-0.051-0.079-0.077 -0.025-0.034-0.046-0.049-0.07-0.074 -0.024-0.026-0.047-0.051-0.08-0.077 -0.022-0.036-0.049-0.051-0.073-0.077 -0.024-0.025-0.041-0.049-0.074-0.072 -0.024-0.036-0.049-0.052-0.071-0.077 -0.027-0.026-0.046-0.049-0.078-0.075 -0.025-0.037-0.047-0.051-0.072-0.077 -0.026-0.025-0.043-0.049-0.078-0.074 -0.023-0.035-0.045-0.049-0.069-0.075 -0.026-0.026-0.044-0.051-0.079-0.075 -0.025-0.033-0.046-0.051-0.07-0.076 -0.028-0.026-0.047-0.052-0.08-0.077 -0.022-0.035-0.047-0.049-0.071-0.077 -0.026-0.025-0.043-0.049-0.074-0.073 -0.024-0.038-0.053-0.053-0.077-0.081 -0.025-0.026-0.046-0.049-0.078-0.073 -0.023-0.034-0.045-0.049-0.07-0.075 -0.024-0.025-0.041-0.051-0.076-0.074 -0.023-0.037-0.049-0.052-0.073-0.077 -0.024-0.026-0.042-0.049-0.077-0.075 -0.022-0.035-0.048-0.051-0.072-0.077 -0.024-0.025-0.043-0.048-0.075-0.074 -0.023-0.034-0.05-0.049-0.074-0.075 -0.024-0.025-0.041-0.051-0.074-0.076 -0.024-0.035-0.049-0.05-0.073-0.075 -0.025-0.026-0.043-0.051-0.078-0.077 -0.027-0.034-0.049-0.049-0.072-0.075 -0.023-0.025-0.041-0.051-0.08-0.074 -0.021-0.034-0.045-0.051-0.068-0.077 -0.027-0.026-0.043-0.049-0.076-0.075 -0.026-0.035-0.047-0.051-0.074-0.076 -0.024-0.026-0.045-0.052-0.077-0.077 -0.026-0.034-0.048-0.049-0.072-0.077 -0.045-0.026-0.062-0.05-0.096-0.076 -0.021-0.034-0.046-0.049-0.07-0.074 -0.026-0.026-0.043-0.051-0.078-0.077 -0.024-0.036-0.047-0.051-0.075-0.077 -0.023-0.025-0.039-0.049-0.072-0.074 -0.025-0.037-0.051-0.052-0.074-0.077 -0.028-0.026-0.045-0.049-0.078-0.075 -0.023-0.034-0.047-0.049-0.072-0.077 -0.025-0.025-0.043-0.049-0.078-0.074 -0.024-0.034-0.045-0.049-0.069-0.077 -0.029-0.026-0.046-0.049-0.08-0.075 -0.022-0.034-0.048-0.049-0.07-0.074 -0.028-0.026-0.047-0.049-0.079-0.075 -0.025-0.037-0.05-0.051-0.074-0.077 -0.025-0.025-0.043-0.049-0.076-0.074 -0.021-0.034-0.045-0.049-0.068-0.075 -0.029-0.026-0.047-0.051-0.08-0.077 -0.025-0.035-0.049-0.049-0.07-0.072 -0.029-0.026-0.043-0.052-0.08-0.077 -0.024-0.035-0.045-0.051-0.074-0.077 -0.024-0.025-0.041-0.049-0.077-0.075 -0.022-0.035-0.048-0.051-0.072-0.076 -0.026-0.026-0.041-0.049-0.073-0.075 -0.027-0.034-0.05-0.049-0.076-0.075 -0.023-0.025-0.041-0.049-0.072-0.074 -0.025-0.039-0.053-0.054-0.078-0.081 -0.025-0.024-0.045-0.047-0.076-0.071 -0.023-0.035-0.047-0.051-0.07-0.077 -0.027-0.026-0.045-0.049-0.078-0.074 -0.026-0.034-0.049-0.051-0.074-0.077 -0.024-0.026-0.045-0.051-0.077-0.074 -0.021-0.035-0.048-0.05-0.07-0.075 -0.026-0.026-0.043-0.051-0.077-0.077 -0.025-0.034-0.05-0.049-0.074-0.075 -0.025-0.025-0.043-0.05-0.075-0.075 -0.024-0.036-0.048-0.051-0.075-0.079 -0.023-0.026-0.043-0.049-0.078-0.075 -0.021-0.037-0.047-0.051-0.07-0.078 -0.025-0.024-0.043-0.048-0.076-0.073 -0.024-0.036-0.049-0.051-0.076-0.079 -0.024-0.025-0.045-0.049-0.077-0.075 -0.022-0.035-0.046-0.051-0.07-0.076 -0.028-0.026-0.043-0.049-0.077-0.075 -0.025-0.037-0.05-0.051-0.074-0.077 -0.025-0.025-0.043-0.049-0.074-0.074 -0.027-0.035-0.049-0.052-0.072-0.077 -0.025-0.026-0.047-0.049-0.08-0.075 -0.025-0.036-0.047-0.051-0.07-0.077 -0.029-0.025-0.045-0.049-0.08-0.074 -0.024-0.034-0.045-0.049-0.07-0.077 -0.028-0.026-0.047-0.049-0.079-0.075 -0.022-0.035-0.046-0.049-0.072-0.076 -0.024-0.026-0.043-0.05-0.075-0.075 -0.025-0.036-0.052-0.051-0.076-0.077 -0.023-0.025-0.041-0.049-0.074-0.075 -0.047-0.062-0.09-0.081-0.137-0.113 -0.049-0.077-0.101-0.118-0.151-0.154 -0.046-0.076-0.099-0.115-0.149-0.151 -0.047-0.075-0.096-0.11-0.146-0.147 -0.052-0.079-0.104-0.118-0.154-0.154 -0.045-0.074-0.099-0.113-0.149-0.149 -0.045-0.077-0.097-0.116-0.146-0.151 -0.048-0.077-0.104-0.115-0.152-0.152 -0.045-0.075-0.098-0.113-0.148-0.149 -0.047-0.077-0.098-0.116-0.147-0.152 -0.049-0.076-0.103-0.114-0.151-0.151 -0.049-0.077-0.101-0.116-0.148-0.151 -0.049-0.077-0.102-0.114-0.15-0.15 -0.047-0.074-0.1-0.112-0.148-0.149 -0.046-0.077-0.102-0.118-0.148-0.154 -0.048-0.074-0.102-0.113-0.15-0.149 -0.047-0.075-0.1-0.114-0.148-0.149 -0.046-0.077-0.099-0.116-0.15-0.152 -0.254-0.399-0.566-0.277-0.777 0.408 -0.271 0.868-1.194 1.798-2.063 2.063 -0.688 0.211-0.812 0.529-0.408 0.786 0.037 0.051 0.076 0.1 0.149 0.149 0.037 0.051 0.072 0.102 0.149 0.151 0.037 0.052 0.074 0.1 0.148 0.15 0.037 0.051 0.076 0.103 0.149 0.151 0.038 0.051 0.075 0.102 0.149 0.151 0.037 0.052 0.076 0.103 0.149 0.152 0.037 0.051 0.074 0.1 0.149 0.149 0.037 0.053 0.074 0.104 0.15 0.154 0.039 0.051 0.076 0.1 0.147 0.149 0.038 0.051 0.075 0.1 0.149 0.149 0.036 0.054 0.075 0.103 0.153 0.154 0.033 0.051 0.072 0.102 0.149 0.149 0.037 0.051 0.072 0.102 0.148 0.15 0.035 0.051 0.071 0.102 0.146 0.151 0.039 0.051 0.074 0.102 0.15 0.151 0.036 0.052 0.075 0.103 0.153 0.152 0.034 0.053 0.074 0.102 0.147 0.151 0.033 0.045 0.054 0.089 0.113 0.134 0.025 0.037 0.051 0.051 0.074 0.077 0.025 0.025 0.043 0.049 0.078 0.075 0.021 0.033 0.045 0.049 0.068 0.074 0.026 0.028 0.045 0.051 0.08 0.079 0.026 0.035 0.047 0.051 0.073 0.077 0.024 0.025 0.039 0.049 0.076 0.074 0.022 0.034 0.047 0.052 0.071 0.077 0.027 0.026 0.044 0.049 0.078 0.075 0.023 0.034 0.047 0.049 0.072 0.077 0.023 0.025 0.043 0.049 0.076 0.074 0.021 0.035 0.049 0.051 0.072 0.077 0.027 0.026 0.041 0.049 0.076 0.075 0.025 0.037 0.049 0.051 0.072 0.076 0.026 0.026 0.045 0.05 0.08 0.075 0.024 0.037 0.045 0.051 0.069 0.077 0.028 0.025 0.047 0.051 0.084 0.077 0.021 0.031 0.043 0.047 0.065 0.072 0.023 0.026 0.046 0.051 0.078 0.077 0.025 0.037 0.047 0.051 0.074 0.077 0.025 0.025 0.041 0.049 0.076 0.074 0.023 0.037 0.045 0.052 0.07 0.077 0.027 0.026 0.045 0.049 0.078 0.075 0.025 0.033 0.047 0.049 0.07 0.075 0.028 0.025 0.047 0.051 0.082 0.076 0.022 0.035 0.043 0.049 0.069 0.075 0.024 0.026 0.045 0.051 0.078 0.077 0.022 0.033 0.047 0.049 0.069 0.074 0.029 0.026 0.045 0.051 0.078 0.077 0.025 0.037 0.049 0.051 0.072 0.077 0.027 0.025 0.045 0.051 0.078 0.074 0.023 0.037 0.045 0.051 0.074 0.077 0.023 0.026 0.041 0.049 0.076 0.075 0.022 0.034 0.043 0.047 0.068 0.072 0.026 0.026 0.047 0.052 0.079 0.077 0.025 0.034 0.048 0.049 0.07 0.075 0.028 0.025 0.047 0.051 0.08 0.077 0.022 0.034 0.049 0.049 0.071 0.074 0.025 0.026 0.043 0.051 0.078 0.075 0.025 0.035 0.049 0.049 0.072 0.075 0.025 0.025 0.043 0.051 0.076 0.076 0.025 0.034 0.047 0.05 0.074 0.075 0.023 0.026 0.043 0.049 0.076 0.075 0.022 0.033 0.049 0.049 0.07 0.074 0.026 0.026 0.045 0.051 0.079 0.075 0.025 0.037 0.048 0.051 0.072 0.077 0.026 0.025 0.045 0.049 0.08 0.074 0.021 0.037 0.045 0.052 0.069 0.077 0.028 0.026 0.043 0.049 0.08 0.075 0.023 0.036 0.047 0.051 0.07 0.079 0.027 0.025 0.045 0.049 0.076 0.072 0.025 0.037 0.047 0.051 0.074 0.077 0.023 0.026 0.045 0.049 0.076 0.075 0.022 0.034 0.045 0.049 0.07 0.074 0.026 0.026 0.045 0.052 0.079 0.077 0.024 0.034 0.046 0.049 0.07 0.077 0.028 0.025 0.047 0.051 0.082 0.077 0.022 0.031 0.043 0.047 0.067 0.07 0.025 0.026 0.041 0.051 0.08 0.079 0.023 0.034 0.049 0.051 0.072 0.077 0.021 0.019 0.016 0.038 0.039 0.055 -0.154 0.044-0.311 0.228-0.428 0.612 -0.271 0.868-1.195 1.798-2.063 2.063 -0.685 0.211-0.81 0.527-0.409 0.783 0.037 0.051 0.074 0.102 0.148 0.151 0.037 0.051 0.076 0.102 0.15 0.15 0.037 0.053 0.074 0.104 0.148 0.15 0.038 0.051 0.075 0.104 0.148 0.15 0.037 0.052 0.074 0.104 0.15 0.15 0.037 0.053 0.074 0.104 0.152 0.15 0.035 0.055 0.076 0.104 0.15 0.152 0.037 0.051 0.072 0.102 0.148 0.147 0.038 0.054 0.073 0.101 0.146 0.147 0.039 0.053 0.074 0.104 0.152 0.153 0.034 0.052 0.073 0.101 0.147 0.149 0.039 0.051 0.075 0.104 0.151 0.148 0.035 0.055 0.074 0.104 0.149 0.154 0.04 0.051 0.075 0.1 0.147 0.146 0.039 0.054 0.074 0.104 0.146 0.149 0.04 0.054 0.079 0.104 0.153 0.152 0.041 0.05 0.075 0.1 0.149 0.146 0.033 0.045 0.051 0.092 0.116 0.137 0.024 0.037 0.048 0.055 0.075 0.078 0.023 0.024 0.041 0.047 0.07 0.07 0.023 0.038 0.051 0.053 0.076 0.079 0.024 0.024 0.045 0.048 0.074 0.071 0.026 0.037 0.053 0.054 0.077 0.08 0.024 0.027 0.042 0.049 0.074 0.07 0.024 0.037 0.049 0.053 0.075 0.077 0.023 0.024 0.041 0.05 0.072 0.07 0.026 0.04 0.053 0.055 0.078 0.083 0.027 0.023 0.045 0.046 0.075 0.07 0.022 0.033 0.044 0.047 0.069 0.07 0.025 0.028 0.043 0.051 0.078 0.076 0.023 0.036 0.049 0.053 0.074 0.077 0.024 0.024 0.043 0.052 0.074 0.075 0.024 0.035 0.051 0.05 0.075 0.078 0.024 0.021 0.042 0.047 0.074 0.072 0.024 0.032 0.051 0.051 0.077 0.077 0.023 0.024 0.039 0.048 0.072 0.068 0.026 0.04 0.051 0.057 0.08 0.081 0.023 0.021 0.038 0.046 0.069 0.066 0.024 0.039 0.05 0.055 0.075 0.082 0.023 0.021 0.041 0.047 0.074 0.072 0.023 0.032 0.051 0.049 0.074 0.076 0.024 0.025 0.041 0.049 0.074 0.072 0.025 0.037 0.051 0.05 0.075 0.078 0.028 0.024 0.046 0.047 0.078 0.072 0.021 0.034 0.047 0.049 0.071 0.073 0.023 0.026 0.041 0.049 0.074 0.074 0.024 0.034 0.051 0.053 0.074 0.079 0.027 0.023 0.042 0.049 0.077 0.07 0.024 0.037 0.048 0.051 0.073 0.076 0.025 0.027 0.045 0.049 0.078 0.074 0.024 0.034 0.047 0.049 0.069 0.072 0.025 0.025 0.042 0.049 0.077 0.076 0.025 0.037 0.048 0.053 0.077 0.078 0.024 0.024 0.042 0.047 0.069 0.069 0.027 0.039 0.052 0.056 0.08 0.082 0.024 0.022 0.041 0.05 0.074 0.071 0.024 0.035 0.049 0.052 0.075 0.076 0.024 0.023 0.041 0.051 0.072 0.07 0.026 0.037 0.05 0.053 0.075 0.078s0.043 0.049 0.076 0.074c0.021 0.033 0.047 0.051 0.069 0.076 0.027 0.023 0.044 0.046 0.08 0.072 0.022 0.035 0.048 0.053 0.074 0.078 0.024 0.024 0.042 0.049 0.073 0.069 0.025 0.039 0.052 0.056 0.078 0.082 0.026 0.024 0.039 0.047 0.07 0.065 0.026 0.039 0.053 0.058 0.079 0.082 0.024 0.021 0.039 0.043 0.067 0.068 0.027 0.037 0.053 0.055 0.08 0.08 0.023 0.023 0.041 0.049 0.074 0.068 0.024 0.039 0.051 0.055 0.076 0.084 0.021 0.025 0.039 0.047 0.073 0.07 0.022 0.033 0.05 0.051 0.073 0.08 0.025 0.022 0.043 0.045 0.074 0.067 0.025 0.039 0.051 0.052 0.076 0.078 0.024 0.024 0.041 0.049 0.074 0.073 0.023 0.035 0.049 0.05 0.072 0.074 0.027 0.025 0.044 0.049 0.076 0.074 0.025 0.035 0.052 0.051 0.076 0.078 0.023 0.025 0.041 0.047 0.076 0.07 0.024 0.037 0.049 0.055 0.076 0.08 0.021 0.025 0.04 0.045 0.071 0.07 0.024 0.034 0.05 0.051 0.073 0.08 0.025 0.022 0.047 0.045 0.076 0.069 0.023 0.034 0.049 0.051 0.074 0.078 0.024 0.024 0.041 0.047 0.076 0.071 0.023 0.037 0.049 0.049 0.077 0.078 0.022 0.023 0.037 0.047 0.069 0.068 0.026 0.039 0.052 0.057 0.08 0.086 0.023 0.021 0.041 0.045 0.074 0.064 0.024 0.037 0.049 0.053 0.072 0.08 0.027 0.024 0.039 0.045 0.075 0.07 0.022 0.036 0.048 0.053 0.073 0.079 0.025 0.022 0.045 0.046 0.072 0.07 0.027 0.036 0.051 0.055 0.076 0.077 0.023 0.025 0.043 0.048 0.078 0.072 0.021 0.037 0.047 0.051 0.073 0.078 0.026 0.023 0.038 0.049 0.073 0.07 0.026 0.037 0.049 0.053 0.076 0.078 0.023 0.025 0.043 0.047 0.075 0.072 0.025 0.035 0.052 0.053 0.075 0.08 0.025 0.022 0.042 0.047 0.075 0.067 0.022 0.035 0.048 0.056 0.071 0.08 0.027 0.022 0.043 0.047 0.076 0.074 0.025 0.034 0.053 0.051 0.076 0.073 0.023 0.025 0.041 0.05 0.074 0.074 0.025 0.033 0.051 0.051 0.074 0.078 0.025 0.027 0.041 0.049 0.076 0.068 0.022 0.037 0.047 0.055 0.074 0.078 0.023 0.025 0.041 0.049 0.071 0.07 0.026 0.039 0.054 0.055 0.079 0.084 0.027 0.024 0.044 0.045 0.074 0.067 0.025 0.035 0.049 0.05 0.068 0.074 0.029 0.026 0.045 0.049 0.078 0.075 0.027 0.039 0.051 0.054 0.076 0.076 0.023 0.027 0.041 0.051 0.072 0.072 0.027 0.037 0.053 0.053 0.078 0.082 0.027 0.025 0.045 0.047 0.076 0.07 0.022 0.033 0.047 0.051 0.071 0.074 0.024 0.025 0.041 0.051 0.074 0.072 0.026 0.041 0.051 0.053 0.079 0.082 0.021 0.024 0.04 0.045 0.07 0.069 0.023 0.035 0.051 0.052 0.074 0.076 0.024 0.022 0.041 0.049 0.078 0.073 0.025 0.037 0.047 0.054 0.074 0.078 0.023 0.025 0.043 0.047 0.072 0.069 0.025 0.038 0.05 0.052 0.074 0.081 0.026 0.025 0.047 0.047 0.08 0.07 0.022 0.033 0.045 0.051 0.067 0.07 0.026 0.028 0.043 0.055 0.08 0.078 0.024 0.033 0.047 0.051 0.071 0.075 0.023 0.029 0.041 0.052 0.078 0.076 0.023 0.035 0.047 0.049 0.07 0.078 0.026 0.021 0.043 0.045 0.074 0.069 0.029 0.037 0.053 0.056 0.08 0.078 0.023 0.025 0.041 0.047 0.07 0.071 0.025 0.034 0.05 0.052 0.076 0.079 0.024 0.025 0.045 0.048 0.076 0.072 0.022 0.035 0.047 0.049 0.071 0.074 0.026 0.026 0.043 0.049 0.078 0.074 0.024 0.036 0.047 0.055 0.071 0.077 0.027 0.025 0.045 0.05 0.076 0.07 0.027 0.039 0.053 0.058 0.078 0.084 0.027 0.021 0.041 0.043 0.072 0.065 0.023 0.037 0.051 0.056 0.075 0.082 0.024 0.021 0.042 0.047 0.075 0.069 0.024 0.034 0.048 0.052 0.074 0.077 0.024 0.027 0.045 0.05 0.075 0.07 0.023 0.037 0.048 0.053 0.072 0.08 0.026 0.022 0.043 0.047 0.076 0.072 0.024 0.034 0.051 0.053 0.075 0.077 0.023 0.022 0.041 0.048 0.074 0.07 0.027 0.038 0.051 0.057 0.078 0.082 0.025 0.022 0.041 0.045 0.072 0.065 0.023 0.039 0.049 0.06 0.076 0.084 0.025 0.021 0.039 0.043 0.07 0.064 0.026 0.037 0.052 0.059 0.078 0.084 0.024 0.025 0.041 0.046 0.073 0.066 0.022 0.037 0.048 0.055 0.074 0.082 0.024 0.022 0.041 0.047 0.073 0.07 0.025 0.036 0.052 0.053 0.076 0.079 0.023 0.022 0.041 0.046 0.074 0.069 0.025 0.037 0.051 0.054 0.076 0.08 0.025 0.025 0.045 0.045 0.074 0.068 0.025 0.039 0.049 0.053 0.078 0.082 0.021 0.023 0.039 0.045 0.07 0.068 0.026 0.035 0.049 0.051 0.074 0.08 0.024 0.023 0.045 0.045 0.077 0.07 0.026 0.035 0.048 0.053 0.072 0.08 0.024 0.022 0.041 0.045 0.077 0.068 0.023 0.038 0.048 0.051 0.072 0.079 0.025 0.024 0.043 0.046 0.078 0.071 0.023 0.035 0.047 0.054 0.07 0.078s0.045 0.045 0.078 0.07c0.025 0.037 0.049 0.053 0.074 0.079 0.025 0.024 0.043 0.048 0.074 0.069 0.024 0.039 0.047 0.054 0.071 0.08 0.027 0.025 0.048 0.045 0.08 0.072 0.022 0.031 0.045 0.049 0.065 0.067 0.029 0.029 0.045 0.056 0.084 0.079 0.023 0.04 0.048 0.057 0.074 0.079 0.023 0.026 0.041 0.049 0.072 0.069 0.027 0.037 0.053 0.059 0.078 0.084 0.025 0.021 0.041 0.041 0.07 0.066 0.025 0.037 0.051 0.055 0.078 0.081 0.023 0.022 0.041 0.048 0.074 0.067 0.024 0.039 0.049 0.056 0.071 0.08 0.026 0.027 0.045 0.047 0.076 0.07 0.026 0.039 0.052 0.057 0.078 0.084 0.024 0.023 0.045 0.045 0.075 0.067 0.021 0.035 0.047 0.052 0.072 0.076 0.023 0.024 0.041 0.051 0.074 0.073 0.025 0.037 0.051 0.052 0.074 0.08 0.025 0.022 0.045 0.045 0.076 0.07 0.023 0.035 0.049 0.051 0.074 0.079 0.028 0.024 0.045 0.046 0.076 0.067 0.022 0.037 0.049 0.054 0.071 0.078 0.024 0.023 0.043 0.049 0.076 0.072 0.026 0.039 0.049 0.053 0.077 0.082 0.025 0.023 0.044 0.045 0.074 0.069 0.026 0.035 0.049 0.05 0.074 0.073 0.025 0.025 0.039 0.052 0.072 0.072 0.025 0.035 0.051 0.057 0.074 0.08 0.027 0.026 0.043 0.047 0.076 0.07 0.004 0.008 0.012 0.01 0.016 0.02 1.742-2.76 3.066-5.801 3.904-9.043 -0.004-0.004-0.01-0.008-0.014-0.013 -0.023-0.026-0.043-0.05-0.078-0.073 -0.021-0.037-0.047-0.049-0.068-0.076 -0.026-0.023-0.043-0.049-0.078-0.078 -0.027-0.032-0.049-0.049-0.073-0.072 -0.026-0.025-0.042-0.048-0.075-0.072 -0.026-0.037-0.047-0.051-0.074-0.076 -0.026-0.024-0.041-0.049-0.075-0.072 -0.022-0.035-0.048-0.055-0.074-0.08 -0.024-0.024-0.041-0.047-0.076-0.074 -0.026-0.033-0.049-0.048-0.073-0.075 -0.025-0.024-0.045-0.046-0.078-0.071 -0.021-0.037-0.047-0.049-0.07-0.074s-0.043-0.049-0.08-0.073c-0.021-0.037-0.045-0.052-0.068-0.075 -0.024-0.027-0.045-0.052-0.078-0.078 -0.026-0.033-0.047-0.049-0.071-0.074 -0.029-0.024-0.041-0.049-0.078-0.07 -0.022-0.039-0.047-0.055-0.076-0.079 -0.024-0.024-0.041-0.05-0.073-0.073 -0.025-0.035-0.05-0.052-0.076-0.076 -0.023-0.025-0.041-0.051-0.072-0.076 -0.027-0.033-0.049-0.047-0.072-0.074 -0.027-0.023-0.045-0.047-0.08-0.071 -0.023-0.035-0.045-0.054-0.068-0.077 -0.029-0.023-0.045-0.05-0.08-0.072 -0.024-0.035-0.047-0.053-0.074-0.076 -0.024-0.024-0.04-0.047-0.071-0.07 -0.022-0.041-0.051-0.055-0.078-0.084 -0.024-0.023-0.041-0.045-0.073-0.07 -0.025-0.033-0.047-0.048-0.074-0.072 -0.023-0.026-0.043-0.053-0.08-0.078 -0.021-0.033-0.045-0.045-0.066-0.069 -0.025-0.028-0.043-0.056-0.08-0.078 -0.023-0.035-0.047-0.051-0.07-0.075 -0.026-0.025-0.045-0.05-0.078-0.074 -0.024-0.033-0.045-0.051-0.071-0.074 -0.024-0.024-0.045-0.047-0.074-0.072 -0.024-0.041-0.053-0.053-0.078-0.079 -0.026-0.024-0.043-0.048-0.073-0.073 -0.025-0.035-0.052-0.05-0.076-0.074 -0.023-0.026-0.041-0.051-0.072-0.076 -0.025-0.037-0.053-0.051-0.078-0.077 -0.027-0.024-0.045-0.05-0.076-0.07 -0.023-0.038-0.047-0.051-0.07-0.077 -0.026-0.025-0.043-0.048-0.076-0.072 -0.024-0.035-0.049-0.051-0.073-0.078 -0.024-0.024-0.045-0.047-0.078-0.07 -0.021-0.038-0.047-0.053-0.071-0.079 -0.024-0.024-0.041-0.05-0.078-0.071 -0.023-0.037-0.047-0.05-0.071-0.076 -0.026-0.026-0.044-0.053-0.079-0.076 -0.021-0.034-0.046-0.047-0.07-0.071 -0.023-0.026-0.045-0.052-0.08-0.074 -0.023-0.038-0.045-0.053-0.068-0.079 -0.028-0.023-0.047-0.048-0.08-0.074 -0.022-0.033-0.045-0.049-0.069-0.072 -0.026-0.026-0.047-0.049-0.08-0.076 -0.024-0.034-0.045-0.051-0.069-0.075 -0.028-0.024-0.043-0.052-0.08-0.071 -0.023-0.037-0.045-0.049-0.068-0.078 -0.029-0.024-0.047-0.049-0.08-0.076 -0.023-0.032-0.045-0.047-0.07-0.071 -0.027-0.026-0.047-0.049-0.078-0.073 -0.024-0.037-0.047-0.054-0.07-0.078 -0.028-0.023-0.045-0.045-0.079-0.07 -0.025-0.039-0.05-0.055-0.074-0.082 -0.024-0.023-0.043-0.045-0.076-0.066 -0.024-0.037-0.045-0.053-0.069-0.076 -0.025-0.027-0.047-0.055-0.08-0.078 -0.023-0.033-0.049-0.049-0.073-0.074 -0.024-0.024-0.042-0.051-0.075-0.075 -0.023-0.033-0.047-0.05-0.07-0.074 -0.029-0.026-0.047-0.051-0.078-0.073 -0.024-0.039-0.051-0.052-0.076-0.076 -0.022-0.023-0.021-0.004-0.055-0.023 -0.023-0.035-0.047-0.051-0.074-0.08 -0.026-0.023-0.043-0.047-0.078-0.068 -0.024-0.039-0.047-0.053-0.071-0.076 -0.022-0.024-0.045-0.049-0.078-0.076 -0.024-0.034-0.047-0.049-0.069-0.075 -0.025-0.026-0.047-0.052-0.08-0.076 -0.023-0.034-0.045-0.051-0.07-0.075 -0.029-0.025-0.044-0.05-0.078-0.074 -0.025-0.037-0.047-0.053-0.07-0.08 -0.025-0.023-0.043-0.047-0.074-0.07 -0.025-0.037-0.051-0.055-0.078-0.08 -0.024-0.025-0.043-0.047-0.076-0.072 -0.024-0.037-0.051-0.051-0.075-0.078 -0.022-0.025-0.041-0.051-0.074-0.072 -0.024-0.037-0.049-0.051-0.073-0.078 -0.025-0.024-0.043-0.049-0.076-0.073 -0.023-0.035-0.045-0.052-0.072-0.076s-0.044-0.049-0.076-0.073c-0.025-0.037-0.051-0.052-0.076-0.078 -0.023-0.023-0.041-0.049-0.074-0.072 -0.023-0.035-0.045-0.053-0.069-0.076 -0.029-0.023-0.046-0.051-0.079-0.076 -0.023-0.033-0.049-0.049-0.073-0.072 -0.024-0.027-0.048-0.049-0.084-0.074 -0.024-0.034-0.051-0.051-0.075-0.077 -0.025-0.024-0.041-0.051-0.074-0.073 -0.024-0.035-0.049-0.051-0.076-0.076 -0.023-0.025-0.038-0.049-0.073-0.074 -0.024-0.037-0.048-0.053-0.075-0.079 -0.023-0.025-0.041-0.05-0.076-0.074 -0.022-0.036-0.049-0.051-0.076-0.077 -0.022-0.026-0.043-0.049-0.074-0.075 -0.022-0.034-0.047-0.049-0.071-0.074 -0.026-0.026-0.044-0.052-0.078-0.077 -0.021-0.034-0.047-0.049-0.071-0.075 -0.024-0.025-0.043-0.051-0.076-0.077C54.533 31.595 54.514 31.578 54.486 31.554z\'/></g><path fill=\'#F5D76E\' d=\'M21.928 21.962c1.649-0.953 3.424-1.482 5.203-1.649 -2.801 3.955-3.233 9.332-0.654 13.8 2.581 4.47 7.453 6.783 12.279 6.334 -1.031 1.461-2.379 2.73-4.031 3.687 -6.121 3.533-13.953 1.437-17.483-4.684C13.708 33.329 15.808 25.498 21.928 21.962zM45.759 29.463c-0.263-0.867-0.7-0.867-0.967 0 -0.271 0.869-1.196 1.798-2.063 2.063 -0.871 0.267-0.871 0.708 0 0.975 0.867 0.267 1.791 1.194 2.063 2.065 0.267 0.867 0.704 0.867 0.967 0 0.271-0.871 1.199-1.799 2.063-2.065 0.869-0.267 0.869-0.708 0-0.975C46.958 31.261 46.029 30.333 45.759 29.463zM41.491 18.799c-0.263-0.867-0.699-0.867-0.966 0 -0.271 0.869-1.196 1.798-2.063 2.063 -0.871 0.267-0.871 0.708 0 0.975 0.866 0.267 1.791 1.195 2.063 2.063 0.267 0.866 0.703 0.866 0.966 0 0.271-0.869 1.2-1.799 2.063-2.063 0.869-0.267 0.869-0.708 0-0.975C42.691 20.595 41.764 19.667 41.491 18.799zM35.092 27.33c-0.263-0.867-0.699-0.867-0.967 0 -0.271 0.869-1.197 1.798-2.063 2.065 -0.87 0.267-0.87 0.706 0 0.975 0.866 0.265 1.793 1.195 2.063 2.064 0.268 0.866 0.704 0.866 0.967 0 0.271-0.869 1.2-1.799 2.063-2.064 0.871-0.269 0.871-0.708 0-0.975C36.292 29.128 35.361 28.199 35.092 27.33z\'/></svg>'}}),'sunny':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_6_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'12.267\' y=\'12.268\' width=\'51.471\' height=\'51.473\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'12.267\' y=\'12.268\' width=\'51.471\' height=\'51.473\' id=\'_x3C_Tracciato_x3E__2_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_1_\' cx=\'70.7803\' cy=\'590.999\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 1 -41.9805 -562.1992)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.2394\' stop-color=\'#B2B2B2\'/><stop offset=\'0.496\' stop-color=\'#676767\'/><stop offset=\'0.7089\' stop-color=\'#2F2F2F\'/><stop offset=\'0.8666\' stop-color=\'#0D0D0D\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_1_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g id=\'_x3C_Tracciato_x3E_\' opacity=\'0.2\' mask=\'url(#_x3C_Tracciato_x3E__2_)\'><path d=\'M36.018 63.721l0.004-0.017 -0.188 0.037 0.038-0.188 -0.188 0.038 0.039-0.188 -0.189 0.037 0.037-0.188 -0.188 0.038 0.037-0.188 -0.188 0.037 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.038 0.036-0.188 -0.188 0.037 0.041-0.188 -0.189 0.04 0.037-0.188 -0.188 0.037 0.037-0.188 -0.188 0.036 0.038-0.188 -0.188 0.04 0.036-0.188 -0.188 0.037 0.039-0.188 -0.188 0.038 0.037-0.189 -0.188 0.039 0.037-0.188 -0.188 0.037 0.037-0.191 -0.188 0.04 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.038 0.037-0.188 -0.188 0.037 0.039-0.189 -0.188 0.039 0.038-0.188 -0.188 0.04 0.037-0.191 -0.189 0.039 0.039-0.188 -0.188 0.04 0.038-0.188 -0.188 0.039 0.039-0.189 -0.188 0.037 0.038-0.19 -0.188 0.04 0.038-0.188 -0.188 0.039 0.049-0.186 -0.216 0.021 0.039-0.188 -0.188 0.038 0.039-0.188 -0.188 0.037 0.038-0.189 -0.188 0.039 0.039-0.188 -0.188 0.037 0.039-0.188 -0.188 0.037 0.039-0.189 -0.19 0.04 0.039-0.188 -0.188 0.037 0.039-0.188 -0.188 0.037 0.039-0.189 -0.188 0.04 0.039-0.188 -0.188 0.037 0.038-0.19 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.189 -0.203 0.029 0.039-0.188 -0.19 0.037 0.039-0.191 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.191 -0.188 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.04 0.039-0.192 -0.188 0.039 0.038-0.189 -0.188 0.039 0.039-0.188 -0.188 0.04 0.039-0.19 -0.188 0.037 0.024-0.191 -0.188 0.037 0.039-0.191L27.4 55.297l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.037 0.038-0.188 -0.188 0.037 0.039-0.188 -0.188 0.038 0.039-0.188 -0.188 0.037 0.038-0.191L26.5 54.402l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.192 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.189 -0.189 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.191 -0.188 0.039 0.039-0.189 -0.188 0.041 0.038-0.189 -0.189 0.037 0.039-0.188L24.708 52.6l0.039-0.188 -0.188 0.04 0.037-0.188 -0.188 0.039 0.039-0.191L24.26 52.15l0.039-0.188 -0.189 0.04 0.039-0.189 -0.188 0.037L24 51.662 23.813 51.7l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.19 -0.189 0.038 0.039-0.188 -0.189 0.039 0.039-0.189 -0.189 0.038 0.039-0.188L22.917 50.8l0.038-0.188 -0.188 0.041 0.039-0.189L22.618 50.5l0.039-0.188 -0.186 0.037 0.038-0.188L22.321 50.2l0.039-0.188 -0.188 0.039 0.039-0.189L22.022 49.9l0.039-0.188 -0.188 0.038 0.039-0.188L21.724 49.6l0.039-0.188 -0.189 0.038 0.039-0.188L21.425 49.3l0.039-0.188 -0.188 0.039 0.039-0.188L21.126 49l0.039-0.188 -0.188 0.037 0.039-0.188L20.828 48.7l0.038-0.188 -0.188 0.038 0.039-0.188L20.529 48.4l0.039-0.188 -0.189 0.038 0.038-0.188L20.23 48.1l0.039-0.188 -0.188 0.04 0.039-0.188L19.931 47.8l0.039-0.188 -0.188 0.039 0.039-0.188L19.633 47.5l0.039-0.188 -0.187 0.037 0.039-0.188L19.336 47.2l0.039-0.188 -0.187 0.038 0.039-0.188L19.038 46.9l0.039-0.188 -0.188 0.038 0.039-0.188L18.74 46.6l0.037-0.188 -0.188 0.04 0.039-0.188L18.44 46.3l0.039-0.19 -0.188 0.039 0.039-0.188 -0.281-0.004 0.753-3.772 0.303 0.303 0.149 0.147 0.604 0.604 0.452 0.449 2.109 2.112 0.905 0.904h0.002l0.902 0.903 0.303 0.303 0.904 0.904 0.002 0.002 0.905 0.904 0.904 0.903 0.303 0.304 0.904 0.904 0.301 0.301 0.303 0.305 0.301 0.299 1.657 1.658 0.904 0.904 0.454 0.454 0.451 0.45 0.902 0.904 0.307 0.307 0.599 0.598 0.304 0.305 0.002 0.002 0.602 0.601 0.302 0.302 0.002 0.004 0.753 0.75 0.153 0.154 0.752 0.752 0.151 0.152 0.303 0.302 0.148 0.147 0.301 0.303 0.152 0.152 0.303 0.301 0.449 0.453 0.307 0.305 0.055 0.054C38.467 63.333 37.256 63.564 36.018 63.721zM12.417 32.153l0.189 0.126 -0.039 0.025 0.188 0.127 -0.039 0.024 0.188 0.126 -0.039 0.026 0.188 0.125 -0.039 0.025 0.188 0.126 -0.039 0.025 0.188 0.125 -0.038 0.026 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.024 0.188 0.127 -0.039 0.025 0.188 0.127 -0.039 0.024 0.188 0.125 -0.025 0.017 0.188 0.127 -0.039 0.023 0.188 0.125 -0.039 0.025 0.188 0.125 -0.034 0.027 0.188 0.125 -0.039 0.023 0.188 0.127 -0.038 0.023 0.189 0.131 -0.041 0.023 0.188 0.125 -0.039 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.041 0.023 0.188 0.127 -0.039 0.027 0.188 0.125 -0.038 0.025 0.189 0.129 -0.041 0.024 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.025 0.188 0.125 -0.032 0.035 0.188 0.127 -0.038 0.024 0.19 0.128 -0.041 0.025 0.188 0.125 -0.019 0.006 0.188 0.125 -0.039 0.023 0.189 0.126 -0.041 0.029 0.188 0.125 -0.039 0.024 0.188 0.125 -0.039 0.024 0.19 0.13 -0.04 0.023 0.188 0.128 -0.039 0.024 0.188 0.127 -0.039 0.025 0.19 0.125 -0.041 0.027 0.188 0.125 -0.039 0.025 0.188 0.125 -0.039 0.027 0.191 0.127 -0.041 0.025 0.188 0.127 -0.037 0.029 0.19 0.129 -0.023 0.008 0.188 0.127 -0.037 0.021 0.188 0.128 -0.035 0.025 0.189 0.128L19.2 38.938l0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.026 0.189 0.125 -0.041 0.026 0.188 0.127 -0.039 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.037 0.025 0.188 0.125 -0.038 0.027 0.188 0.127 -0.038 0.025 0.189 0.125 -0.041 0.029 0.188 0.125 -0.038 0.023 0.188 0.125 -0.039 0.027 0.189 0.127 -0.023 0.01 0.188 0.127 -0.039 0.023 0.188 0.129 -0.039 0.025 0.188 0.127 -0.036 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.04 0.024 0.188 0.125 -0.039 0.024 0.188 0.127 -0.039 0.027 0.191 0.125 -0.041 0.026 0.188 0.127 -0.039 0.024 0.188 0.125 -0.038 0.025 0.19 0.129 -0.039 0.024 0.188 0.125 -0.039 0.026 0.189 0.132 -0.035 0.024 0.188 0.125 -0.039 0.024L23.296 43l-0.041 0.029 0.188 0.125 -0.038 0.023 0.189 0.131 -0.039 0.023 0.188 0.127 -0.039 0.025 0.191 0.127 -0.038 0.029 0.188 0.127 -0.039 0.024 0.188 0.125 -0.036 0.024 0.19 0.129 -0.041 0.025 0.188 0.125 -0.039 0.024 0.189 0.127L24.608 44.4l0.188 0.125 -0.039 0.024 0.189 0.125 -0.041 0.029 0.188 0.125 -0.039 0.024 0.189 0.129 -0.038 0.025 0.188 0.125 -0.036 0.027 0.188 0.127 -0.039 0.025 0.188 0.125 -0.039 0.024 0.19 0.127 -0.041 0.026 0.188 0.125 -0.039 0.027 0.189 0.127 -0.039 0.024 0.189 0.127 -0.039 0.026 0.188 0.125 -0.039 0.025 0.189 0.129 -0.038 0.024 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.025 0.188 0.125 -0.039 0.026 0.188 0.128 -0.039 0.023 0.188 0.125L27.3 47.133l0.19 0.125 -0.041 0.029 0.188 0.125 -0.039 0.023 0.189 0.131L27.75 47.59l0.188 0.127 -0.039 0.025 0.188 0.127L28.053 47.9l0.188 0.125 -0.038 0.023 0.189 0.127 -0.041 0.027 0.188 0.125L28.5 48.355l0.191 0.127 -0.039 0.024 0.188 0.127 -0.039 0.026 0.188 0.125 -0.039 0.025 0.19 0.129 -0.039 0.024 0.188 0.125 -0.039 0.024 0.19 0.13 -0.038 0.024 0.188 0.125 -0.039 0.026 0.188 0.127L29.7 49.57l0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.024 0.189 0.127 -0.039 0.026 0.191 0.127L30.3 50.178l0.188 0.127 -0.039 0.027 0.188 0.125 -0.038 0.023 0.188 0.125 -0.039 0.025 0.19 0.127 -0.041 0.027 0.188 0.125 -0.038 0.025 0.189 0.129 -0.039 0.025 0.188 0.125 -0.039 0.027 0.188 0.125L31.501 51.4l0.189 0.129 -0.039 0.023 0.179 0.121 0.004 0.01 -0.033 0.021 0.089 0.06 0.108-0.029 0.019-0.029 0.021 0.014 0.006 0.01L32.01 51.75l0.09 0.059 0.049 0.075 0.021-0.028 0.022 0.017 0.004 0.004L32.162 51.9l0.09 0.058 0.049 0.075 0.02-0.029 0.02 0.016 0.004 0.006L32.31 52.05l0.089 0.058 0.052 0.076 0.02-0.029 0.021 0.016 0.004 0.006L32.461 52.2l0.089 0.056 0.054 0.077 0.019-0.028 0.017 0.008 0.008 0.014 -0.035 0.021 0.089 0.057 0.053 0.08 0.021-0.031 0.021 0.016 0.004 0.008L32.76 52.5l0.092 0.059 0.049 0.075 0.021-0.028 0.021 0.015 0.004 0.006 -0.032 0.024 0.09 0.057 0.052 0.077 0.02-0.029 0.017 0.009 0.009 0.014 -0.029 0.027 0.09 0.059 0.052 0.076 0.021-0.029 0.021 0.018 0.002 0.004 -0.035 0.024 0.092 0.06 0.051 0.074 0.017-0.029 0.021 0.014 0.008 0.01 -0.036 0.023 0.092 0.061 0.048 0.074 0.021-0.031 0.024 0.018v0.006l-0.033 0.022 0.09 0.062 0.048 0.072 0.021-0.029 0.02 0.018 0.005 0.004 -0.036 0.025 0.092 0.059 0.051 0.074 0.021-0.027 0.021 0.014 0.004 0.007 -0.032 0.024 0.088 0.057 0.052 0.076 0.02-0.028 0.021 0.013 0.004 0.012 -0.032 0.021 0.09 0.061 0.047 0.074 0.021-0.029 0.022 0.017 0.003 0.004 -0.036 0.024 0.092 0.063 0.048 0.07 0.021-0.029 0.02 0.015 0.006 0.008 -0.033 0.023 0.082 0.057 0.056 0.08 0.021-0.031 0.018 0.011 0.009 0.013 -0.035 0.022 0.089 0.06 0.051 0.073 0.02-0.028 0.021 0.018 0.004 0.004 -0.034 0.023 0.092 0.06 0.048 0.075 0.021-0.029 0.02 0.014 0.006 0.012 -0.033 0.021 0.088 0.059 0.051 0.078 0.021-0.029 0.021 0.013 0.005 0.008 -0.025 0.031 0.092 0.06 0.049 0.076 0.019-0.031 0.025 0.018 0.004 0.006 -0.037 0.023 0.091 0.063 0.051 0.07 0.02-0.029 0.02 0.018 0.006 0.004 -0.035 0.024 0.088 0.06 0.054 0.078 0.021-0.033 0.02 0.016 0.006 0.01 -0.033 0.021 0.088 0.059 0.051 0.077 0.019-0.03 0.022 0.014 0.005 0.011 -0.035 0.022 0.091 0.062 0.048 0.069 0.021-0.023 0.021 0.012 0.005 0.01 -0.033 0.021 0.09 0.057 0.029 0.066 0.017-0.031 0.024 0.016 0.004 0.008 -0.037 0.021 0.092 0.063 0.051 0.072 0.021-0.031 0.021 0.018 0.005 0.006 -0.038 0.027 0.097 0.061 0.045 0.068 0.02-0.025 0.023 0.014 0.004 0.009 -0.035 0.022 0.09 0.057 0.051 0.079 0.016-0.031 0.022 0.015 0.005 0.008 -0.035 0.021 0.092 0.059 0.048 0.076 0.021-0.031 0.023 0.018 0.004 0.008 -0.033 0.021 0.086 0.059 0.053 0.075 0.019-0.028 0.019 0.012 0.01 0.013 -0.035 0.022 0.089 0.058 0.051 0.079 0.017-0.031 0.022 0.016 0.004 0.008 -0.034 0.021 0.092 0.06 0.047 0.076 0.02-0.029 0.021 0.016 0.008 0.007 -0.033 0.022 0.083 0.059 0.056 0.079 0.021-0.033 0.017 0.013 0.01 0.012 -0.035 0.023 0.089 0.057 0.05 0.078 0.02-0.03 0.022 0.015 0.004 0.01 -0.037 0.021 0.093 0.063 0.049 0.074 0.021-0.031 0.021 0.016L37.324 57l-0.035 0.025 0.092 0.059 0.046 0.072 0.019-0.026 0.022 0.013 0.005 0.008 -0.035 0.023 0.09 0.057 0.05 0.078 0.019-0.029 0.023 0.014 0.004 0.01 -0.035 0.02 0.092 0.064 0.049 0.074 0.021-0.031 0.019 0.016 0.008 0.006 -0.033 0.023 0.083 0.057 0.054 0.08 0.021-0.033 0.017 0.013 0.008 0.013 -0.034 0.022 0.09 0.06 0.049 0.076 0.02-0.029 0.023 0.014 0.006 0.008 -0.035 0.025 0.092 0.059 0.047 0.075 0.021-0.029 0.021 0.013 0.006 0.008 -0.035 0.025 0.089 0.057 0.05 0.076 0.021-0.028 0.021 0.013 0.004 0.01 -0.035 0.023 0.091 0.057 0.049 0.077 0.02-0.028 0.023 0.012 0.004 0.009 -0.035 0.022 0.091 0.062 0.048 0.073 0.021-0.03 0.019 0.015 0.007 0.01 -0.033 0.023 0.088 0.059 0.033 0.061 0.021-0.029 0.021 0.014 0.004 0.008 -0.033 0.025 0.088 0.057 0.066 0.094 0.02-0.029 0.027 0.016v0.006l-0.033 0.023 0.089 0.058 0.048 0.077 0.021-0.029 0.017 0.009 0.008 0.013 -0.032 0.024 0.088 0.06 0.049 0.074 0.021-0.029 0.021 0.014 0.004 0.008 -0.033 0.025 0.087 0.057 0.052 0.076 0.021-0.028 0.021 0.015 0.004 0.006 -0.033 0.025 0.09 0.057 0.051 0.076 0.02-0.028 0.02 0.009 0.006 0.014 -0.033 0.021 0.086 0.057 0.053 0.079 0.021-0.03 0.021 0.014 0.008 0.009 -0.035 0.024 0.091 0.059 0.048 0.074 0.02-0.028 0.021 0.015 0.01 0.01 -0.039 0.021 0.092 0.061 0.049 0.074 0.02-0.029 0.024 0.017 0.004 0.004 -0.037 0.024 0.093 0.064 0.049 0.069 0.02-0.028 0.021 0.018 0.004 0.004 -0.035 0.025 0.092 0.063 0.048 0.07 0.019-0.029 0.021 0.016 0.004 0.006 -0.033 0.024 0.088 0.058 0.053 0.078 0.021-0.031 0.019 0.008 0.006 0.016 -0.033 0.023 0.089 0.058 0.048 0.075 0.021-0.029 0.021 0.014 0.006 0.008 -0.035 0.024 0.088 0.056 0.05 0.078 0.021-0.031 0.021 0.016 0.008 0.01 -0.037 0.023 0.092 0.061 0.049 0.072 0.019-0.027 0.021 0.012 0.004 0.011 -0.032 0.022 0.09 0.059 0.048 0.074 0.021-0.028 0.021 0.013 0.005 0.01 -0.033 0.023 0.09 0.059 0.048 0.076 0.021-0.029 0.021 0.015 0.007 0.01 -0.035 0.021 0.091 0.063 0.049 0.072 0.02-0.031 0.023 0.017v0.008l-0.033 0.021 0.091 0.059 0.048 0.076 0.021-0.029 0.022 0.017 0.004 0.005 -0.032 0.024 0.086 0.06 0.053 0.073 0.018-0.028 0.021 0.01 0.007 0.016 -0.036 0.021 0.092 0.058 0.049 0.077 0.019-0.031 0.024 0.018 0.004 0.006 -0.037 0.022 0.093 0.063 0.05 0.07 0.02-0.029 0.022 0.018 0.004 0.004 -0.035 0.025 0.089 0.058 0.051 0.075 0.018-0.029 0.021 0.014 0.006 0.008 -0.035 0.025 0.088 0.059 0.052 0.076 0.022-0.03 0.018 0.011 0.004 0.012 -0.033 0.023 0.092 0.059 0.049 0.077 0.02-0.03 0.023 0.017 0.005 0.008 -0.036 0.022 0.082 0.053c9.217-3.204 16.504-10.487 19.708-19.706l-0.009-0.004 -0.053-0.08 -0.021 0.03 -0.018-0.01 -0.004-0.011 0.033-0.022 -0.086-0.059 -0.052-0.076 -0.022 0.028 -0.02-0.013 -0.009-0.008 0.038-0.025 -0.092-0.059 -0.051-0.076 -0.017 0.029 -0.026-0.017 -0.003-0.004 0.037-0.024 -0.092-0.063 -0.05-0.07 -0.021 0.029 -0.017-0.015 -0.009-0.008 0.037-0.023 -0.09-0.059L61.525 41.8l-0.021 0.029 -0.018-0.013 -0.008-0.008 0.037-0.025 -0.092-0.063 -0.05-0.07 -0.017 0.027 -0.021-0.012 -0.007-0.01 0.034-0.023 -0.086-0.059 -0.053-0.077 -0.022 0.028 -0.021-0.014 -0.006-0.005 0.038-0.024 -0.092-0.06 -0.05-0.077 -0.021 0.031 -0.017-0.014 -0.009-0.008 0.037-0.024 -0.092-0.058 -0.05-0.076 -0.019 0.029 -0.02-0.013 -0.007-0.009 0.036-0.023 -0.088-0.06 -0.053-0.079 -0.022 0.033 -0.017-0.016 -0.008-0.008 0.037-0.023 -0.093-0.063 -0.05-0.072 -0.02 0.03 -0.022-0.017 -0.004-0.006 0.036-0.022 -0.09-0.063 -0.052-0.07 -0.019 0.029 -0.02-0.014 -0.006-0.008 0.033-0.025 -0.086-0.059 -0.055-0.079 -0.021 0.033 -0.019-0.015 -0.006-0.008 0.037-0.023 -0.093-0.061 -0.05-0.074 -0.02 0.031 -0.021-0.018L60.12 40.45l0.036-0.022 -0.09-0.059 -0.051-0.075 -0.02 0.028 -0.021-0.012 -0.006-0.008 0.035-0.025 -0.09-0.059 -0.051-0.08 -0.021 0.031 -0.02-0.012 -0.007-0.012 0.037-0.021 -0.09-0.063 -0.052-0.072 -0.021 0.031 -0.021-0.018 -0.005-0.007 0.038-0.022 -0.092-0.063 -0.051-0.071 -0.019 0.029 -0.022-0.017 -0.004-0.004 0.034-0.025 -0.09-0.059 -0.05-0.078 -0.021 0.031 -0.019-0.016 -0.007-0.006 0.037-0.023 -0.092-0.059 -0.05-0.077 -0.021 0.03 -0.018-0.014 -0.008-0.009 0.033-0.022 -0.088-0.06 -0.051-0.073 -0.019 0.027L59.066 39.4l-0.004-0.004 0.035-0.023 -0.09-0.059 -0.051-0.08 -0.021 0.031 -0.018-0.015 -0.007-0.009 0.038-0.021 -0.092-0.063 -0.051-0.073 -0.021 0.028L58.77 39.1l-0.008-0.006 0.032-0.023 -0.083-0.059 -0.055-0.078 -0.021 0.032 -0.017-0.013 -0.009-0.01 0.035-0.023 -0.086-0.059 -0.054-0.08 -0.021 0.033 -0.02-0.017 -0.006-0.009 0.037-0.021 -0.092-0.063 -0.051-0.075 -0.021 0.031 -0.024-0.017 -0.002-0.004 0.034-0.022 -0.092-0.063 -0.048-0.072 -0.02 0.031 -0.021-0.018 -0.009-0.008 0.039-0.023 -0.096-0.063 -0.043-0.069 -0.021 0.024 -0.022-0.012 -0.004-0.009 0.035-0.024 -0.092-0.063 -0.05-0.069 -0.018 0.027 -0.021-0.016 -0.006-0.006 0.035-0.024 -0.088-0.056 -0.053-0.08 -0.021 0.031 -0.018-0.015L57.7 38.035l0.038-0.021 -0.09-0.062 -0.053-0.075 0.004 0.048 -0.017-0.013 -0.008-0.008 0.036-0.025L57.52 37.82l-0.049-0.074 -0.018 0.029 -0.021-0.014 -0.007-0.009 0.036-0.024 -0.088-0.057 -0.053-0.078L57.3 37.625l-0.017-0.016 -0.008-0.006 0.037-0.022 -0.092-0.062 -0.051-0.074 -0.021 0.029 -0.017-0.013 -0.009-0.009 0.035-0.025 -0.09-0.058 -0.051-0.075 -0.017 0.029 -0.021-0.012 -0.006-0.01 0.034-0.025 -0.088-0.059 -0.052-0.076 -0.023 0.03 -0.017-0.015L56.82 37.15l0.037-0.023 -0.092-0.061 -0.05-0.074 -0.019 0.031 -0.023-0.018 -0.004-0.005 0.035-0.024 -0.087-0.059 -0.052-0.074 -0.021 0.028 -0.021-0.013 -0.006-0.008 0.037-0.025 -0.093-0.059 -0.05-0.078L56.4 36.723l-0.018-0.013 -0.015-0.017 0.034-0.022 -0.092-0.063 -0.047-0.072 -0.02 0.031 -0.021-0.018 -0.004-0.006 0.035-0.023 -0.089-0.061 -0.052-0.076 -0.021 0.028L56.073 36.4l-0.005-0.006 0.035-0.023 -0.09-0.059 -0.052-0.08 -0.021 0.031 -0.018-0.013 -0.006-0.011 0.035-0.021 -0.092-0.061 -0.049-0.075 -0.019 0.03L55.775 36.1l-0.006-0.006 0.033-0.021 -0.089-0.059 -0.05-0.076 -0.02 0.029 -0.021-0.013 -0.004-0.009 0.033-0.024 -0.09-0.06 -0.049-0.074 -0.021 0.029L55.475 35.8l-0.006-0.008 0.035-0.021 -0.092-0.063 -0.049-0.071 -0.018 0.03 -0.021-0.017 -0.004-0.008 0.033-0.021 -0.086-0.059 -0.055-0.08 -0.021 0.033 -0.019-0.013 -0.004-0.008 0.033-0.024 -0.085-0.06 -0.053-0.079 -0.022 0.033 -0.019-0.018 -0.008-0.008 0.035-0.021L54.96 35.26l-0.048-0.076 -0.02 0.028L54.875 35.2l-0.009-0.007 0.038-0.022 -0.092-0.062 -0.051-0.076 -0.021 0.029 -0.017-0.01 -0.009-0.012 0.037-0.023 -0.092-0.061 -0.05-0.074 -0.02 0.031L54.573 34.9l-0.005-0.01 0.035-0.021 -0.092-0.063 -0.05-0.074 -0.017 0.031 -0.021-0.016 -0.006-0.006 0.035-0.023 -0.088-0.059 -0.053-0.079 -0.021 0.032L54.275 34.6l-0.01-0.008 0.027-0.031L54.202 34.5l-0.05-0.075 -0.02 0.029 -0.021-0.013 -0.004-0.008 0.035-0.023 -0.092-0.061 -0.048-0.074 -0.021 0.031 -0.021-0.016 -0.005-0.01 0.032-0.02 -0.086-0.06 -0.051-0.077 -0.021 0.031 -0.021-0.016 -0.004-0.01 0.032-0.025L53.75 34.05l-0.048-0.077 -0.019 0.031 -0.021-0.013 -0.004-0.009 0.033-0.021 -0.088-0.06 -0.051-0.078 -0.021 0.031 -0.018-0.012 -0.006-0.013 0.033-0.021 -0.088-0.063 -0.051-0.075 -0.021 0.029 -0.019-0.012 -0.008-0.01 0.033-0.021 -0.088-0.058 -0.05-0.08L53.23 33.55l-0.021-0.012 -0.005-0.009 0.036-0.022 -0.092-0.062L53.1 33.371 53.079 33.4l-0.024-0.018 -0.002-0.004 0.035-0.021L53 33.3l-0.05-0.075 -0.017 0.029 -0.021-0.014 -0.006-0.008 0.035-0.024 -0.092-0.062 -0.049-0.074L52.783 33.1l-0.021-0.012 -0.004-0.005 0.035-0.022 -0.092-0.062 -0.049-0.075 -0.021 0.027 -0.021-0.014 -0.006-0.008 0.033-0.021 -0.082-0.06 -0.056-0.08 -0.021 0.031 -0.021-0.012 -0.007-0.01 0.034-0.023L52.4 32.695l-0.049-0.074 -0.02 0.027 -0.021-0.016 -0.004-0.005 0.033-0.022 -0.09-0.061 -0.048-0.076 -0.021 0.029 -0.023-0.015 -0.006-0.006 0.037-0.024 -0.09-0.06 -0.05-0.074 -0.017 0.027 -0.021-0.014 -0.006-0.006 0.036-0.023 -0.092-0.061 -0.048-0.076 -0.02 0.029 -0.021-0.012 -0.008-0.009 0.037-0.024 -0.09-0.059 -0.05-0.075 -0.019 0.03 -0.021-0.013 -0.005-0.009 0.022-0.025 -0.09-0.06 -0.05-0.077 -0.019 0.03 -0.023-0.016 -0.111-0.167 -0.025 0.037 -0.125-0.188 -0.023 0.041 -0.13-0.189 -0.024 0.039 -0.121-0.191 -0.024 0.037 -0.128-0.188 -0.021 0.039 -0.129-0.188 -0.025 0.038 -0.125-0.188 -0.027 0.036 -0.125-0.188 -0.025 0.039 -0.121-0.19 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.129-0.188 -0.023 0.039 -0.125-0.188 -0.025 0.039 -0.129-0.188L49.6 29.944l-0.125-0.188 -0.023 0.039 -0.129-0.19 -0.025 0.039 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.024 0.039 -0.13-0.189 -0.023 0.039 -0.125-0.188 -0.025 0.037 -0.129-0.189 -0.024 0.037 -0.125-0.188 -0.024 0.037 -0.128-0.189 -0.026 0.039 -0.125-0.188 -0.024 0.039 -0.129-0.188 -0.024 0.037L47.8 28.1l-0.024 0.041 -0.129-0.189 -0.024 0.039 -0.125-0.188 -0.026 0.038 -0.128-0.188 -0.024 0.037 -0.125-0.188 -0.024 0.039 -0.13-0.188 -0.023 0.037 -0.127-0.19 -0.027 0.039 -0.127-0.19 -0.025 0.038 -0.127-0.188 -0.023 0.039L46.43 26.75l-0.023 0.037 -0.125-0.188 -0.025 0.037 -0.129-0.188L46.1 26.485l-0.127-0.188 -0.023 0.039 -0.127-0.19 -0.027 0.039 -0.125-0.188 -0.027 0.039 -0.125-0.189 -0.024 0.039 -0.13-0.189 -0.023 0.037 -0.125-0.188 -0.025 0.035 -0.127-0.188 -0.026 0.039 -0.127-0.188 -0.028 0.036 -0.127-0.188 -0.023 0.035 -0.127-0.187 -0.024 0.039 -0.129-0.187 -0.025 0.037L44.3 24.64l-0.026 0.039 -0.127-0.189 -0.024 0.038 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.024 0.037 -0.125-0.188 -0.024 0.039 -0.13-0.188 -0.023 0.036 -0.127-0.188 -0.029 0.037 -0.127-0.189 -0.026 0.038 -0.127-0.188 -0.024 0.037 -0.125-0.188 -0.025 0.036 -0.125-0.188 -0.026 0.038 -0.127-0.188L42.6 23.021l-0.127-0.188 -0.025 0.039 -0.129-0.191 -0.024 0.039 -0.127-0.188 -0.024 0.037 -0.125-0.189 -0.025 0.039 -0.129-0.188 -0.025 0.039 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.024 0.039 -0.127-0.188 -0.028 0.039 -0.125-0.188 -0.023 0.035 -0.127-0.187 -0.026 0.039 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.024 0.036 -0.127-0.188 -0.024 0.039 -0.13-0.188 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.127-0.188 -0.024 0.039 -0.128-0.188 -0.025 0.039 -0.125-0.188 -0.029 0.038 -0.127-0.19 -0.024 0.039 -0.127-0.189 -0.024 0.039 -0.125-0.188 -0.025 0.039 -0.129-0.19 -0.025 0.036 -0.127-0.188 -0.025 0.036 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.025 0.038 -0.014-0.214 -0.024 0.035 -0.125-0.188 -0.024 0.039 -0.127-0.187 -0.028 0.039L38.323 18.6l-0.025 0.035 -0.127-0.188 -0.024 0.039 -0.129-0.188 -0.025 0.039 -0.125-0.188 -0.024 0.037 -0.125-0.188 -0.026 0.039 -0.127-0.189 -0.025 0.039 -0.129-0.189 -0.016 0.035 -0.125-0.188 -0.021 0.039 -0.127-0.191 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.125-0.188 -0.024 0.038 -0.129-0.19 -0.024 0.039 -0.125-0.188 -0.025 0.037 -0.123-0.188 -0.025 0.039 -0.127-0.189 -0.027 0.036 -0.127-0.188 -0.024 0.039 -0.128-0.189 -0.026 0.037 -0.125-0.188 -0.024 0.036 -0.125-0.188 -0.025 0.039 -0.129-0.188 -0.025 0.037 -0.127-0.188 -0.025 0.035 -0.127-0.188 -0.025 0.039L35 15.283l-0.014 0.039 -0.129-0.189 -0.024 0.037 -0.125-0.188 -0.026 0.039 -0.127-0.19 -0.021 0.039 -0.125-0.188 -0.024 0.038 -0.13-0.188 -0.023 0.037 -0.121-0.191 -0.025 0.039 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.025 0.037 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.026 0.039L33.35 13.63l-0.023 0.037L33.2 13.48l-0.027 0.039 -0.125-0.188 -0.026 0.037 -0.125-0.188 -0.024 0.038 -0.126-0.189 -0.021 0.032L32.6 12.873l-0.022 0.036 -0.129-0.188 -0.022 0.037 -0.127-0.188 -0.025 0.039 -0.128-0.189 -0.024 0.036 -0.126-0.188 -2.133 3.2h0.252l-0.099 0.152h0.252l-0.1 0.152h0.251l-0.1 0.149h0.25l-0.1 0.152h0.251l-0.1 0.151h0.252l-0.101 0.152h0.25l-0.098 0.149h0.251l-0.1 0.151h0.252l-0.1 0.152h0.249l-0.1 0.151h0.252l-0.101 0.151h0.252l-0.1 0.15h0.251l-0.1 0.151h0.252l-0.107 0.147h0.252l-0.1 0.152h0.251l-0.1 0.149h0.25l-0.101 0.152h0.25l-0.1 0.151h0.252l-0.101 0.15h0.252l-0.102 0.151h0.253l-0.103 0.149h0.252l-0.1 0.152h0.252l-0.102 0.151h0.253l-0.101 0.151h0.25l-0.101 0.15h0.255l-0.076 0.106c-0.6-0.085-1.199-0.143-1.815-0.143 -2.801 0-5.38 0.909-7.487 2.434l-0.081-0.016 0.1-0.1 -0.252-0.049 0.103-0.102 -0.252-0.049 0.1-0.101 -0.249-0.049 0.1-0.1 -0.254-0.051 0.102-0.1 -0.251-0.05 0.1-0.1 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.1 -0.252-0.05 0.101-0.1 -0.252-0.049 0.1-0.1 -0.251-0.049 0.1-0.101 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.1 -0.253-0.049 0.101-0.101 -0.253-0.049 0.102-0.102 -0.249-0.049 0.1-0.1 -0.253-0.049 0.101-0.101 -0.245-0.064 0.1-0.102 -0.249-0.052 0.1-0.1 -3.774-0.753 0.755 3.772 0.1-0.1 0.049 0.251 0.101-0.1 0.051 0.252 0.1-0.101 0.049 0.25 0.1-0.1 0.049 0.25 0.101-0.101 0.051 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.052 0.252 0.1-0.1L20 23.029l0.1-0.1 0.049 0.249 0.101-0.1 0.051 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.049 0.25L20.7 23.53l0.049 0.252 0.1-0.1 0.049 0.252 0.1-0.101 0.05 0.25 0.1-0.1 0.049 0.251 0.1-0.1 0.049 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.017 0.085C20.106 26.624 19.2 29.203 19.2 32c0 0.619 0.057 1.221 0.143 1.816l-0.108 0.07v-0.25l-0.152 0.1v-0.254l-0.149 0.103v-0.252l-0.151 0.101v-0.25l-0.152 0.101v-0.255l-0.149 0.1v-0.25l-0.15 0.102v-0.252l-0.152 0.1v-0.252l-0.151 0.105v-0.25l-0.152 0.102v-0.252l-0.149 0.102v-0.252l-0.149 0.1v-0.252l-0.152 0.101v-0.252l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.1v-0.251l-0.151 0.1v-0.251l-0.152 0.1V31.07l-0.151 0.1v-0.251l-0.15 0.098v-0.25l-0.151 0.101v-0.252l-0.151 0.1v-0.252l-0.152 0.101v-0.25l-0.151 0.1v-0.251l-0.15 0.1v-0.252l-0.149 0.109v-0.252l-3.2 2.133 0.188 0.126L12.417 32.153zM54.354 26.675l0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.189 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.19L53.3 25.628l0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.184 0.038 0.037-0.188 -0.187 0.038 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.036-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.188 -0.189 0.038 0.041-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.189 0.037 0.021-0.219 -0.188 0.038 0.04-0.188 -0.191 0.039 0.039-0.189 -0.188 0.039 0.04-0.188 -0.189 0.036 0.037-0.188 -0.188 0.039 0.037-0.189 -0.188 0.039 0.038-0.188 -0.189 0.039 0.039-0.19 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188L49.08 21.41l0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188 -0.189 0.038 0.04-0.188 -0.188 0.038 0.037-0.188 -0.19 0.039 0.04-0.189 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188L47.73 20.06l0.039-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.189 0.039 0.041-0.188 -0.19 0.039 0.04-0.188 -0.191 0.039 0.039-0.19 -0.188 0.039 0.04-0.188 -0.188 0.039 0.039-0.189 -0.188 0.039 0.038-0.188 -0.209 0.014 0.041-0.19 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.189 -0.188 0.039 0.04-0.188 -3.772 0.755 0.305 0.303 0.149 0.149 0.601 0.604 0.453 0.452 0.754 0.755 0.15 0.149 0.754 0.756 0.904 0.905 0.454 0.454 0.45 0.45 3.017 3.019 0.904 0.904 0.905 0.905 0 0 0.301 0.301 0.906 0.904 0.354 0.354 1 1.004 0 0h0.004l0.389 0.386 0.515 0.517h0.002l0 0 0.901 0.902 0.903 0.903 0.529 0.529 0.528 0.528 0.904 0.906 0.452 0.449 0.903 0.904 2.111 2.111 0.357 0.358c0.294-1.192 0.527-2.407 0.684-3.646l-0.022 0.004 0.036-0.191 -0.188 0.037 0.038-0.188L63.4 35.727l0.037-0.188 -0.188 0.039 0.038-0.191L63.1 35.424l0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.04 0.038-0.19 -0.188 0.041 0.037-0.191 -0.189 0.039 0.04-0.189 -0.188 0.041 0.037-0.191 -0.188 0.039 0.037-0.188 -0.189 0.037 0.04-0.188 -0.188 0.041 0.037-0.189 -0.19 0.037 0.04-0.188 -0.188 0.036 0.038-0.188 -0.188 0.041 0.037-0.188 -0.188 0.04 0.038-0.188 -0.188 0.037 0.039-0.191 -0.188 0.039 0.038-0.188 -0.192 0.039 0.04-0.189 -0.188 0.039 0.039-0.188 -0.209 0.009 0.039-0.188 -0.188 0.037 0.037-0.188 -0.188 0.039 0.037-0.188 -0.189 0.038 0.041-0.189 -0.189 0.038 0.039-0.188 -0.188 0.038 0.037-0.187 -0.188 0.039 0.037-0.188 -0.189 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.189 -0.188 0.037 0.041-0.188L58.872 31.2l0.037-0.189 -0.188 0.039 0.037-0.188L58.568 30.9l0.041-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.04-0.188 -0.2 0.024 0.038-0.189 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.036-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.036-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.189 0.039 0.04-0.19 -0.19 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.188 -0.192 0.039 0.04-0.188 -0.188 0.037 0.039-0.188 -0.188 0.039 0.038-0.188L54.354 26.675z\'/></g><path id=\'_x3C_Tracciato_x3E__1_\' fill=\'#F5D76E\' d=\'M34.134 48.533L32 51.732l-2.133-3.199H34.134zM34.131 15.469l-2.133-3.2 -2.133 3.2H34.131zM15.467 29.869l-3.2 2.133 3.2 2.135V29.869zM48.531 34.134L51.73 32l-3.199-2.133V34.134zM18.801 42.184l-0.753 3.772 3.77-0.756L18.801 42.184zM45.195 21.82l0.757-3.772 -3.772 0.755L45.195 21.82zM42.18 45.2l3.774 0.754L45.2 42.184 42.18 45.2zM21.818 18.803l-3.774-0.753 0.755 3.772L21.818 18.803zM32 19.2c-7.068 0-12.8 5.732-12.8 12.8 0 7.066 5.732 12.8 12.8 12.8 7.066 0 12.8-5.733 12.8-12.8C44.8 24.932 39.066 19.2 32 19.2z\'/></svg>'}})};
+},{"localforage":59,"react":276}],26:[function(require,module,exports){
+'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _react=require('react');var _react2=_interopRequireDefault(_react);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}exports.default={'stormy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0\' y=\'0\' width=\'64\' height=\'64\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_2_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'9.6\' y=\'12.8\' width=\'54.3\' height=\'50.68\'><feColorMatrix type=\'matrix\' values=\'1\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'9.6\' y=\'12.8\' width=\'54.3\' height=\'50.68\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'734.76\' cy=\'1153.2\' r=\'37.33\' gradientTransform=\'matrix(1 0 0 1 -705.9609 -1124.3984)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.11\' stop-color=\'#E8E8E8\'/><stop offset=\'0.35\' stop-color=\'#ADADAD\'/><stop offset=\'0.69\' stop-color=\'#4E4E4E\'/><stop offset=\'0.95\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.33\'/></g></mask><g opacity=\'0.2\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M63.9 33.99c-0.01-0.01-0.02-0.02-0.04-0.03 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.11-0.16-0.16 -0.05-0.04-0.1-0.1-0.15-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15s-0.1-0.1-0.15-0.15c-0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.09-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -1.74-1.78-4.16-2.89-6.86-2.89 -0.59 0-1.17 0.09-1.73 0.2 0 0 0-0.01-0.01-0.01 -0.06-0.06-0.12-0.1-0.17-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.1-0.06-0.16-0.1-0.21-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.16 -0.04-0.05-0.1-0.09-0.15-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -2.28-2.36-5.35-3.83-8.78-3.83 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 2.4 0.99 4.55 2.58 6.1 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.13 0.16 0.18 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.04 0.1 0.1 0.14 0.14 0.05 0.04 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.01 0.01 0.02 0.02 0.02 0.03l-0.59 2.31 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.56 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.42 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4L32.09 57.8l-0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.4 0.26-0.26 -0.1 0.42 0.25-0.26 -0.1 0.41 0.26-0.26L33.2 59.4l0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.44 0.26-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.4 0.26-0.26 -0.11 0.42 0.25-0.26 -0.1 0.4 0.26-0.18 -0.1 0.42 0.25-0.26 -0.1 0.41 0.25-0.26L35.59 61.9l0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.1 0.42 0.25-0.26 -0.11 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.09 0.36c0.02 0 0.03-0.01 0.05-0.01l0.2-0.2 -0.05 0.18C51.9 61.01 62.98 48.89 63.9 33.99z\'/></g><path fill=\'#6C7A89\' d=\'M44.78 18.83c-0.82 0-1.61 0.14-2.37 0.33 -1.95-3.77-5.88-6.36-10.42-6.36 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 4.71 3.82 8.53 8.53 8.53h1.29 25.12 0.24c5.3 0 9.6-4.3 9.6-9.6C54.39 23.13 50.09 18.83 44.78 18.83z\'/><polygon fill=\'#F5AB35\' points=\'37.17 46.91 33.4 46.91 35.03 40.51 26.83 48.89 30.6 48.89 28.97 55.28 \'/></svg>'}}),'stormy-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="64" height="64" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z"/><defs><filter filterUnits="userSpaceOnUse" x="9.6" y="12.8" width="54.3" height="50.7"><feColorMatrix type="matrix" values="1"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.6" y="12.8" width="54.3" height="50.7"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient cx="402.77" cy="-781.6" r="37.33" gradientTransform="matrix(1 0 0 -1 -373.9707 -752.7988)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.11" stop-color="#E8E8E8"/><stop offset="0.35" stop-color="#ADADAD"/><stop offset="0.69" stop-color="#4E4E4E"/><stop offset="0.95" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.33"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.9 33.99c-0.01-0.01-0.02-0.02-0.04-0.03 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.04-0.05-0.09-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -1.74-1.78-4.16-2.89-6.86-2.89 -0.59 0-1.17 0.09-1.73 0.2 0 0 0-0.01-0.01-0.01 -0.05-0.05-0.11-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.09-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.09-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.09-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.06-0.06-0.12-0.11-0.17-0.16 -0.05-0.05-0.1-0.09-0.14-0.14 -2.27-2.36-5.34-3.83-8.77-3.83 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 2.4 0.99 4.55 2.58 6.1 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.04 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.13 0.16 0.18 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.04 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.01 0.01 0.02 0.02 0.02 0.03L28.96 55.15l0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.49 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.42 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.42 0.25-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.26-0.26 -0.1 0.43 0.26-0.26 -0.1 0.41 0.26-0.26L33.8 60.02l0.26-0.26 -0.1 0.41 0.25-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.25-0.26L34.4 60.62l0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.26-0.26 -0.1 0.41 0.26-0.18 -0.11 0.41 0.25-0.26 -0.1 0.41L35.7 61.5l-0.1 0.41 0.26-0.26 -0.11 0.42L36 61.8l-0.1 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.1 0.41 0.25-0.26 -0.1 0.41 0.26-0.26 -0.11 0.41 0.25-0.26 -0.1 0.41 0.26-0.26L37.1 63.4l0.25-0.26L37.26 63.5c0.02 0 0.03-0.01 0.05-0.01l0.2-0.2 -0.05 0.18C51.9 61.01 62.98 48.89 63.9 33.99z"/></g><path fill="#6C7A89" d="M44.78 18.83c-0.82 0-1.61 0.14-2.37 0.33 -1.95-3.77-5.88-6.36-10.42-6.36 -5.39 0-9.93 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 4.71 3.82 8.53 8.53 8.53h1.29 25.12 0.24c5.3 0 9.6-4.3 9.6-9.6C54.39 23.13 50.09 18.83 44.78 18.83z"/><polygon fill="#F5AB35" points="37.17 46.91 33.4 46.91 35.03 40.51 26.83 48.89 30.6 48.89 28.97 55.28 "/></svg>'}}),'cloudy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_5_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="6.4" y="10.666" width="56.67" height="53.238"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="6.4" y="10.666" width="56.67" height="53.238" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path d="M63.07 39.533l-0.104 0.023 0.039-0.19 -0.189 0.038 0.039-0.188 -0.188 0.037 0.037-0.19 -0.188 0.039 0.041-0.188 -0.19 0.037 0.038-0.188 -0.188 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.188 0.041 0.036-0.192L61.613 38.2l0.041-0.188 -0.188 0.039 0.037-0.189L61.314 37.9l0.037-0.188 -0.188 0.037 0.039-0.188 -0.188 0.041 0.036-0.19 -0.19 0.038 0.039-0.188L60.715 37.3l0.039-0.188 -0.191 0.039 0.041-0.188 -0.19 0.037 0.04-0.188 -0.188 0.037 0.039-0.188 -0.193 0.04 0.039-0.188 -0.188 0.037 0.039-0.189L59.813 36.4l0.041-0.188 -0.192 0.037 0.038-0.188L59.514 36.1l0.038-0.188 -0.188 0.038 0.041-0.188L59.213 35.8l0.037-0.19 -0.188 0.039L59.1 35.46l-0.188 0.04 0.038-0.188 -0.188 0.037 0.037-0.188L58.611 35.2l0.039-0.188 -0.188 0.038 0.038-0.19L58.313 34.9l0.037-0.192 -0.188 0.04 0.038-0.188L58.014 34.6l0.036-0.188 -0.188 0.04L57.9 34.26l-0.19 0.039 0.04-0.189 -0.191 0.039 0.039-0.188 -0.209 0.017 0.036-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.037-0.189 -0.188 0.041 0.037-0.189 -0.188 0.037 0.037-0.188 -0.188 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.189 -0.188 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.191 0.039 0.039-0.191 -0.188 0.039 0.039-0.188 -0.188 0.038 0.037-0.189 -0.191 0.038 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.188 0.039 0.04-0.189 -0.19 0.039 0.036-0.188 -0.188 0.039 0.041-0.188 -0.188 0.039 0.039-0.188 -0.19 0.037 0.037-0.189 -0.188 0.039 0.04-0.188 -0.188 0.039 0.036-0.189 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.021-0.207 -0.188 0.039 0.039-0.188 -0.189 0.038 0.039-0.19 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.189 -0.188 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.036-0.191 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.19 -0.19 0.039 0.039-0.188 -0.188 0.039 0.04-0.188 -0.188 0.039 0.039-0.189 -0.191 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.036-0.19 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.037 0.039-0.188L50.6 27.212l0.041-0.188 -0.189 0.039 0.039-0.189 -0.189 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.191 -0.188 0.039 0.039-0.188 -0.191 0.039 0.041-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039L49.3 25.67l-0.188 0.039 0.039-0.188 -0.188 0.039L49 25.372l-0.189 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.188 0.039 0.037-0.189 -0.189 0.037 0.041-0.188 -0.188 0.039 0.037-0.188 -0.19 0.039 0.039-0.19 -0.188 0.037 0.04-0.188 -0.191 0.039 0.037-0.189 -0.188 0.039 0.039-0.188L47.46 24.06l0.04-0.188 -0.189 0.039 0.039-0.188 -0.19 0.038 0.04-0.188 -0.188 0.039 0.038-0.188 -0.19 0.038 0.041-0.188 -0.192 0.039 0.04-0.188 -0.189 0.039 0.037-0.189 -0.188 0.039 0.037-0.189 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.189 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.189 -0.188 0.038 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.188 -0.22-0.018 0.04-0.188 -0.188 0.038 0.037-0.189 -0.189 0.039 0.037-0.188 -0.188 0.038 0.036-0.19 -0.188 0.039 0.037-0.188 -0.19 0.039 0.039-0.19 -0.188 0.039 0.041-0.188 -0.192 0.039 0.04-0.19 -0.189 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.188 -0.188 0.039 0.041-0.188 -0.188 0.039 0.039-0.188 -0.191 0.039 0.037-0.188 -0.188 0.039 0.041-0.19 -0.189 0.039 0.037-0.188 -0.186 0.034 0.037-0.188 -0.188 0.038 0.028-0.202 -0.188 0.039 0.038-0.188 -0.188 0.039 0.037-0.189 -0.188 0.038 0.037-0.188 -0.191 0.037 0.04-0.188 -0.188 0.037 0.039-0.188 -0.19 0.039 0.036-0.191 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.19L40.8 17.386l0.038-0.188 -0.188 0.039 0.037-0.189L40.5 17.085l0.037-0.188 -0.188 0.04 0.039-0.189 -0.189 0.039 0.039-0.189 -0.188 0.037 0.038-0.188 -3.771 0.755 0.148 0.152 0.452 0.452 1.056 1.055 0.15 0.152 1.006 1.004 0.354 0.352 0.451 0.453 1.057 1.056 0.451 0.453 0.381 0.377 0.523 0.527 1.713 1.708 1.004 1.007 0 0 0.305 0.303 0.248 0.251 0.201 0.201 0.076 0.075 0.074 0.076 0.754 0.755 0.829 0.828c-0.546-0.096-1.104-0.169-1.677-0.169 -0.614 0-1.202 0.089-1.781 0.209 -0.033-0.028-0.059-0.063-0.09-0.09 -0.052-0.044-0.096-0.104-0.146-0.15 -0.054-0.044-0.097-0.104-0.15-0.149 -0.055-0.049-0.1-0.108-0.154-0.155 -0.054-0.045-0.094-0.103-0.146-0.148 -0.055-0.045-0.096-0.104-0.149-0.149 -0.054-0.047-0.101-0.107-0.153-0.153 -0.051-0.046-0.095-0.105-0.147-0.15 -0.052-0.044-0.097-0.104-0.152-0.149 -0.05-0.047-0.096-0.107-0.147-0.152 -0.055-0.047-0.096-0.106-0.151-0.151 -0.054-0.047-0.096-0.106-0.149-0.152 -0.053-0.044-0.092-0.102-0.146-0.145 -0.055-0.047-0.096-0.106-0.152-0.153 -0.052-0.047-0.098-0.107-0.15-0.154 -0.053-0.045-0.092-0.102-0.146-0.145 -0.056-0.047-0.102-0.108-0.157-0.158 -0.053-0.045-0.095-0.103-0.147-0.147 -0.056-0.045-0.097-0.104-0.149-0.149 -0.053-0.047-0.097-0.107-0.152-0.154 -0.053-0.045-0.092-0.102-0.145-0.147 -0.058-0.047-0.102-0.108-0.158-0.153 -0.05-0.044-0.092-0.105-0.144-0.148 -0.206-0.177-0.431-0.322-0.647-0.484l-0.033-0.044 -0.016 0.018c-0.015-0.011-0.031-0.02-0.044-0.03l-0.092-0.139 -0.024 0.039 -0.129-0.189 -0.023 0.038 -0.129-0.188 -0.023 0.038 -0.127-0.189 -0.027 0.037 -0.127-0.188 -0.025 0.039 -0.129-0.19 -0.026 0.039 -0.125-0.188 -0.024 0.037 -0.129-0.189 -0.025 0.039 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.024 0.036 -0.129-0.188 -0.023 0.038 -0.129-0.188 -0.025 0.037 -0.125-0.188 -0.025 0.039 -0.129-0.189 -0.024 0.039 -0.125-0.188 -0.024 0.039 -0.129-0.19 -0.027 0.039 -0.127-0.189 -0.025 0.035 -0.127-0.188 -0.027 0.041 -0.127-0.189 -0.025 0.037 -0.125-0.188 -0.024 0.036 -0.125-0.188 -0.027 0.039 -0.127-0.188L36.65 21.28l-0.129-0.189 -0.025 0.035 -0.125-0.188 -0.027 0.039 -0.127-0.187 -0.025 0.039 -0.125-0.189 -0.024 0.039 -0.13-0.189 -0.023 0.038 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.002 0.015 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.025 0.038 -0.129-0.189 -0.025 0.039 -0.117-0.188 -0.025 0.039 -0.129-0.191L34.7 19.298l-0.127-0.188 -0.027 0.039 -0.125-0.188 -0.024 0.038 -0.129-0.189 -0.025 0.036 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.024 0.038 -0.127-0.188 -0.024 0.037 -0.128-0.188 -0.023 0.039 -0.125-0.191 -0.02 0.037 -0.128-0.188 -0.022 0.039 -0.127-0.188 -0.025 0.036 -0.125-0.189 -0.024 0.041 -0.125-0.188 -0.026 0.035 -0.125-0.189 -0.025 0.037 -0.127-0.188 -0.024 0.039 -0.126-0.188 -0.025 0.038 -0.126-0.189 -0.024 0.037L32.162 16.7l-0.025 0.039L32.01 16.55l-0.024 0.039 -0.126-0.188 -0.026 0.039 -0.126-0.19 -0.025 0.039L31.556 16.1l-0.026 0.039 -0.125-0.188 -0.026 0.039 -0.126-0.188 -0.021 0.03 -0.126-0.188 -0.026 0.038 -0.126-0.188 -0.023 0.036 -0.126-0.189 -0.025 0.038 -0.126-0.188 -0.026 0.039 -0.126-0.19 -0.025 0.037 -0.126-0.188 -0.026 0.039 -0.128-0.19 -0.025 0.039 -0.126-0.188 -0.026 0.037 -0.125-0.188 -0.026 0.037 -0.126-0.188 -0.025 0.039 -0.126-0.188 -0.026 0.039 -0.126-0.188 -0.025 0.038 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.018 0.032 -0.126-0.188 -0.023 0.034 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.027 0.039 -0.126-0.191 -0.025 0.039 -0.124-0.189 -0.026 0.039L28.24 12.78l-0.025 0.039 -0.126-0.188 -0.026 0.038 -0.125-0.189 -0.026 0.039 -0.125-0.189 -0.025 0.037 -0.126-0.188 -0.026 0.039 -0.126-0.189 -0.025 0.035 -0.126-0.188 -0.026 0.039 -0.125-0.188 -0.026 0.039 -0.126-0.188 -0.025 0.038 -0.128-0.189 -0.018 0.032 -0.126-0.188 -0.023 0.035 -0.128-0.188 -0.025 0.039 -0.124-0.188 -0.026 0.039 -0.127-0.189 -0.025 0.036 -0.124-0.188 -2.133 3.2h0.252l-0.101 0.152h0.25l-0.1 0.15h0.253l-0.1 0.151h0.252l-0.1 0.152h0.251l-0.1 0.149h0.252l-0.101 0.151h0.254l-0.1 0.152h0.25l-0.1 0.149h0.252l-0.1 0.152h0.251l-0.1 0.151h0.25l-0.101 0.149h0.254l-0.1 0.152h0.252l-0.101 0.151h0.252l-0.109 0.151h0.25l-0.1 0.15h0.251l-0.1 0.151h0.252l-0.1 0.152h0.251l-0.1 0.149h0.252l-0.101 0.152h0.252l-0.1 0.151h0.252l-0.101 0.149h0.252l-0.1 0.152h0.251l-0.1 0.151h0.25l-0.101 0.149h0.254l-0.1 0.152h0.252l-0.071 0.103c-0.595-0.085-1.199-0.141-1.817-0.141 -2.801 0-5.382 0.908-7.49 2.436l-0.081-0.017 0.1-0.1 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.101 -0.252-0.054 0.1-0.1 -0.252-0.048 0.1-0.1 -0.25-0.052 0.1-0.1 -0.25-0.051 0.101-0.1 -0.253-0.05 0.1-0.101 -0.251-0.05 0.102-0.102 -0.254-0.049 0.1-0.1 -0.247-0.052 0.1-0.101 -0.254-0.051 0.101-0.1 -0.252-0.049 0.1-0.104 -0.249-0.048 0.1-0.1 -0.252-0.049 0.1-0.1 -0.249-0.052 0.1-0.1 -0.254-0.051 0.101-0.1L16 17.453l0.1-0.101 -0.251-0.049 0.1-0.1 -3.771-0.755 0.755 3.772 0.1-0.1 0.051 0.251 0.101-0.1 0.049 0.25 0.1-0.101 0.051 0.252 0.1-0.1 0.05 0.252 0.1-0.101 0.049 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.05 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.051 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.051 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.051 0.252 0.114-0.109 0.049 0.252 0.1-0.1 0.049 0.249 0.101-0.1 0.049 0.252 0.1-0.101 0.049 0.252 0.1-0.1 0.018 0.081c-1.524 2.105-2.432 4.685-2.432 7.483 0 0.617 0.079 1.211 0.167 1.805l-0.13 0.088v-0.252l-0.152 0.1v-0.254l-0.149 0.101v-0.25l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.151 0.1v-0.251l-0.15 0.1v-0.249l-0.151 0.1V30.98l-0.149 0.1v-0.251l-0.152 0.1v-0.252l-0.147 0.104v-0.254l-0.149 0.1v-0.25l-0.152 0.101v-0.252l-0.149 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.1v-0.251l-0.151 0.1v-0.251l-0.152 0.1V29.47l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.101v-0.252l-0.151 0.1v-0.252l-0.15 0.101v-0.252l-0.151 0.1v-0.251l-0.15 0.1v-0.246L9.6 28.519v-0.252L6.4 30.4l0.188 0.126 -0.039 0.025 0.193 0.126 -0.039 0.026 0.188 0.126 -0.039 0.025 0.188 0.124 -0.038 0.026 0.188 0.125 -0.039 0.026 0.188 0.126L7.3 31.306l0.188 0.126 -0.037 0.026 0.188 0.126L7.6 31.609l0.188 0.126 -0.039 0.026 0.188 0.125 -0.039 0.026 0.188 0.126 -0.039 0.024 0.188 0.126 -0.039 0.026 0.188 0.126 -0.039 0.025 0.188 0.125 -0.024 0.02 0.188 0.127 -0.036 0.022 0.189 0.126 -0.041 0.025 0.188 0.125 -0.038 0.026 0.188 0.127 -0.039 0.024 0.189 0.125 -0.041 0.025 0.188 0.125 -0.039 0.026 0.188 0.127 -0.039 0.024 0.188 0.125 -0.039 0.024 0.189 0.125 -0.039 0.027 0.189 0.127 -0.041 0.024 0.188 0.125 -0.039 0.024 0.188 0.127 -0.039 0.024 0.189 0.127 -0.039 0.027 0.188 0.127 -0.038 0.025 0.19 0.125 -0.022 0.018 0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.025 0.189 0.127 -0.037 0.027 0.188 0.125 -0.039 0.024 0.075 0.05c-0.49 1.066-0.769 2.252-0.769 3.506 0 2.396 0.995 4.553 2.581 6.104 0.049 0.05 0.099 0.1 0.15 0.148 0.051 0.051 0.1 0.102 0.153 0.15 0.049 0.05 0.1 0.104 0.152 0.152 0.047 0.048 0.096 0.098 0.145 0.144 0.051 0.054 0.102 0.104 0.155 0.156 0.047 0.048 0.097 0.098 0.146 0.144 0.051 0.055 0.102 0.106 0.155 0.154 0.047 0.05 0.096 0.1 0.146 0.146 0.052 0.054 0.101 0.106 0.154 0.154 0.051 0.053 0.102 0.104 0.153 0.152 0.049 0.05 0.099 0.1 0.15 0.146 0.049 0.049 0.096 0.101 0.145 0.147 0.051 0.052 0.102 0.104 0.155 0.155 0.048 0.047 0.097 0.099 0.146 0.146 0.051 0.051 0.104 0.104 0.157 0.154 0.047 0.05 0.096 0.098 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.049 0.05 0.098 0.101 0.149 0.147 0.05 0.053 0.099 0.103 0.15 0.149 0.051 0.054 0.1 0.103 0.153 0.152 0.049 0.05 0.1 0.101 0.152 0.149 0.047 0.045 0.096 0.096 0.145 0.145 0.051 0.052 0.103 0.105 0.155 0.156 0.05 0.05 0.099 0.1 0.148 0.148 0.051 0.051 0.102 0.102 0.153 0.15 0.049 0.05 0.1 0.102 0.15 0.15 0.049 0.049 0.098 0.1 0.147 0.146 0.051 0.052 0.102 0.104 0.153 0.153 0.049 0.051 0.099 0.101 0.15 0.149 0.049 0.052 0.1 0.103 0.151 0.15 0.049 0.05 0.098 0.1 0.149 0.147 0.052 0.053 0.103 0.105 0.156 0.155 0.049 0.052 0.098 0.099 0.147 0.146 0.049 0.051 0.101 0.101 0.152 0.149 0.049 0.052 0.1 0.101 0.151 0.149 0.049 0.051 0.1 0.103 0.151 0.15 0.05 0.053 0.101 0.104 0.152 0.153 0.049 0.046 0.098 0.097 0.149 0.146 0.051 0.051 0.103 0.103 0.156 0.154 0.047 0.049 0.096 0.096 0.145 0.146 0.051 0.05 0.102 0.104 0.153 0.152 0.05 0.047 0.099 0.1 0.15 0.146 0.049 0.05 0.1 0.102 0.151 0.154 0.049 0.047 0.098 0.1 0.15 0.146 0.049 0.052 0.1 0.104 0.153 0.154 0.049 0.05 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.15 0.147 0.049 0.053 0.098 0.103 0.149 0.147 0.049 0.051 0.098 0.103 0.149 0.149 0.062 0.069 0.113 0.122 0.164 0.172 0.049 0.05 0.1 0.104 0.151 0.152 0.049 0.048 0.099 0.098 0.15 0.147 0.049 0.047 0.1 0.101 0.151 0.149 0.049 0.05 0.1 0.101 0.152 0.149 0.049 0.052 0.098 0.102 0.147 0.147 0.051 0.052 0.102 0.104 0.153 0.154 0.049 0.052 0.101 0.104 0.152 0.151 0.049 0.049 0.098 0.099 0.147 0.145 0.051 0.054 0.102 0.105 0.156 0.158C22.204 53.95 22.251 54 22.3 54.046c0.051 0.054 0.104 0.106 0.158 0.158 0.049 0.05 0.101 0.101 0.15 0.149 0.049 0.047 0.096 0.097 0.145 0.145 0.051 0.052 0.102 0.105 0.155 0.154 0.05 0.048 0.097 0.1 0.148 0.146 0.051 0.051 0.104 0.104 0.157 0.154 0.049 0.052 0.101 0.1 0.152 0.15 0.047 0.049 0.096 0.098 0.145 0.146 0.049 0.05 0.1 0.101 0.151 0.149 0.049 0.053 0.101 0.104 0.152 0.151 0.048 0.05 0.098 0.103 0.146 0.15 0.051 0.05 0.102 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.145 0.145 0.051 0.052 0.104 0.105 0.159 0.16 0.047 0.046 0.095 0.096 0.144 0.142 0.051 0.054 0.102 0.104 0.153 0.154 0.049 0.05 0.1 0.104 0.151 0.151 0.05 0.053 0.101 0.101 0.152 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.051 0.051 0.1 0.104 0.154 0.154 0.049 0.051 0.096 0.1 0.146 0.145 0.051 0.053 0.102 0.105 0.155 0.158 0.05 0.049 0.101 0.101 0.152 0.147 0.049 0.048 0.1 0.101 0.151 0.147 0.047 0.049 0.092 0.097 0.141 0.143 0.054 0.055 0.105 0.107 0.161 0.16 0.049 0.048 0.098 0.102 0.146 0.148 0.051 0.049 0.101 0.102 0.154 0.153 0.049 0.045 0.096 0.097 0.147 0.144 0.051 0.053 0.102 0.104 0.154 0.151 0.049 0.056 0.1 0.104 0.151 0.154 0.049 0.048 0.096 0.096 0.147 0.146 0.051 0.051 0.101 0.104 0.154 0.151 0.049 0.054 0.1 0.101 0.151 0.147 0.049 0.053 0.098 0.104 0.149 0.149 0.05 0.052 0.099 0.101 0.148 0.149 0.051 0.051 0.102 0.105 0.155 0.154 0.049 0.051 0.099 0.101 0.15 0.15 0.051 0.051 0.102 0.104 0.155 0.15 0.047 0.049 0.094 0.095 0.141 0.141 0.051 0.055 0.103 0.107 0.156 0.158 0.049 0.051 0.098 0.102 0.147 0.146 0.049 0.049 0.1 0.104 0.152 0.153 0.049 0.05 0.098 0.099 0.147 0.146 0.051 0.053 0.104 0.104 0.157 0.156 0.05 0.049 0.097 0.098 0.148 0.147 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.052 0.05 0.101 0.104 0.154 0.15 0.049 0.049 0.096 0.1 0.147 0.145 0.049 0.053 0.101 0.104 0.152 0.154 0.051 0.053 0.102 0.104 0.155 0.154 0.047 0.049 0.094 0.096 0.143 0.142 0.052 0.053 0.104 0.104 0.156 0.153 0.049 0.053 0.1 0.104 0.151 0.152 0.049 0.049 0.099 0.098 0.148 0.146 0.049 0.049 0.098 0.102 0.146 0.146 0.051 0.055 0.104 0.108 0.158 0.158 0.05 0.051 0.097 0.098 0.148 0.146 0.051 0.055 0.102 0.104 0.153 0.154 0.047 0.047 0.096 0.096 0.148 0.145 0.047 0.052 0.096 0.1 0.145 0.146 0.053 0.055 0.106 0.11 0.161 0.162 0.048 0.049 0.097 0.096 0.146 0.145 0.049 0.047 0.1 0.103 0.151 0.149 0.035 0.035 0.068 0.068 0.102 0.104C47.193 63.889 59.691 53.496 63.07 39.533z"/></g><path fill="#F5D76E" d="M38.934 30.398c0 7.069-5.729 12.802-12.8 12.802 -7.068 0-12.8-5.733-12.8-12.802 0-7.068 5.732-12.8 12.8-12.8C33.204 17.598 38.934 23.33 38.934 30.398zM28.265 13.867l-2.133-3.2 -2.133 3.2H28.265zM9.6 28.267L6.4 30.4l3.2 2.131V28.267zM39.329 20.218l0.756-3.772 -3.772 0.755L39.329 20.218zM15.951 17.201l-3.774-0.753 0.755 3.772L15.951 17.201z"/><path fill="#FFFFFF" d="M45.866 28.265c-0.824 0-1.612 0.136-2.375 0.33 -1.949-3.778-5.884-6.363-10.425-6.363 -5.391 0-9.924 3.644-11.295 8.598 -0.811-0.256-1.657-0.431-2.552-0.431 -4.712 0-8.533 3.824-8.533 8.537 0 4.711 3.821 8.533 8.533 8.533h1.289 25.118 0.241c5.305 0 9.601-4.301 9.601-9.602C55.467 32.563 51.171 28.265 45.866 28.265z"/></svg>'}}),'cloudy-2':_react2.default.createElement('svg',{x:'0px',y:'0px',width:'64px',height:'64px',viewBox:'0 0 64 64','enable-background':'new 0 0 64 64'},_react2.default.createElement('g',{id:'day_bg'},_react2.default.createElement('circle',{fill:'#89C4F4',cx:'32',cy:'32',r:'32'}),_react2.default.createElement('path',{fill:'#6BB9F0',d:'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z'})),_react2.default.createElement('defs',null,_react2.default.createElement('filter',{id:'Adobe_OpacityMaskFilter',filterUnits:'userSpaceOnUse',x:'9.681',y:'19.434',width:'53.348',height:'44.407'},_react2.default.createElement('feColorMatrix',{type:'matrix',values:'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0'}))),_react2.default.createElement('mask',{maskUnits:'userSpaceOnUse',x:'9.681',y:'19.434',width:'53.348',height:'44.407',id:'SVGID_1_'},_react2.default.createElement('g',{filter:'url(#Adobe_OpacityMaskFilter)'},_react2.default.createElement('radialGradient',{id:'SVGID_2_',cx:'70.7803',cy:'590.999',r:'37.333',gradientTransform:'matrix(1 0 0 1 -41.9805 -562.1992)',gradientUnits:'userSpaceOnUse'},_react2.default.createElement('stop',{offset:'0',stopColor:'#FFFFFF'}),_react2.default.createElement('stop',{offset:'0.1126',stopColor:'#E8E8E8'}),_react2.default.createElement('stop',{offset:'0.3492',stopColor:'#ADADAD'}),_react2.default.createElement('stop',{offset:'0.6869',stopColor:'#4E4E4E'}),_react2.default.createElement('stop',{offset:'0.9519',stopColor:'#000000'})),_react2.default.createElement('circle',{fill:'url(#SVGID_2_)',cx:'28.8',cy:'28.8',r:'37.333'}))),_react2.default.createElement('g',{opacity:'0.2',mask:'url(#SVGID_1_)'},_react2.default.createElement('path',{fill:'#1A171B',d:'M63.029 39.695c-0.021-0.021-0.043-0.041-0.063-0.061 -0.048-0.048-0.101-0.104-0.149-0.148 -0.049-0.049-0.101-0.102-0.149-0.148 -0.051-0.053-0.101-0.104-0.149-0.152 -0.05-0.047-0.101-0.098-0.15-0.147 -0.049-0.05-0.1-0.103-0.149-0.149 -0.05-0.053-0.101-0.104-0.151-0.154 -0.049-0.045-0.096-0.096-0.145-0.144 -0.052-0.053-0.104-0.106-0.158-0.161 -0.05-0.048-0.101-0.096-0.147-0.146 -0.048-0.05-0.101-0.101-0.151-0.149 -0.048-0.051-0.097-0.101-0.146-0.15 -0.051-0.049-0.104-0.103-0.153-0.153 -0.05-0.048-0.101-0.101-0.149-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.048-0.051-0.097-0.1-0.144-0.146 -0.053-0.055-0.109-0.107-0.16-0.162 -0.051-0.051-0.104-0.101-0.154-0.149 -0.045-0.046-0.092-0.095-0.139-0.138 -0.049-0.055-0.104-0.108-0.158-0.158 -0.045-0.051-0.098-0.102-0.146-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.051-0.051-0.104-0.104-0.154-0.157 -0.051-0.048-0.1-0.101-0.148-0.147 -0.05-0.049-0.102-0.099-0.148-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.046-0.048-0.096-0.097-0.143-0.144 -0.051-0.053-0.1-0.104-0.153-0.152 -0.05-0.051-0.101-0.104-0.151-0.154 -0.049-0.048-0.099-0.1-0.148-0.146 -0.049-0.047-0.102-0.104-0.153-0.152 -0.048-0.05-0.101-0.1-0.147-0.15 -0.047-0.049-0.101-0.1-0.147-0.146 -0.054-0.055-0.106-0.105-0.158-0.156 -0.046-0.046-0.096-0.096-0.142-0.142 -0.051-0.052-0.1-0.104-0.152-0.154 -0.052-0.05-0.102-0.104-0.152-0.151 -0.047-0.049-0.1-0.099-0.146-0.147 -0.048-0.056-0.104-0.104-0.154-0.153 -0.048-0.051-0.098-0.101-0.146-0.148 -0.051-0.053-0.102-0.102-0.154-0.151 -0.048-0.056-0.102-0.104-0.152-0.153 -0.048-0.049-0.094-0.097-0.14-0.143 -0.052-0.055-0.106-0.104-0.158-0.156 -0.048-0.053-0.1-0.101-0.147-0.15 -0.049-0.051-0.1-0.101-0.151-0.152 -0.05-0.051-0.101-0.1-0.149-0.148 -0.049-0.051-0.101-0.103-0.149-0.15 -0.052-0.049-0.099-0.1-0.149-0.149 -0.051-0.051-0.101-0.103-0.15-0.153 -0.051-0.052-0.1-0.101-0.149-0.149 -0.05-0.052-0.101-0.101-0.151-0.152 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.096-0.099-0.146-0.147 -0.05-0.051-0.104-0.104-0.156-0.155 -0.047-0.049-0.096-0.096-0.144-0.145 -0.05-0.051-0.103-0.103-0.153-0.154 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.098-0.098-0.147-0.15 -0.05-0.051-0.101-0.098-0.149-0.149 -0.049-0.051-0.101-0.103-0.152-0.153 -0.048-0.05-0.098-0.099-0.146-0.148 -0.051-0.053-0.104-0.104-0.154-0.155 -0.049-0.049-0.096-0.097-0.146-0.145 -0.05-0.05-0.101-0.101-0.15-0.15 -0.049-0.053-0.104-0.104-0.157-0.158 -0.046-0.049-0.097-0.096-0.146-0.145 -0.049-0.051-0.102-0.1-0.148-0.151 -0.053-0.051-0.102-0.102-0.152-0.154 -0.048-0.049-0.1-0.098-0.148-0.149 -0.049-0.051-0.102-0.1-0.15-0.151 -0.05-0.052-0.1-0.101-0.148-0.15 -0.052-0.051-0.102-0.1-0.15-0.149 -0.051-0.051-0.1-0.102-0.152-0.153 -0.048-0.05-0.096-0.099-0.145-0.148 -0.053-0.053-0.105-0.104-0.157-0.155 -1.741-1.781-4.167-2.891-6.854-2.891 -0.6 0-1.175 0.088-1.736 0.2 -0.002-0.002-0.004-0.004-0.006-0.006 -0.051-0.053-0.106-0.1-0.154-0.154 -0.049-0.051-0.102-0.096-0.148-0.147 -0.046-0.051-0.1-0.098-0.148-0.149 -0.049-0.055-0.104-0.102-0.152-0.156 -0.048-0.049-0.098-0.094-0.145-0.145 -0.049-0.055-0.109-0.104-0.162-0.159 -0.043-0.05-0.096-0.095-0.145-0.146 -0.048-0.053-0.102-0.1-0.148-0.151 -0.049-0.053-0.104-0.101-0.152-0.154 -0.048-0.051-0.1-0.096-0.148-0.145 -0.047-0.053-0.102-0.102-0.15-0.153 -0.046-0.051-0.104-0.099-0.15-0.15 -0.046-0.051-0.1-0.096-0.146-0.147 -0.05-0.055-0.108-0.104-0.158-0.158 -0.046-0.049-0.097-0.094-0.142-0.143 -0.051-0.055-0.108-0.104-0.159-0.157 -2.146-2.338-5.216-3.806-8.636-3.806 -5.391 0-9.924 3.644-11.296 8.598 -0.811-0.256-1.658-0.432-2.552-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 2.396 0.995 4.555 2.584 6.104 0.049 0.052 0.098 0.102 0.149 0.15 0.047 0.051 0.096 0.098 0.146 0.146 0.051 0.053 0.104 0.104 0.156 0.156 0.049 0.047 0.098 0.099 0.149 0.147 0.049 0.05 0.1 0.103 0.151 0.149 0.05 0.051 0.101 0.101 0.152 0.15 0.049 0.049 0.098 0.1 0.149 0.149 0.049 0.05 0.101 0.103 0.154 0.153 0.049 0.049 0.098 0.101 0.151 0.149 0.047 0.048 0.096 0.097 0.147 0.144 0.052 0.054 0.105 0.108 0.158 0.162 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.103 0.104 0.156 0.155 0.049 0.049 0.1 0.101 0.151 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.052 0.054 0.105 0.104 0.158 0.156 0.049 0.053 0.1 0.104 0.151 0.15 0.047 0.048 0.096 0.098 0.146 0.145 0.051 0.053 0.102 0.104 0.155 0.155 0.051 0.048 0.1 0.103 0.154 0.152 0.047 0.05 0.096 0.098 0.147 0.146 0.051 0.053 0.1 0.104 0.153 0.154 0.047 0.048 0.096 0.096 0.146 0.145 0.051 0.053 0.103 0.105 0.158 0.156 0.049 0.051 0.098 0.1 0.15 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.149 0.051 0.05 0.103 0.104 0.154 0.153 0.047 0.049 0.096 0.097 0.145 0.145 0.051 0.053 0.104 0.105 0.159 0.158 0.047 0.048 0.094 0.096 0.143 0.141 0.051 0.055 0.102 0.107 0.157 0.157 0.047 0.052 0.096 0.101 0.148 0.146 0.051 0.055 0.102 0.104 0.155 0.154 0.047 0.051 0.094 0.1 0.143 0.145 0.054 0.052 0.105 0.105 0.158 0.16 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.104 0.104 0.158 0.158 0.047 0.048 0.096 0.096 0.145 0.142 0.051 0.055 0.104 0.108 0.16 0.158 0.047 0.051 0.094 0.1 0.143 0.146 0.051 0.049 0.102 0.104 0.153 0.151 0.049 0.048 0.098 0.101 0.148 0.147 0.051 0.054 0.104 0.105 0.157 0.158 0.049 0.047 0.096 0.096 0.147 0.144 0.049 0.048 0.099 0.103 0.15 0.149 0.049 0.049 0.098 0.101 0.147 0.147 0.053 0.054 0.104 0.104 0.16 0.159 0.047 0.048 0.094 0.096 0.143 0.145 0.051 0.051 0.104 0.104 0.157 0.155 0.047 0.048 0.097 0.097 0.146 0.146 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.098 0.098 0.148 0.146 0.049 0.05 0.1 0.104 0.151 0.15 0.049 0.051 0.098 0.104 0.149 0.151 0.051 0.052 0.103 0.103 0.156 0.153 0.049 0.049 0.096 0.099 0.145 0.145 0.051 0.053 0.1 0.104 0.153 0.154 0.05 0.05 0.101 0.1 0.152 0.148 0.051 0.051 0.102 0.104 0.153 0.154 0.049 0.049 0.099 0.096 0.148 0.146 0.031 0.043 0.078 0.094 0.129 0.14 0.051 0.054 0.102 0.104 0.155 0.153 0.05 0.053 0.101 0.104 0.152 0.154 0.049 0.047 0.098 0.101 0.149 0.147 0.049 0.053 0.101 0.103 0.152 0.153 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.053 0.103 0.103 0.155 0.152 0.047 0.051 0.096 0.1 0.145 0.146 0.051 0.05 0.1 0.104 0.154 0.15 0.051 0.054 0.102 0.106 0.153 0.156 0.051 0.051 0.102 0.102 0.154 0.15 0.047 0.048 0.096 0.096 0.145 0.145 0.051 0.053 0.104 0.105 0.157 0.155 0.049 0.05 0.099 0.099 0.148 0.146 0.051 0.053 0.102 0.104 0.153 0.154 0.047 0.049 0.094 0.096 0.143 0.145 0.054 0.052 0.107 0.107 0.16 0.16 0.047 0.049 0.096 0.096 0.143 0.142 0.051 0.052 0.102 0.104 0.156 0.155 0.047 0.049 0.094 0.097 0.143 0.145 0.053 0.055 0.104 0.105 0.159 0.158 0.05 0.048 0.097 0.096 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.047 0.05 0.096 0.097 0.145 0.146 0.054 0.051 0.105 0.104 0.158 0.158 0.047 0.047 0.094 0.096 0.143 0.141 0.053 0.052 0.105 0.107 0.16 0.16 0.049 0.048 0.098 0.096 0.147 0.146 0.049 0.048 0.096 0.101 0.147 0.146 0.05 0.051 0.101 0.103 0.152 0.154 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.048 0.097 0.096 0.148 0.146 0.051 0.049 0.1 0.102 0.151 0.149 0.049 0.05 0.098 0.101 0.147 0.149 0.052 0.052 0.105 0.104 0.158 0.156 0.049 0.047 0.096 0.098 0.145 0.144 0.051 0.051 0.103 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.147 0.146 0.051 0.051 0.104 0.104 0.158 0.156 0.047 0.048 0.096 0.098 0.145 0.145 0.051 0.051 0.104 0.104 0.157 0.157 0.047 0.046 0.094 0.097 0.144 0.142 0.053 0.055 0.104 0.106 0.159 0.158 0.049 0.051 0.1 0.104 0.152 0.15 0.047 0.048 0.094 0.096 0.143 0.145 0.049 0.047 0.1 0.102 0.151 0.151s0.104 0.104 0.156 0.153c0.047 0.051 0.096 0.101 0.145 0.146 0.053 0.054 0.104 0.108 0.16 0.158 0.047 0.046 0.094 0.095 0.141 0.142 0.051 0.053 0.104 0.104 0.158 0.158 0.051 0.051 0.101 0.102 0.154 0.15 0.047 0.046 0.096 0.096 0.145 0.142 0.049 0.052 0.098 0.104 0.149 0.154 0.052 0.05 0.105 0.104 0.158 0.153 0.047 0.051 0.096 0.099 0.145 0.146 0.051 0.051 0.1 0.1 0.154 0.154 0.051 0.048 0.1 0.1 0.151 0.148 0.051 0.051 0.1 0.102 0.151 0.15 0.05 0.05 0.099 0.1 0.15 0.15 0.049 0.047 0.098 0.1 0.149 0.146 0.051 0.049 0.1 0.104 0.152 0.152 0.051 0.05 0.1 0.102 0.153 0.148 0.049 0.053 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.146 0.049 0.053 0.098 0.103 0.149 0.151 0.051 0.05 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.053 0.098 0.1 0.149 0.147 0.052 0.052 0.101 0.104 0.152 0.153 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.052 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.149 0.146 0.049 0.053 0.098 0.104 0.148 0.152 0.053 0.052 0.104 0.105 0.159 0.158 0.048 0.048 0.097 0.098 0.146 0.144 0.049 0.052 0.099 0.101 0.147 0.147 0.05 0.053 0.104 0.107 0.158 0.158 0.046 0.049 0.092 0.094 0.14 0.141 0.053 0.054 0.106 0.107 0.164 0.162 0.047 0.046 0.096 0.096 0.144 0.142 0.04 0.042 0.083 0.084 0.125 0.125C48.063 63.07 59.725 53.05 63.029 39.695z'})),_react2.default.createElement('path',{fill:'#FFFFFF',d:'M44.783 25.417c-0.825 0-1.612 0.137-2.375 0.331 -1.95-3.778-5.883-6.364-10.425-6.364 -5.392 0-9.925 3.644-11.297 8.598 -0.811-0.256-1.657-0.432-2.551-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.289 25.12 0.241c5.303 0 9.602-4.3 9.602-9.601C54.387 29.716 50.088 25.417 44.783 25.417z'})),'cloudy-3':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDS" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_7_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="8.078" y="20.48" width="54.826" height="43.129"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.078" y="20.48" width="54.826" height="43.129" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M62.904 40.171c-0.033-0.032-0.064-0.067-0.102-0.104 -0.048-0.047-0.096-0.096-0.144-0.144 -0.052-0.052-0.106-0.106-0.16-0.159 -0.046-0.047-0.099-0.097-0.146-0.146 -0.052-0.049-0.102-0.1-0.152-0.148 -0.051-0.051-0.104-0.104-0.154-0.15 -0.044-0.051-0.094-0.098-0.145-0.146 -0.047-0.05-0.101-0.104-0.149-0.154 -0.049-0.049-0.101-0.1-0.151-0.149 -0.049-0.05-0.101-0.103-0.151-0.149 -0.048-0.05-0.101-0.101-0.15-0.15 -0.048-0.049-0.1-0.1-0.147-0.148 -0.047-0.051-0.101-0.104-0.151-0.15 -0.05-0.049-0.101-0.104-0.149-0.151 -0.051-0.048-0.101-0.103-0.149-0.149 -0.05-0.053-0.101-0.101-0.15-0.148 -0.05-0.051-0.1-0.104-0.149-0.148 -0.051-0.053-0.101-0.104-0.151-0.154 -0.048-0.049-0.099-0.098-0.147-0.146 -0.051-0.052-0.103-0.104-0.153-0.153 -0.05-0.053-0.097-0.101-0.146-0.15 -0.053-0.049-0.104-0.1-0.154-0.149 -0.051-0.054-0.101-0.104-0.154-0.153 -0.043-0.049-0.094-0.097-0.143-0.143 -0.049-0.051-0.1-0.104-0.15-0.152 -0.049-0.052-0.104-0.104-0.154-0.154 -0.048-0.051-0.102-0.102-0.152-0.148 -0.045-0.048-0.096-0.102-0.144-0.146 -0.052-0.051-0.103-0.104-0.151-0.154 -0.051-0.049-0.101-0.1-0.149-0.15 -0.052-0.048-0.101-0.1-0.15-0.146 -0.05-0.053-0.104-0.104-0.153-0.152 -0.047-0.05-0.099-0.1-0.146-0.148 -0.05-0.051-0.102-0.102-0.154-0.15 -0.048-0.051-0.101-0.1-0.147-0.15 -0.048-0.05-0.101-0.102-0.151-0.148 -0.048-0.053-0.102-0.104-0.15-0.152s-0.1-0.104-0.149-0.15 -0.101-0.1-0.149-0.146c-0.05-0.053-0.101-0.1-0.149-0.15 -0.048-0.05-0.101-0.104-0.151-0.154 -0.049-0.049-0.099-0.098-0.148-0.146 -0.049-0.052-0.102-0.104-0.153-0.153 -0.046-0.051-0.097-0.101-0.146-0.147 -0.051-0.054-0.104-0.103-0.154-0.151 -0.051-0.055-0.104-0.105-0.154-0.154 -0.046-0.051-0.092-0.096-0.143-0.145 -0.049-0.052-0.1-0.104-0.149-0.152 -0.05-0.055-0.104-0.105-0.153-0.156 -0.048-0.049-0.097-0.098-0.146-0.146 -0.052-0.054-0.104-0.105-0.158-0.156 -0.046-0.049-0.094-0.097-0.142-0.146 -0.053-0.053-0.106-0.105-0.158-0.158 -0.049-0.049-0.096-0.096-0.146-0.145 -0.051-0.053-0.103-0.104-0.154-0.155 -0.045-0.05-0.096-0.096-0.146-0.146 -0.048-0.051-0.1-0.102-0.147-0.151 -0.051-0.053-0.105-0.104-0.155-0.155 -0.046-0.05-0.099-0.099-0.146-0.146 -0.052-0.053-0.104-0.104-0.154-0.155 -1.327-1.366-3.178-2.221-5.231-2.221 -0.456 0-0.894 0.065-1.323 0.153 -0.008-0.006-0.017-0.015-0.021-0.021 -0.051-0.057-0.105-0.105-0.158-0.159 -0.044-0.049-0.096-0.091-0.145-0.141 -0.045-0.053-0.103-0.102-0.149-0.155 -0.05-0.052-0.104-0.099-0.151-0.152 -0.049-0.053-0.103-0.1-0.152-0.153 -0.047-0.051-0.1-0.097-0.146-0.147 -0.05-0.053-0.104-0.103-0.156-0.155 -0.047-0.051-0.102-0.096-0.146-0.148 -0.046-0.051-0.102-0.098-0.15-0.149 -0.046-0.053-0.104-0.1-0.152-0.153 -0.047-0.054-0.102-0.1-0.15-0.152 -0.046-0.049-0.1-0.096-0.146-0.145 -1.631-1.785-3.971-2.907-6.578-2.907 -1.254 0-2.435 0.283-3.514 0.75 -0.203-0.017-0.398-0.062-0.609-0.062 -0.456 0-0.893 0.067-1.322 0.153 -0.007-0.008-0.016-0.015-0.023-0.021 -0.047-0.055-0.105-0.104-0.158-0.158 -0.06-0.065-0.113-0.11-0.159-0.159 -0.05-0.053-0.104-0.102-0.154-0.155 -0.048-0.051-0.103-0.098-0.149-0.15 -0.047-0.053-0.103-0.1-0.15-0.153 -0.047-0.051-0.102-0.098-0.15-0.149 -0.047-0.052-0.101-0.099-0.146-0.147 -0.049-0.053-0.102-0.103-0.152-0.155 -0.047-0.051-0.102-0.096-0.148-0.147 -0.049-0.054-0.104-0.103-0.155-0.156 -0.047-0.051-0.098-0.096-0.147-0.147 -0.05-0.053-0.105-0.103-0.156-0.156 -1.635-1.783-3.974-2.905-6.58-2.905 -4.102 0-7.552 2.771-8.597 6.541 -0.617-0.194-1.259-0.328-1.944-0.328 -3.584 0-6.492 2.907-6.492 6.495 0 1.83 0.766 3.479 1.985 4.66 0.05 0.049 0.097 0.1 0.148 0.145 0.049 0.053 0.1 0.104 0.151 0.152 0.049 0.053 0.1 0.105 0.154 0.153 0.049 0.052 0.1 0.103 0.151 0.152 0.047 0.048 0.096 0.096 0.146 0.144 0.049 0.053 0.101 0.104 0.154 0.154 0.049 0.052 0.1 0.102 0.151 0.152 0.049 0.047 0.098 0.1 0.152 0.148 0.049 0.049 0.098 0.102 0.147 0.146 0.051 0.05 0.102 0.104 0.153 0.152 0.047 0.051 0.097 0.1 0.148 0.146 0.051 0.052 0.102 0.104 0.155 0.156 0.049 0.047 0.096 0.098 0.148 0.144 0.049 0.054 0.1 0.104 0.151 0.153 0.049 0.051 0.098 0.101 0.149 0.148 0.051 0.053 0.101 0.105 0.154 0.153 0.049 0.052 0.098 0.101 0.149 0.147 0.049 0.051 0.1 0.101 0.152 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.099 0.101 0.15 0.149 0.049 0.048 0.098 0.101 0.147 0.146 0.049 0.051 0.098 0.101 0.146 0.149 0.052 0.056 0.105 0.106 0.159 0.158 0.049 0.051 0.1 0.101 0.153 0.149 0.047 0.047 0.094 0.096 0.146 0.143 0.049 0.054 0.1 0.104 0.153 0.154 0.049 0.052 0.1 0.104 0.152 0.151 0.049 0.048 0.1 0.103 0.151 0.149 0.049 0.048 0.098 0.101 0.147 0.148 0.049 0.049 0.1 0.1 0.152 0.148 0.049 0.05 0.098 0.104 0.149 0.152 0.051 0.052 0.102 0.103 0.156 0.151 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.048 0.098 0.101 0.149 0.148 0.049 0.047 0.098 0.1 0.148 0.146 0.051 0.053 0.102 0.105 0.155 0.158 0.049 0.048 0.098 0.097 0.149 0.146 0.05 0.05 0.099 0.101 0.15 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.049 0.102 0.104 0.156 0.153 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.047 0.098 0.101 0.147 0.147 0.049 0.05 0.098 0.101 0.148 0.147 0.053 0.053 0.104 0.105 0.159 0.16 0.049 0.051 0.098 0.099 0.15 0.146 0.049 0.05 0.096 0.101 0.147 0.146 0.049 0.053 0.1 0.104 0.151 0.152 0.051 0.053 0.103 0.104 0.154 0.152 0.049 0.054 0.1 0.102 0.151 0.148 0.049 0.053 0.098 0.102 0.15 0.15 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.051 0.098 0.102 0.149 0.15 0.051 0.053 0.105 0.104 0.158 0.156 0.049 0.048 0.098 0.098 0.147 0.146 0.049 0.047 0.1 0.101 0.152 0.147 0.049 0.05 0.098 0.101 0.147 0.149 0.051 0.051 0.102 0.104 0.155 0.153 0.049 0.05 0.099 0.101 0.15 0.15 0.049 0.048 0.098 0.1 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.147 0.05 0.052 0.101 0.104 0.152 0.151 0.049 0.051 0.1 0.101 0.151 0.149 0.049 0.05 0.099 0.101 0.15 0.149 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.055 0.102 0.104 0.156 0.153 0.049 0.052 0.098 0.101 0.149 0.147 0.047 0.049 0.096 0.099 0.145 0.145 0.051 0.055 0.105 0.107 0.158 0.162 0.047 0.046 0.096 0.098 0.145 0.143 0.051 0.051 0.103 0.104 0.153 0.153 0.052 0.052 0.103 0.103 0.154 0.149 0.047 0.051 0.094 0.101 0.143 0.145 0.049 0.053 0.1 0.105 0.152 0.154 0.051 0.052 0.102 0.104 0.153 0.152 0.051 0.051 0.102 0.105 0.155 0.153 0.048 0.048 0.095 0.097 0.142 0.142 0.051 0.051 0.102 0.104 0.153 0.154 0.051 0.051 0.1 0.104 0.154 0.153 0.049 0.048 0.1 0.101 0.151 0.147 0.047 0.049 0.096 0.101 0.145 0.147 0.051 0.051 0.1 0.103 0.154 0.153 0.049 0.049 0.1 0.102 0.151 0.15 0.049 0.051 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.145 0.049 0.051 0.1 0.104 0.151 0.153 0.049 0.052 0.101 0.104 0.152 0.151 0.049 0.053 0.1 0.103 0.151 0.152 0.049 0.047 0.1 0.1 0.149 0.146 0.05 0.051 0.099 0.101 0.15 0.147 0.049 0.053 0.098 0.103 0.149 0.152 0.051 0.051 0.102 0.104 0.156 0.152 0.049 0.052 0.1 0.102 0.153 0.152 0.045 0.049 0.092 0.094 0.141 0.141 0.051 0.055 0.103 0.105 0.154 0.154 0.051 0.053 0.102 0.104 0.155 0.153 0.049 0.05 0.1 0.104 0.152 0.151 0.049 0.049 0.096 0.099 0.147 0.145 0.049 0.053 0.1 0.104 0.151 0.152 0.052 0.052 0.101 0.105 0.154 0.152 0.049 0.054 0.1 0.104 0.151 0.152 0.047 0.047 0.096 0.096 0.145 0.143 0.05 0.055 0.101 0.104 0.154 0.156 0.049 0.047 0.1 0.103 0.151 0.151 0.049 0.05 0.101 0.103 0.154 0.149 0.047 0.051 0.096 0.101 0.146 0.146 0.049 0.051 0.1 0.104 0.154 0.154 0.049 0.05 0.098 0.1 0.149 0.148 0.051 0.051 0.102 0.102 0.153 0.152 0.049 0.048 0.099 0.098 0.15 0.148 0.049 0.049 0.098 0.1 0.149 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.052 0.103 0.104 0.158 0.156 0.049 0.049 0.1 0.102 0.153 0.148 0.045 0.048 0.093 0.096 0.142 0.141 0.051 0.051 0.102 0.105 0.153 0.155 0.051 0.056 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.103 0.149 0.149 0.049 0.051 0.096 0.101 0.147 0.146 0.049 0.05 0.101 0.102 0.154 0.154 0.049 0.05 0.098 0.1 0.151 0.148 0.051 0.053 0.102 0.104 0.156 0.154 0.047 0.046 0.094 0.096 0.143 0.143 0.049 0.051 0.1 0.104 0.151 0.153 0.051 0.05 0.103 0.104 0.156 0.151 0.049 0.053 0.098 0.103 0.149 0.15 0.049 0.049 0.098 0.1 0.149 0.146 0.052 0.053 0.104 0.105 0.156 0.154 0.047 0.051 0.096 0.101 0.145 0.145 0.051 0.052 0.103 0.105 0.156 0.156 0.049 0.05 0.1 0.103 0.151 0.15 0.047 0.047 0.096 0.1 0.147 0.145 0.05 0.051 0.099 0.104 0.15 0.15 0.051 0.055 0.104 0.105 0.157 0.158 0.049 0.051 0.101 0.1 0.152 0.146 0.047 0.049 0.094 0.097 0.143 0.145 0.049 0.051 0.1 0.104 0.151 0.154 0.052 0.053 0.105 0.104 0.159 0.158 0.049 0.045 0.098 0.097 0.149 0.146 0.049 0.05 0.096 0.099 0.146 0.146 0.049 0.049 0.098 0.101 0.149 0.148 0.051 0.055 0.104 0.105 0.158 0.158 0.049 0.048 0.098 0.1 0.147 0.146 0.049 0.051 0.1 0.102 0.151 0.15 0.049 0.051 0.096 0.1 0.148 0.146 0.051 0.055 0.103 0.104 0.153 0.154 0.049 0.049 0.1 0.102 0.15 0.149 0.051 0.05 0.1 0.101 0.148 0.147 0.049 0.051 0.098 0.1 0.146 0.146 0.053 0.055 0.104 0.107 0.158 0.158 0.051 0.051 0.102 0.101 0.151 0.15 0.049 0.049 0.097 0.1 0.146 0.146 0.051 0.05 0.102 0.103 0.152 0.149 0.049 0.049 0.098 0.101 0.148 0.149 0.05 0.05 0.1 0.104 0.15 0.153 0.051 0.051 0.104 0.101 0.152 0.15 0.05 0.047 0.098 0.1 0.146 0.146 0.053 0.052 0.101 0.104 0.153 0.153 0.052 0.051 0.101 0.103 0.152 0.149 0.048 0.05 0.098 0.103 0.147 0.149 0.051 0.053 0.104 0.104 0.153 0.152 0.048 0.047 0.101 0.1 0.147 0.147 0.049 0.05 0.101 0.103 0.152 0.153 0.051 0.049 0.1 0.101 0.149 0.147 0.048 0.048 0.101 0.103 0.149 0.149 0.051 0.053 0.101 0.103 0.149 0.152 0.052 0.051 0.101 0.1 0.149 0.149 0.05 0.049 0.101 0.101 0.15 0.149 0.051 0.051 0.1 0.101 0.151 0.149 0.048 0.05 0.099 0.101 0.147 0.149 0.049 0.05 0.104 0.104 0.154 0.154 0.033 0.033 0.063 0.063 0.096 0.094C49.009 62.129 59.611 52.646 62.904 40.171z"/></g><path fill="#DFE0E1" d="M34.8 25.039c-0.625 0-1.225 0.105-1.806 0.252 -1.485-2.874-4.478-4.843-7.934-4.843 -4.102 0-7.552 2.771-8.598 6.541 -0.616-0.194-1.258-0.328-1.942-0.328 -3.584 0-6.492 2.907-6.492 6.493 0 3.584 2.907 6.492 6.492 6.492h0.983 19.113H34.8c4.035 0 7.31-3.271 7.31-7.305C42.107 28.307 38.838 25.039 34.8 25.039z"/><path fill="#FFFFFF" d="M48.667 28.938c-0.63 0-1.229 0.104-1.812 0.252 -1.48-2.874-4.476-4.842-7.932-4.842 -4.102 0-7.552 2.771-8.598 6.541 -0.617-0.194-1.26-0.328-1.943-0.328 -3.584 0-6.492 2.906-6.492 6.494 0 3.584 2.907 6.491 6.492 6.491h0.981 19.115 0.183c4.036 0 7.305-3.271 7.305-7.305C55.967 32.211 52.698 28.938 48.667 28.938z"/></svg>'}}),'cloudy-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="64" height="64" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.7 0 32-14.3 32-32S49.7 0 32 0V64z"/><defs><filter filterUnits="userSpaceOnUse" x="8.6" y="11.3" width="55.1" height="52.7"><feColorMatrix type="matrix" values="1"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.6" y="11.3" width="55.1" height="52.7"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient cx="70.8" cy="591" r="37.3" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1" stop-color="#E8E8E8"/><stop offset="0.3" stop-color="#ADADAD"/><stop offset="0.7" stop-color="#4E4E4E"/><stop offset="1" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.3"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#34495E" d="M63.7 36.4c0 0 0 0 0 0 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1s0 0-0.1-0.1c0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1s0-0.1-0.1-0.1c0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 -0.1 0-0.1-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 -0.3-0.4-0.6-0.3-0.8 0.4 -0.3 0.9-1.2 1.8-2.1 2.1 0 0 0 0-0.1 0 0 0 0 0 0 0 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 -0.1 0-0.1 0-0.2 0 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0 0-0.1-0.1 0 0 0-0.1-0.1-0.1 0 0-0.1 0-0.1-0.1 0 0 0 0-0.1-0.1 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.1 0-0.1-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.1-0.1 -0.3-0.4-0.6-0.3-0.8 0.4 -0.3 0.9-1.2 1.8-2.1 2.1 -0.7 0.2-0.8 0.5-0.4 0.8 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0.1 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0.1 0.1 0.1 0 0 0 0 0.1 0.1 0 0 0 0 0 0 -0.4 0-0.7 0.1-1.1 0.1 0 0 0 0 0 0 -0.1-0.1-0.1-0.1-0.2-0.2 0 0-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0 0-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.2 0-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.2 -0.1-0.1-0.1-0.1-0.2-0.2 0 0-0.1-0.1-0.1-0.1 0-0.1-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0 0-0.1-0.1-0.1-0.1 -0.1-0.1-0.1-0.1-0.2-0.2 0-0.1-0.1-0.1-0.1-0.1 -2.1-2.3-5.2-3.8-8.6-3.8 -0.5 0-1 0-1.5 0.1 0 0 0-0.1 0.1-0.1 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.1 0-0.2 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -0.1 0-0.2 0-0.3 0 0-0.1 0.1-0.1 0.1-0.2 -1.8 0.2-3.6 0.7-5.2 1.7 -5.6 3.2-7.8 10-5.5 15.8C9.7 33.5 8.6 35.8 8.6 38.4c0 2.4 1 4.6 2.6 6.1 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0 0.1 0.1 0.2 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0 0 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0.1 0 0.1 0.1 0.2 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.2 0 0.1 0.1 0.1 0.2 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0.1 0 0.1 0.1 0.2 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.2 0 0 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.2 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.2 0.1 0 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.2 0 0 0.1 0.1 0.1 0.1 0 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.2 0.2 0 0.1 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.1 0.1 0 0 0.1 0.1 0.2 0.1 0 0.1 0.1 0.1 0.2 0.1 0 0 0.1 0.1 0.1 0.1C31 64 31.5 64 32 64 48.2 64 61.5 52 63.7 36.4z"/></g><path fill="#F5D76E" d="M17.1 16.1c1.6-1 3.4-1.5 5.2-1.6 -2.8 4-3.2 9.3-0.7 13.8 2.6 4.5 7.5 6.8 12.3 6.3 -1 1.5-2.4 2.7-4 3.7 -6.1 3.5-14 1.4-17.5-4.7C8.8 27.5 10.9 19.6 17.1 16.1zM44.2 17.2c-0.3-0.9-0.7-0.9-1 0 -0.3 0.9-1.2 1.8-2.1 2.1 -0.9 0.3-0.9 0.7 0 1 0.9 0.3 1.8 1.2 2.1 2.1 0.3 0.9 0.7 0.9 1 0 0.3-0.9 1.2-1.8 2.1-2.1 0.9-0.3 0.9-0.7 0-1C45.4 19 44.5 18 44.2 17.2zM33.6 11.9c-0.3-0.9-0.7-0.9-1 0 -0.3 0.9-1.2 1.8-2.1 2.1 -0.9 0.3-0.9 0.7 0 1 0.9 0.3 1.8 1.2 2.1 2.1 0.3 0.9 0.7 0.9 1 0 0.3-0.9 1.2-1.8 2.1-2.1 0.9-0.3 0.9-0.7 0-1C34.8 13.7 33.8 12.8 33.6 11.9z"/><path fill="#FFFFFF" d="M43.7 27.7c-0.8 0-1.6 0.1-2.4 0.3 -1.9-3.8-5.9-6.4-10.4-6.4 -5.4 0-9.9 3.6-11.3 8.6 -0.8-0.3-1.7-0.4-2.6-0.4 -4.7 0-8.5 3.8-8.5 8.5 0 4.7 3.8 8.5 8.5 8.5h1.3 25.1 0.2c5.3 0 9.6-4.3 9.6-9.6C53.3 32 49 27.7 43.7 27.7z"/></svg>'}}),'cloudy-2-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="CLOUDY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="night_bg_6_"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="9.681" y="19.434" width="53.348" height="44.407"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.681" y="19.434" width="53.348" height="44.407" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.029 39.695c-0.021-0.021-0.043-0.041-0.063-0.061 -0.048-0.048-0.101-0.104-0.149-0.148 -0.049-0.049-0.101-0.102-0.149-0.148 -0.051-0.053-0.101-0.104-0.149-0.152 -0.05-0.047-0.101-0.098-0.15-0.147 -0.049-0.05-0.1-0.103-0.149-0.149 -0.05-0.053-0.101-0.104-0.151-0.154 -0.049-0.045-0.096-0.096-0.145-0.144 -0.052-0.053-0.104-0.106-0.158-0.161 -0.05-0.048-0.101-0.096-0.147-0.146 -0.048-0.05-0.101-0.101-0.151-0.149 -0.048-0.051-0.097-0.101-0.146-0.15 -0.051-0.049-0.104-0.103-0.153-0.153 -0.05-0.048-0.101-0.101-0.149-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.048-0.051-0.097-0.1-0.144-0.146 -0.053-0.055-0.109-0.107-0.16-0.162 -0.051-0.051-0.104-0.101-0.154-0.149 -0.045-0.046-0.092-0.095-0.139-0.138 -0.049-0.055-0.104-0.108-0.158-0.158 -0.045-0.051-0.098-0.102-0.146-0.146 -0.048-0.051-0.101-0.104-0.149-0.15 -0.051-0.051-0.104-0.104-0.154-0.157 -0.051-0.048-0.1-0.101-0.148-0.147 -0.05-0.049-0.102-0.099-0.148-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.046-0.048-0.096-0.097-0.143-0.144 -0.051-0.053-0.1-0.104-0.153-0.152 -0.05-0.051-0.101-0.104-0.151-0.154 -0.049-0.048-0.099-0.1-0.148-0.146 -0.049-0.047-0.102-0.104-0.153-0.152 -0.048-0.05-0.101-0.1-0.147-0.15 -0.047-0.049-0.101-0.1-0.147-0.146 -0.054-0.055-0.106-0.105-0.158-0.156 -0.046-0.046-0.096-0.096-0.142-0.142 -0.051-0.052-0.1-0.104-0.152-0.154 -0.052-0.05-0.102-0.104-0.152-0.151 -0.047-0.049-0.1-0.099-0.146-0.147 -0.048-0.056-0.104-0.104-0.154-0.153 -0.048-0.051-0.098-0.101-0.146-0.148 -0.051-0.053-0.102-0.102-0.154-0.151 -0.048-0.056-0.102-0.104-0.152-0.153 -0.048-0.049-0.094-0.097-0.14-0.143 -0.052-0.055-0.106-0.104-0.158-0.156 -0.048-0.053-0.1-0.101-0.147-0.15 -0.049-0.051-0.1-0.101-0.151-0.152 -0.05-0.051-0.101-0.1-0.149-0.148 -0.049-0.051-0.101-0.103-0.149-0.15 -0.052-0.049-0.099-0.1-0.149-0.149 -0.051-0.051-0.101-0.103-0.15-0.153 -0.051-0.052-0.1-0.101-0.149-0.149 -0.05-0.052-0.101-0.101-0.151-0.152 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.096-0.099-0.146-0.147 -0.05-0.051-0.104-0.104-0.156-0.155 -0.047-0.049-0.096-0.096-0.144-0.145 -0.05-0.051-0.103-0.103-0.153-0.154 -0.049-0.051-0.101-0.102-0.152-0.153 -0.049-0.049-0.098-0.098-0.147-0.15 -0.05-0.051-0.101-0.098-0.149-0.149 -0.049-0.051-0.101-0.103-0.152-0.153 -0.048-0.05-0.098-0.099-0.146-0.148 -0.051-0.053-0.104-0.104-0.154-0.155 -0.049-0.049-0.096-0.097-0.146-0.145 -0.05-0.05-0.101-0.101-0.15-0.15 -0.049-0.053-0.104-0.104-0.157-0.158 -0.046-0.049-0.097-0.096-0.146-0.145 -0.049-0.051-0.102-0.1-0.148-0.151 -0.053-0.051-0.102-0.102-0.152-0.154 -0.048-0.049-0.1-0.098-0.148-0.149 -0.049-0.051-0.102-0.1-0.15-0.151 -0.05-0.052-0.1-0.101-0.148-0.15 -0.052-0.051-0.102-0.1-0.15-0.149 -0.051-0.051-0.1-0.102-0.152-0.153 -0.048-0.05-0.096-0.099-0.145-0.148 -0.053-0.053-0.105-0.104-0.157-0.155 -1.741-1.781-4.167-2.891-6.854-2.891 -0.6 0-1.175 0.088-1.736 0.2 -0.002-0.002-0.004-0.004-0.006-0.006 -0.051-0.053-0.106-0.1-0.154-0.154 -0.049-0.051-0.102-0.096-0.148-0.147 -0.046-0.051-0.1-0.098-0.148-0.149 -0.049-0.055-0.104-0.102-0.152-0.156 -0.048-0.049-0.098-0.094-0.145-0.145 -0.049-0.055-0.109-0.104-0.162-0.159 -0.043-0.05-0.096-0.095-0.145-0.146 -0.048-0.053-0.102-0.1-0.148-0.151 -0.049-0.053-0.104-0.101-0.152-0.154 -0.048-0.051-0.1-0.096-0.148-0.145 -0.047-0.053-0.102-0.102-0.15-0.153 -0.046-0.051-0.104-0.099-0.15-0.15 -0.046-0.051-0.1-0.096-0.146-0.147 -0.05-0.055-0.108-0.104-0.158-0.158 -0.046-0.049-0.097-0.094-0.142-0.143 -0.051-0.055-0.108-0.104-0.159-0.157 -2.146-2.338-5.216-3.806-8.636-3.806 -5.391 0-9.924 3.644-11.296 8.598 -0.811-0.256-1.658-0.432-2.552-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 2.396 0.995 4.555 2.584 6.104 0.049 0.052 0.098 0.102 0.149 0.15 0.047 0.051 0.096 0.098 0.146 0.146 0.051 0.053 0.104 0.104 0.156 0.156 0.049 0.047 0.098 0.099 0.149 0.147 0.049 0.05 0.1 0.103 0.151 0.149 0.05 0.051 0.101 0.101 0.152 0.15 0.049 0.049 0.098 0.1 0.149 0.149 0.049 0.05 0.101 0.103 0.154 0.153 0.049 0.049 0.098 0.101 0.151 0.149 0.047 0.048 0.096 0.097 0.147 0.144 0.052 0.054 0.105 0.108 0.158 0.162 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.103 0.104 0.156 0.155 0.049 0.049 0.1 0.101 0.151 0.147 0.047 0.05 0.096 0.101 0.145 0.146 0.052 0.054 0.105 0.104 0.158 0.156 0.049 0.053 0.1 0.104 0.151 0.15 0.047 0.048 0.096 0.098 0.146 0.145 0.051 0.053 0.102 0.104 0.155 0.155 0.051 0.048 0.1 0.103 0.154 0.152 0.047 0.05 0.096 0.098 0.147 0.146 0.051 0.053 0.1 0.104 0.153 0.154 0.047 0.048 0.096 0.096 0.146 0.145 0.051 0.053 0.103 0.105 0.158 0.156 0.049 0.051 0.098 0.1 0.15 0.149 0.049 0.05 0.098 0.101 0.149 0.149 0.049 0.051 0.1 0.101 0.151 0.149 0.051 0.05 0.103 0.104 0.154 0.153 0.047 0.049 0.096 0.097 0.145 0.145 0.051 0.053 0.104 0.105 0.159 0.158 0.047 0.048 0.094 0.096 0.143 0.141 0.051 0.055 0.102 0.107 0.157 0.157 0.047 0.052 0.096 0.101 0.148 0.146 0.051 0.055 0.102 0.104 0.155 0.154 0.047 0.051 0.094 0.1 0.143 0.145 0.054 0.052 0.105 0.105 0.158 0.16 0.047 0.045 0.094 0.096 0.143 0.142 0.051 0.052 0.104 0.104 0.158 0.158 0.047 0.048 0.096 0.096 0.145 0.142 0.051 0.055 0.104 0.108 0.16 0.158 0.047 0.051 0.094 0.1 0.143 0.146 0.051 0.049 0.102 0.104 0.153 0.151 0.049 0.048 0.098 0.101 0.148 0.147 0.051 0.054 0.104 0.105 0.157 0.158 0.049 0.047 0.096 0.096 0.147 0.144 0.049 0.048 0.099 0.103 0.15 0.149 0.049 0.049 0.098 0.101 0.147 0.147 0.053 0.054 0.104 0.104 0.16 0.159 0.047 0.048 0.094 0.096 0.143 0.145 0.051 0.051 0.104 0.104 0.157 0.155 0.047 0.048 0.097 0.097 0.146 0.146 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.051 0.098 0.098 0.148 0.146 0.049 0.05 0.1 0.104 0.151 0.15 0.049 0.051 0.098 0.104 0.149 0.151 0.051 0.052 0.103 0.103 0.156 0.153 0.049 0.049 0.096 0.099 0.145 0.145 0.051 0.053 0.1 0.104 0.153 0.154 0.05 0.05 0.101 0.1 0.152 0.148 0.051 0.051 0.102 0.104 0.153 0.154 0.049 0.049 0.099 0.096 0.148 0.146 0.031 0.043 0.078 0.094 0.129 0.14 0.051 0.054 0.102 0.104 0.155 0.153 0.05 0.053 0.101 0.104 0.152 0.154 0.049 0.047 0.098 0.101 0.149 0.147 0.049 0.053 0.101 0.103 0.152 0.153 0.049 0.05 0.1 0.1 0.151 0.148 0.049 0.049 0.098 0.102 0.149 0.148 0.052 0.053 0.103 0.103 0.155 0.152 0.047 0.051 0.096 0.1 0.145 0.146 0.051 0.05 0.1 0.104 0.154 0.15 0.051 0.054 0.102 0.106 0.153 0.156 0.051 0.051 0.102 0.102 0.154 0.15 0.047 0.048 0.096 0.096 0.145 0.145 0.051 0.053 0.104 0.105 0.157 0.155 0.049 0.05 0.099 0.099 0.148 0.146 0.051 0.053 0.102 0.104 0.153 0.154 0.047 0.049 0.094 0.096 0.143 0.145 0.054 0.052 0.107 0.107 0.16 0.16 0.047 0.049 0.096 0.096 0.143 0.142 0.051 0.052 0.102 0.104 0.156 0.155 0.047 0.049 0.094 0.097 0.143 0.145 0.053 0.055 0.104 0.105 0.159 0.158 0.05 0.048 0.097 0.096 0.146 0.146 0.051 0.049 0.102 0.104 0.155 0.153 0.047 0.05 0.096 0.097 0.145 0.146 0.054 0.051 0.105 0.104 0.158 0.158 0.047 0.047 0.094 0.096 0.143 0.141 0.053 0.052 0.105 0.107 0.16 0.16 0.049 0.048 0.098 0.096 0.147 0.146 0.049 0.048 0.096 0.101 0.147 0.146 0.05 0.051 0.101 0.103 0.152 0.154 0.051 0.051 0.102 0.104 0.155 0.154 0.049 0.048 0.097 0.096 0.148 0.146 0.051 0.049 0.1 0.102 0.151 0.149 0.049 0.05 0.098 0.101 0.147 0.149 0.052 0.052 0.105 0.104 0.158 0.156 0.049 0.047 0.096 0.098 0.145 0.144 0.051 0.051 0.103 0.104 0.154 0.153 0.049 0.049 0.096 0.097 0.147 0.146 0.051 0.051 0.104 0.104 0.158 0.156 0.047 0.048 0.096 0.098 0.145 0.145 0.051 0.051 0.104 0.104 0.157 0.157 0.047 0.046 0.094 0.097 0.144 0.142 0.053 0.055 0.104 0.106 0.159 0.158 0.049 0.051 0.1 0.104 0.152 0.15 0.047 0.048 0.094 0.096 0.143 0.145 0.049 0.047 0.1 0.102 0.151 0.151s0.104 0.104 0.156 0.153c0.047 0.051 0.096 0.101 0.145 0.146 0.053 0.054 0.104 0.108 0.16 0.158 0.047 0.046 0.094 0.095 0.141 0.142 0.051 0.053 0.104 0.104 0.158 0.158 0.051 0.051 0.101 0.102 0.154 0.15 0.047 0.046 0.096 0.096 0.145 0.142 0.049 0.052 0.098 0.104 0.149 0.154 0.052 0.05 0.105 0.104 0.158 0.153 0.047 0.051 0.096 0.099 0.145 0.146 0.051 0.051 0.1 0.1 0.154 0.154 0.051 0.048 0.1 0.1 0.151 0.148 0.051 0.051 0.1 0.102 0.151 0.15 0.05 0.05 0.099 0.1 0.15 0.15 0.049 0.047 0.098 0.1 0.149 0.146 0.051 0.049 0.1 0.104 0.152 0.152 0.051 0.05 0.1 0.102 0.153 0.148 0.049 0.053 0.1 0.104 0.154 0.152 0.047 0.048 0.096 0.098 0.147 0.146 0.049 0.053 0.098 0.103 0.149 0.151 0.051 0.05 0.102 0.104 0.156 0.154 0.049 0.05 0.098 0.101 0.149 0.147 0.049 0.053 0.098 0.1 0.149 0.147 0.052 0.052 0.101 0.104 0.152 0.153 0.051 0.051 0.1 0.101 0.151 0.149 0.049 0.052 0.098 0.101 0.149 0.149 0.05 0.051 0.099 0.101 0.149 0.146 0.049 0.053 0.098 0.104 0.148 0.152 0.053 0.052 0.104 0.105 0.159 0.158 0.048 0.048 0.097 0.098 0.146 0.144 0.049 0.052 0.099 0.101 0.147 0.147 0.05 0.053 0.104 0.107 0.158 0.158 0.046 0.049 0.092 0.094 0.14 0.141 0.053 0.054 0.106 0.107 0.164 0.162 0.047 0.046 0.096 0.096 0.144 0.142 0.04 0.042 0.083 0.084 0.125 0.125C48.063 63.07 59.725 53.05 63.029 39.695z"/></g><path fill="#FFFFFF" d="M44.783 25.417c-0.825 0-1.612 0.137-2.375 0.331 -1.95-3.778-5.883-6.364-10.425-6.364 -5.392 0-9.925 3.644-11.297 8.598 -0.811-0.256-1.657-0.432-2.551-0.432 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.289 25.12 0.241c5.303 0 9.602-4.3 9.602-9.601C54.387 29.716 50.088 25.417 44.783 25.417z"/></svg>'}}),'cloudy-3-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="64" height="64" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z"/><defs><filter filterUnits="userSpaceOnUse" x="8.08" y="20.48" width="54.83" height="43.13"><feColorMatrix type="matrix" values="1"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.08" y="20.48" width="54.83" height="43.13"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient cx="70.78" cy="591" r="37.33" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.11" stop-color="#E8E8E8"/><stop offset="0.35" stop-color="#ADADAD"/><stop offset="0.69" stop-color="#4E4E4E"/><stop offset="0.95" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.33"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M62.9 40.17c-0.03-0.03-0.06-0.07-0.1-0.1 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.09-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.09-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15s-0.1-0.1-0.15-0.15 -0.1-0.1-0.15-0.15c-0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.09-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.09-0.1-0.14-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -1.33-1.37-3.18-2.22-5.23-2.22 -0.46 0-0.89 0.07-1.32 0.15 -0.01-0.01-0.02-0.01-0.02-0.02 -0.05-0.06-0.1-0.1-0.16-0.16 -0.04-0.05-0.1-0.09-0.14-0.14 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.14 -1.63-1.78-3.97-2.91-6.58-2.91 -1.25 0-2.43 0.28-3.51 0.75 -0.2-0.02-0.4-0.06-0.61-0.06 -0.46 0-0.89 0.07-1.32 0.15 -0.01-0.01-0.02-0.01-0.02-0.02 -0.05-0.05-0.1-0.1-0.16-0.16 -0.06-0.06-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -1.63-1.78-3.97-2.9-6.58-2.9 -4.1 0-7.55 2.77-8.6 6.54 -0.62-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.5 0 1.83 0.77 3.48 1.99 4.66 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.09 0.14 0.14 0.05 0.06 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.1 0.1 0.15 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.15 0.16 0.05 0.06 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.11 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.03 0.03 0.06 0.06 0.1 0.09C49.01 62.13 59.61 52.65 62.9 40.17z"/></g><path fill="#DFE0E1" d="M34.8 25.04c-0.62 0-1.23 0.11-1.81 0.25 -1.48-2.87-4.48-4.84-7.93-4.84 -4.1 0-7.55 2.77-8.6 6.54 -0.62-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.49 0 3.58 2.91 6.49 6.49 6.49h0.98 19.11H34.8c4.04 0 7.31-3.27 7.31-7.3C42.11 28.31 38.84 25.04 34.8 25.04z"/><path fill="#FFFFFF" d="M48.67 28.94c-0.63 0-1.23 0.1-1.81 0.25 -1.48-2.87-4.48-4.84-7.93-4.84 -4.1 0-7.55 2.77-8.6 6.54 -0.62-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.49 0 3.58 2.91 6.49 6.49 6.49h0.98 19.11 0.18c4.04 0 7.31-3.27 7.31-7.3C55.97 32.21 52.7 28.94 48.67 28.94z"/></svg>'}}),'snowy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_1_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'9.61\' y=\'12.8\' width=\'54.291\' height=\'50.821\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'9.61\' y=\'12.8\' width=\'54.291\' height=\'50.821\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'402.7705\' cy=\'-781.5986\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 -1 -373.9707 -752.7988)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.1126\' stop-color=\'#E8E8E8\'/><stop offset=\'0.3492\' stop-color=\'#ADADAD\'/><stop offset=\'0.6869\' stop-color=\'#4E4E4E\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g opacity=\'0.2\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M63.9 33.979c-0.006-0.004-0.008-0.008-0.012-0.013 -0.052-0.055-0.105-0.106-0.158-0.157 -0.047-0.049-0.101-0.102-0.147-0.15 -0.048-0.047-0.101-0.096-0.149-0.145 -0.045-0.048-0.101-0.103-0.147-0.147 -0.048-0.054-0.101-0.104-0.151-0.153 -0.046-0.051-0.103-0.102-0.15-0.152 -0.047-0.047-0.096-0.096-0.144-0.143 -0.048-0.053-0.101-0.102-0.147-0.152 -0.055-0.051-0.106-0.104-0.158-0.154 -0.047-0.051-0.1-0.104-0.146-0.154 -0.049-0.049-0.104-0.098-0.148-0.146 -0.051-0.054-0.104-0.103-0.154-0.156 -0.046-0.05-0.1-0.099-0.146-0.147 -0.049-0.051-0.1-0.1-0.149-0.151 -0.05-0.051-0.101-0.1-0.149-0.15 -0.045-0.051-0.096-0.1-0.147-0.149 -0.048-0.053-0.103-0.104-0.151-0.155 -0.046-0.052-0.101-0.101-0.15-0.152 -0.049-0.051-0.1-0.1-0.149-0.149 -0.048-0.051-0.101-0.101-0.147-0.152 -0.052-0.051-0.103-0.102-0.151-0.153 -0.048-0.049-0.101-0.098-0.149-0.147 -0.046-0.052-0.101-0.101-0.146-0.152 -0.05-0.051-0.103-0.102-0.149-0.153 -0.051-0.052-0.104-0.1-0.15-0.152 -0.049-0.051-0.1-0.102-0.153-0.151 -0.046-0.049-0.097-0.098-0.142-0.147 -0.055-0.054-0.106-0.105-0.158-0.158 -0.049-0.051-0.1-0.1-0.147-0.149 -0.049-0.049-0.099-0.099-0.146-0.146 -0.049-0.051-0.1-0.102-0.147-0.151 -0.05-0.053-0.104-0.104-0.153-0.156 -0.051-0.049-0.102-0.096-0.146-0.146 -0.051-0.053-0.104-0.104-0.159-0.155 -0.043-0.049-0.096-0.098-0.146-0.146 -0.047-0.053-0.101-0.104-0.15-0.155 -0.05-0.049-0.102-0.1-0.148-0.149 -0.047-0.052-0.102-0.101-0.146-0.15 -0.051-0.051-0.104-0.102-0.154-0.153 -0.046-0.049-0.101-0.098-0.146-0.15 -0.053-0.051-0.104-0.102-0.153-0.153 -0.048-0.049-0.101-0.096-0.147-0.145 -0.043-0.051-0.096-0.101-0.146-0.152 -0.046-0.053-0.104-0.104-0.154-0.155 -0.051-0.051-0.101-0.1-0.15-0.152 -0.045-0.049-0.096-0.096-0.146-0.145 -0.05-0.051-0.101-0.102-0.149-0.151 -0.049-0.052-0.101-0.103-0.152-0.154 -0.048-0.051-0.102-0.1-0.148-0.151 -0.049-0.049-0.102-0.098-0.145-0.146 -0.051-0.052-0.104-0.104-0.154-0.154 -0.048-0.051-0.101-0.103-0.15-0.151 -0.049-0.051-0.1-0.101-0.148-0.152 -0.049-0.051-0.098-0.1-0.145-0.149 -0.053-0.053-0.105-0.104-0.158-0.156 -0.049-0.049-0.096-0.098-0.145-0.145 -0.05-0.051-0.104-0.104-0.154-0.155 -0.049-0.05-0.1-0.099-0.148-0.148 -0.046-0.051-0.102-0.102-0.15-0.151s-0.11-0.102-0.158-0.15c-0.049-0.052-0.104-0.103-0.152-0.154 -0.048-0.049-0.102-0.098-0.145-0.146 -0.055-0.053-0.105-0.105-0.158-0.156 -0.045-0.051-0.096-0.1-0.141-0.148 -0.051-0.051-0.104-0.104-0.158-0.156C54.1 24.107 54.046 24.058 54 24.009c-0.048-0.051-0.1-0.102-0.152-0.153 -0.048-0.049-0.098-0.098-0.146-0.15 -0.052-0.051-0.104-0.102-0.152-0.153 -0.046-0.049-0.096-0.096-0.146-0.145 -0.051-0.054-0.104-0.105-0.154-0.158 -0.05-0.05-0.1-0.099-0.15-0.15 -0.048-0.051-0.1-0.103-0.148-0.152 -0.049-0.051-0.102-0.1-0.148-0.149 -0.048-0.051-0.1-0.1-0.15-0.151 -0.049-0.052-0.104-0.103-0.154-0.154 -0.048-0.049-0.098-0.098-0.145-0.147 -0.051-0.051-0.101-0.1-0.149-0.152 -0.05-0.051-0.104-0.102-0.154-0.151 -0.044-0.051-0.096-0.1-0.144-0.149 -0.049-0.054-0.104-0.105-0.154-0.156 -1.743-1.781-4.164-2.893-6.857-2.893 -0.595 0-1.172 0.087-1.735 0.201 -0.005-0.004-0.009-0.007-0.013-0.011 -0.047-0.049-0.097-0.092-0.141-0.141 -0.048-0.056-0.109-0.106-0.158-0.163 -0.043-0.049-0.096-0.092-0.144-0.141 -0.046-0.055-0.106-0.104-0.158-0.16 -0.044-0.051-0.101-0.096-0.146-0.148 -0.047-0.051-0.102-0.098-0.15-0.151 -0.044-0.051-0.1-0.1-0.15-0.151 -0.043-0.052-0.1-0.099-0.146-0.15 -0.044-0.051-0.1-0.096-0.145-0.147 -0.05-0.055-0.109-0.104-0.162-0.161 -0.043-0.051-0.101-0.096-0.146-0.147 -0.046-0.051-0.098-0.096-0.146-0.146 -0.162-0.067-0.219-0.114-0.267-0.165 -0.051-0.056-0.106-0.104-0.159-0.158 -0.043-0.052-0.1-0.099-0.144-0.15 -0.044-0.051-0.106-0.098-0.149-0.149 -2.148-2.338-5.223-3.808-8.643-3.808 -5.391 0-9.924 3.644-11.296 8.597 -0.812-0.255-1.658-0.43-2.552-0.43 -4.713 0-8.534 3.821-8.534 8.533 0 2.396 0.995 4.553 2.582 6.1 0.049 0.051 0.101 0.102 0.152 0.148 0.049 0.052 0.1 0.105 0.151 0.152 0.049 0.05 0.098 0.102 0.149 0.148 0.05 0.049 0.101 0.102 0.152 0.15 0.049 0.046 0.1 0.1 0.151 0.146 0.049 0.055 0.101 0.104 0.152 0.154 0.049 0.048 0.1 0.1 0.151 0.15 0.049 0.047 0.098 0.1 0.147 0.146 0.052 0.05 0.103 0.104 0.156 0.154 0.049 0.05 0.096 0.1 0.147 0.146 0.051 0.051 0.101 0.102 0.152 0.15 0.049 0.05 0.098 0.104 0.149 0.148 0.051 0.056 0.102 0.105 0.156 0.155 0.047 0.046 0.096 0.101 0.145 0.144 0.051 0.049 0.102 0.106 0.155 0.156 0.047 0.047 0.096 0.1 0.146 0.143 0.051 0.053 0.102 0.104 0.155 0.158 0.049 0.047 0.098 0.101 0.149 0.146 0.05 0.051 0.101 0.102 0.152 0.15 0.049 0.048 0.098 0.1 0.149 0.146 0.051 0.053 0.102 0.106 0.154 0.154 0.047 0.044 0.096 0.096 0.145 0.141 0.051 0.053 0.104 0.111 0.16 0.161 0.047 0.046 0.096 0.097 0.145 0.142 0.051 0.051 0.1 0.104 0.153 0.154 0.049 0.049 0.098 0.102 0.15 0.15 0.051 0.048 0.102 0.1 0.153 0.148 0.047 0.047 0.094 0.1 0.143 0.143 0.051 0.055 0.105 0.107 0.158 0.158 0.049 0.051 0.098 0.101 0.149 0.15 0.051 0.045 0.1 0.1 0.152 0.145 0.049 0.056 0.098 0.104 0.149 0.15 0.049 0.049 0.1 0.104 0.151 0.152 0.049 0.048 0.101 0.102 0.152 0.148 0.049 0.049 0.1 0.102 0.151 0.148 0.049 0.051 0.1 0.104 0.152 0.148 0.051 0.052 0.1 0.102 0.153 0.152 0.049 0.049 0.096 0.098 0.147 0.145 0.051 0.053 0.101 0.104 0.154 0.152 0.049 0.051 0.1 0.105 0.151 0.151 0.049 0.046 0.098 0.103 0.15 0.146 0.049 0.051 0.1 0.104 0.151 0.15 0.049 0.053 0.098 0.1 0.149 0.149 0.051 0.055 0.105 0.104 0.156 0.153 0.049 0.049 0.096 0.102 0.145 0.146 0.034 0.037 0.064 0.072 0.098 0.107 -1.118 0.125-2.013 1.035-2.013 2.17 0 0.631 0.281 1.181 0.714 1.568 0.049 0.051 0.098 0.104 0.154 0.153 0.047 0.05 0.096 0.101 0.149 0.146 0.049 0.051 0.098 0.104 0.151 0.15 0.049 0.055 0.099 0.104 0.152 0.148 0.047 0.053 0.096 0.104 0.149 0.15 0.047 0.051 0.096 0.1 0.149 0.149 0.05 0.055 0.099 0.104 0.154 0.153 0.047 0.049 0.096 0.102 0.149 0.145 0.049 0.053 0.098 0.104 0.154 0.152 0.047 0.05 0.096 0.103 0.149 0.146 0.049 0.056 0.098 0.104 0.154 0.154 0.047 0.051 0.096 0.101 0.149 0.147 0.049 0.053 0.098 0.104 0.153 0.152 0.047 0.051 0.096 0.1 0.15 0.146 0.049 0.053 0.098 0.106 0.153 0.152 0.047 0.051 0.096 0.1 0.15 0.146 0.049 0.055 0.098 0.104 0.151 0.15 0.047 0.053 0.096 0.104 0.149 0.148 0.049 0.055 0.098 0.104 0.154 0.154 0.047 0.047 0.094 0.101 0.147 0.146 0.049 0.054 0.098 0.104 0.153 0.149 0.05 0.051 0.099 0.107 0.152 0.15 0.047 0.055 0.096 0.104 0.151 0.149 0.049 0.053 0.096 0.101 0.15 0.147 0.049 0.053 0.096 0.106 0.151 0.151 0.049 0.056 0.098 0.104 0.151 0.149 0.05 0.053 0.097 0.104 0.152 0.148 0.049 0.053 0.096 0.105 0.151 0.151 0.049 0.05 0.096 0.103 0.152 0.146 0.047 0.055 0.096 0.104 0.149 0.149 0.049 0.056 0.098 0.104 0.154 0.153 0.047 0.056 0.096 0.101 0.149 0.146 0.049 0.053 0.096 0.104 0.151 0.152 0.049 0.052 0.098 0.105 0.152 0.15 0.049 0.051 0.098 0.104 0.151 0.15 0.047 0.051 0.096 0.102 0.149 0.146 0.05 0.051 0.097 0.104 0.152 0.148 0.049 0.055 0.098 0.104 0.151 0.15 0.047 0.052 0.096 0.104 0.15 0.15 0.049 0.051 0.098 0.104 0.151 0.15 0.049 0.053 0.098 0.102 0.151 0.148 0.032 0.039 0.058 0.078 0.093 0.111 0.025 0.029 0.053 0.047 0.08 0.071 0.026 0.026 0.045 0.054 0.071 0.079 0.026 0.031 0.055 0.046 0.083 0.07 0.023 0.028 0.045 0.055 0.067 0.078 0.026 0.029 0.054 0.047 0.082 0.071 0.026 0.028 0.045 0.054 0.073 0.079 0.025 0.029 0.051 0.046 0.079 0.07 0.025 0.024 0.045 0.055 0.07 0.078 0.026 0.025 0.053 0.045 0.082 0.071 0.026 0.029 0.044 0.052 0.073 0.079 0.025 0.025 0.051 0.044 0.078 0.068 0.026 0.031 0.045 0.057 0.073 0.084 0.026 0.025 0.053 0.043 0.079 0.068 0.025 0.026 0.045 0.055 0.072 0.078 0.026 0.027 0.054 0.047 0.081 0.071 0.026 0.028 0.047 0.054 0.073 0.079 0.023 0.023 0.051 0.046 0.077 0.066 0.025 0.028 0.047 0.057 0.074 0.082 0.024 0.029 0.051 0.047 0.077 0.071 0.026 0.021 0.044 0.05 0.071 0.075 0.025 0.029 0.053 0.05 0.08 0.074 0.024 0.025 0.045 0.053 0.069 0.074 0.028 0.029 0.055 0.049 0.083 0.076 0.025 0.028 0.045 0.051 0.072 0.076 0.026 0.027 0.052 0.044 0.079 0.071 0.026 0.026 0.044 0.052 0.071 0.079 0.025 0.023 0.053 0.043 0.081 0.072 0.025 0.026 0.045 0.051 0.072 0.078 0.026 0.027 0.051 0.045 0.08 0.067 0.026 0.028 0.044 0.054 0.073 0.079 0.025 0.029 0.051 0.046 0.078 0.07 0.026 0.029 0.045 0.055 0.073 0.084 0.026 0.023 0.051 0.045 0.079 0.065 0.025 0.029 0.045 0.054 0.07 0.079 0.026 0.029 0.054 0.048 0.082 0.075 0.026 0.024 0.044 0.052 0.073 0.079 0.025 0.023 0.051 0.044 0.079 0.068 0.023 0.026 0.045 0.047 0.07 0.074 0.028 0.031 0.056 0.049 0.083 0.073 0.024 0.03 0.044 0.054 0.071 0.079 0.025 0.025 0.053 0.046 0.081 0.07 0.025 0.028 0.045 0.055 0.07 0.074 0.026 0.033 0.053 0.051 0.083 0.075 0.024 0.029 0.045 0.054 0.071 0.079 0.025 0.029 0.051 0.046 0.078 0.07 0.026 0.025 0.045 0.055 0.073 0.08 0.026 0.023 0.053 0.043 0.082 0.07 0.025 0.028 0.044 0.051 0.072 0.078 0.026 0.029 0.052 0.047 0.079 0.069 0.026 0.026 0.045 0.052 0.071 0.079 0.025 0.025 0.053 0.043 0.081 0.07 0.025 0.028 0.047 0.057 0.074 0.08 0.024 0.027 0.051 0.047 0.077 0.067 0.026 0.03 0.047 0.054 0.075 0.083 0.025 0.025 0.051 0.046 0.079 0.07 0.025 0.029 0.047 0.055 0.072 0.08 0.024 0.023 0.051 0.045 0.077 0.065 0.025 0.029 0.044 0.054 0.073 0.083 0.025 0.025 0.053 0.047 0.08 0.071 0.026 0.024 0.045 0.052 0.071 0.073 0.025 0.029 0.053 0.05 0.082 0.076 0.025 0.024 0.044 0.053 0.07 0.076 0.026 0.027 0.054 0.045 0.081 0.071 0.024 0.03 0.045 0.052 0.071 0.079 0.025 0.029 0.053 0.044 0.079 0.068 0.025 0.026 0.045 0.055 0.07 0.078 0.026 0.027 0.053 0.047 0.081 0.075 0.023 0.025 0.045 0.05 0.07 0.075 0.026 0.029 0.054 0.046 0.082 0.075 0.026 0.028 0.047 0.05 0.073 0.079s0.051 0.046 0.079 0.07c0.025 0.024 0.045 0.049 0.072 0.074 0.026 0.029 0.054 0.047 0.082 0.071 0.024 0.028 0.045 0.052 0.071 0.079 0.025 0.023 0.053 0.048 0.081 0.072 0.025 0.026 0.045 0.053 0.072 0.078 0.026 0.027 0.051 0.045 0.077 0.065 0.026 0.03 0.047 0.058 0.075 0.087 0.025 0.027 0.051 0.046 0.078 0.066 0.026 0.024 0.045 0.055 0.071 0.078 0.026 0.029 0.055 0.047 0.083 0.071 0.023 0.029 0.044 0.054 0.067 0.075 0.026 0.029 0.054 0.05 0.082 0.075 0.026 0.024 0.045 0.054 0.073 0.079 0.025 0.029 0.053 0.046 0.082 0.07 0.022 0.028 0.044 0.053 0.067 0.078 0.026 0.029 0.053 0.045 0.082 0.071 0.026 0.028 0.047 0.052 0.073 0.077 0.023 0.025 0.051 0.044 0.076 0.07 0.026 0.026 0.047 0.057 0.075 0.084 0.026 0.023 0.051 0.043 0.079 0.067 0.025 0.027 0.045 0.052 0.072 0.079 0.026 0.025 0.052 0.044 0.079 0.07 0.026 0.025 0.044 0.055 0.073 0.08 0.025 0.023 0.051 0.045 0.079 0.07 0.025 0.028 0.047 0.049 0.074 0.078 0.024 0.027 0.052 0.047 0.077 0.067 0.026 0.028 0.044 0.054 0.073 0.079 0.025 0.027 0.053 0.048 0.078 0.074 0.026 0.024 0.045 0.053 0.071 0.076 0.026 0.027 0.053 0.045 0.081 0.071 0.025 0.031 0.045 0.052 0.073 0.079 0.025 0.031 0.051 0.044 0.078 0.068 0.026 0.027 0.044 0.055 0.071 0.078 0.025 0.027 0.053 0.049 0.081 0.076 0.024 0.024 0.045 0.049 0.071 0.078 0.027 0.025 0.052 0.042 0.08 0.067 0.025 0.028 0.045 0.054 0.072 0.079 0.025 0.027 0.051 0.046 0.08 0.07 0.024 0.028 0.047 0.055 0.073 0.082 0.026 0.025 0.052 0.045 0.079 0.067 0.027 0.028 0.045 0.052 0.074 0.079 0.024 0.029 0.053 0.048 0.08 0.072 0.025 0.027 0.045 0.053 0.07 0.08 0.025 0.025 0.053 0.043 0.079 0.069 0.024 0.025 0.045 0.052 0.069 0.077 0.025 0.027 0.055 0.046 0.08 0.07 0.026 0.031 0.045 0.055 0.074 0.08 0.024 0.023 0.053 0.045 0.08 0.07 0.024 0.028 0.045 0.055 0.068 0.078 0.025 0.029 0.057 0.047 0.083 0.071 0.022 0.026 0.044 0.05 0.067 0.075 0.025 0.027 0.056 0.05 0.08 0.074 0.026 0.024 0.043 0.053 0.07 0.078s0.051 0.045 0.079 0.071c0.024 0.028 0.046 0.052 0.073 0.081 0.025 0.027 0.052 0.044 0.076 0.066 0.029 0.027 0.045 0.053 0.072 0.078 0.025 0.029 0.053 0.049 0.08 0.074 0.024 0.026 0.043 0.049 0.068 0.078 0.025 0.027 0.052 0.047 0.079 0.066 0.026 0.029 0.046 0.055 0.075 0.084 0.023 0.023 0.05 0.046 0.076 0.07 0.026 0.028 0.049 0.055 0.074 0.078 0.023 0.025 0.049 0.047 0.075 0.067 0.024 0.028 0.044 0.054 0.073 0.083 0.023 0.025 0.054 0.044 0.078 0.07 0.025 0.024 0.045 0.049 0.07 0.074 0.025 0.029 0.051 0.047 0.084 0.075 0.021 0.025 0.041 0.05 0.064 0.077 0.021 0.025 0.052 0.044 0.081 0.068 0.028 0.031 0.046 0.055 0.071 0.08 0.023 0.025 0.05 0.045 0.074 0.07 0.028 0.028 0.045 0.055 0.07 0.078 0.029 0.029 0.055 0.047 0.083 0.073 0.021 0.026 0.046 0.052 0.065 0.077 0.025 0.029 0.056 0.05 0.082 0.074 0.026 0.027 0.043 0.055 0.072 0.08 0.025 0.025 0.051 0.043 0.079 0.069 0.021 0.021 0.042 0.044 0.063 0.071C50.82 62.188 62.941 49.596 63.9 33.979z\'/></g><path fill=\'#FFFFFF\' d=\'M54.393 28.433c0 5.299-4.297 9.6-9.601 9.6H44.55 19.43h-1.288c-4.712 0-8.533-3.82-8.533-8.533 0-4.712 3.821-8.533 8.533-8.533 0.894 0 1.741 0.177 2.552 0.43 1.374-4.953 5.904-8.597 11.298-8.597 4.542 0 8.475 2.588 10.425 6.364 0.763-0.194 1.55-0.33 2.375-0.33C50.096 18.833 54.393 23.132 54.393 28.433zM32 42.482c-1.18 0-2.133 0.955-2.133 2.134 0 1.18 0.956 2.134 2.133 2.134s2.134-0.954 2.134-2.134C34.134 43.438 33.18 42.482 32 42.482zM44.8 42.482c-1.179 0-2.133 0.955-2.133 2.134 0 1.18 0.954 2.134 2.133 2.134 1.181 0 2.134-0.954 2.134-2.134C46.934 43.438 45.979 42.482 44.8 42.482zM19.2 42.482c-1.177 0-2.133 0.955-2.133 2.134 0 1.18 0.956 2.134 2.133 2.134 1.18 0 2.133-0.954 2.133-2.134C21.333 43.438 20.38 42.482 19.2 42.482zM38.4 48.884c-1.18 0-2.135 0.954-2.135 2.134s0.955 2.133 2.135 2.133c1.179 0 2.133-0.953 2.133-2.133S39.579 48.884 38.4 48.884zM25.6 48.884c-1.177 0-2.133 0.954-2.133 2.134s0.956 2.133 2.133 2.133c1.18 0 2.133-0.953 2.133-2.133S26.78 48.884 25.6 48.884z\'/></svg>'}}),'snowy-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="64" height="64" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z"/><defs><filter filterUnits="userSpaceOnUse" x="9.61" y="12.8" width="54.29" height="50.91"><feColorMatrix type="matrix" values="1"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.61" y="12.8" width="54.29" height="50.91"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient cx="70.78" cy="591" r="37.33" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.11" stop-color="#E8E8E8"/><stop offset="0.35" stop-color="#ADADAD"/><stop offset="0.69" stop-color="#4E4E4E"/><stop offset="0.95" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.33"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.9 33.98c-0.01 0-0.01-0.01-0.01-0.01 -0.05-0.05-0.1-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.16-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.14 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.07-0.05-0.12-0.11-0.17-0.16 -0.05-0.05-0.09-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15C52.1 22.14 52.05 22.09 52 22.04c-0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -1.74-1.78-4.17-2.89-6.86-2.89 -0.6 0-1.17 0.09-1.73 0.2 0 0-0.01-0.01-0.02-0.01 -0.04-0.05-0.09-0.09-0.14-0.14 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.09-0.14-0.14 -0.05-0.05-0.11-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.11-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.1-0.06-0.16-0.11-0.21-0.16 -0.05-0.06-0.11-0.1-0.16-0.16 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -2.15-2.34-5.22-3.81-8.64-3.81 -5.39 0-9.92 3.64-11.3 8.6 -0.81-0.25-1.66-0.43-2.55-0.43 -4.71 0-8.53 3.82-8.53 8.53 0 2.4 1 4.55 2.58 6.1 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.06 0.1 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.14 0.14 0.05 0.06 0.11 0.11 0.16 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.14 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.11 0.1 0.16 0.16 0.05 0.05 0.1 0.1 0.14 0.14 0.03 0.04 0.06 0.08 0.1 0.11 -1.12 0.09-2.01 1-2.01 2.14 0 0.63 0.28 1.18 0.71 1.57 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.09 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.11 0.15 0.15 0.05 0.07 0.1 0.12 0.15 0.17 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.03 0.04 0.06 0.08 0.09 0.11 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.02 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.02 0.05 0.05 0.08 0.07 0.03 0.02 0.04 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.02 0.05 0.05 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.02 0.04 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.04 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.02 0.02 0.05 0.05 0.07 0.07 0.03 0.03 0.06 0.05 0.08 0.07 0.02 0.03 0.04 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.07 0.03 0.03 0.05 0.05 0.08 0.08 0.02 0.03 0.05 0.05 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.08 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.02 0.05 0.04 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.02 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.08 0.02 0.02 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.08 0.03 0.03 0.05 0.05 0.07 0.08s0.05 0.04 0.08 0.07c0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.08 0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.02 0.05 0.04 0.08 0.07 0.03 0.03 0.05 0.06 0.08 0.09 0.03 0.02 0.05 0.04 0.08 0.07 0.03 0.02 0.05 0.05 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.02 0.03 0.04 0.06 0.07 0.07 0.03 0.03 0.05 0.05 0.08 0.08 0.03 0.02 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.03 0.04 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.08 0.08 0.03 0.03 0.05 0.04 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.04 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.03 0.02 0.04 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.04 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07 0.02 0.03 0.05 0.06 0.07 0.08s0.05 0.04 0.08 0.07c0.03 0.03 0.05 0.05 0.07 0.08 0.03 0.03 0.05 0.05 0.08 0.07s0.05 0.06 0.07 0.08c0.03 0.02 0.05 0.05 0.08 0.07 0.02 0.02 0.05 0.05 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.02 0.03 0.04 0.05 0.07 0.08 0.02 0.03 0.06 0.05 0.08 0.07 0.03 0.02 0.05 0.06 0.07 0.08 0.03 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.08 0.08 0.02 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.02 0.03 0.06 0.05 0.08 0.07 0.03 0.02 0.05 0.05 0.07 0.08 0.02 0.02 0.05 0.04 0.08 0.07 0.03 0.03 0.05 0.06 0.08 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.02 0.05 0.05 0.07 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.02 0.02 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.05 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.02 0.02 0.04 0.05 0.07 0.08 0.03 0.02 0.06 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.05 0.06 0.07 0.08 0.03 0.03 0.06 0.05 0.08 0.07 0.02 0.03 0.04 0.05 0.07 0.08 0.02 0.03 0.05 0.05 0.08 0.07 0.03 0.03 0.04 0.06 0.07 0.08 0.02 0.03 0.05 0.04 0.08 0.07 0.02 0.02 0.04 0.05 0.06 0.07C50.82 62.19 62.94 49.6 63.9 33.98z"/></g><path fill="#FFFFFF" d="M54.39 28.43c0 5.3-4.3 9.6-9.6 9.6H44.55 19.43h-1.29c-4.71 0-8.53-3.82-8.53-8.53 0-4.71 3.82-8.53 8.53-8.53 0.89 0 1.74 0.18 2.55 0.43 1.37-4.95 5.9-8.6 11.3-8.6 4.54 0 8.48 2.59 10.43 6.36 0.76-0.19 1.55-0.33 2.38-0.33C50.1 18.83 54.39 23.13 54.39 28.43zM32 42.48c-1.18 0-2.13 0.96-2.13 2.13 0 1.18 0.96 2.13 2.13 2.13s2.13-0.95 2.13-2.13C34.13 43.44 33.18 42.48 32 42.48zM44.8 42.48c-1.18 0-2.13 0.96-2.13 2.13 0 1.18 0.95 2.13 2.13 2.13 1.18 0 2.13-0.95 2.13-2.13C46.93 43.44 45.98 42.48 44.8 42.48zM19.2 42.48c-1.18 0-2.13 0.96-2.13 2.13 0 1.18 0.96 2.13 2.13 2.13 1.18 0 2.13-0.95 2.13-2.13C21.33 43.44 20.38 42.48 19.2 42.48zM38.4 48.88c-1.18 0-2.13 0.95-2.13 2.13s0.96 2.13 2.13 2.13c1.18 0 2.13-0.95 2.13-2.13S39.58 48.88 38.4 48.88zM25.6 48.88c-1.18 0-2.13 0.95-2.13 2.13s0.96 2.13 2.13 2.13c1.18 0 2.13-0.95 2.13-2.13S26.78 48.88 25.6 48.88z"/></svg>'}}),'rainy':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="RAINY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_4_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="9.609" y="12.8" width="54.292" height="50.974"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.609" y="12.8" width="54.292" height="50.974" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="402.7705" cy="-781.5986" r="37.333" gradientTransform="matrix(1 0 0 -1 -373.9707 -752.7988)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path d="M63.9 33.979c-0.01-0.006-0.018-0.015-0.025-0.022 -0.048-0.052-0.1-0.103-0.15-0.151 -0.05-0.055-0.102-0.104-0.152-0.154 -0.051-0.051-0.1-0.101-0.15-0.147 -0.046-0.048-0.1-0.103-0.148-0.151 -0.047-0.047-0.102-0.101-0.146-0.146 -0.046-0.053-0.1-0.104-0.15-0.152 -0.047-0.051-0.1-0.101-0.148-0.15 -0.051-0.051-0.102-0.102-0.148-0.149 -0.052-0.051-0.102-0.103-0.15-0.153 -0.047-0.052-0.102-0.101-0.15-0.149 -0.048-0.051-0.1-0.102-0.15-0.152 -0.045-0.053-0.1-0.102-0.148-0.152 -0.046-0.049-0.102-0.098-0.146-0.147 -0.05-0.051-0.1-0.1-0.148-0.151 -0.051-0.052-0.104-0.103-0.154-0.154 -0.05-0.049-0.098-0.098-0.146-0.146 -0.051-0.051-0.104-0.104-0.153-0.154 -0.046-0.049-0.099-0.096-0.142-0.145 -0.051-0.051-0.104-0.102-0.15-0.151 -0.051-0.054-0.104-0.105-0.154-0.156 -0.05-0.049-0.1-0.1-0.15-0.149 -0.049-0.049-0.1-0.098-0.148-0.148 -0.046-0.051-0.1-0.1-0.146-0.151 -0.049-0.051-0.104-0.102-0.152-0.153 -0.046-0.05-0.098-0.099-0.146-0.15 -0.049-0.051-0.101-0.098-0.146-0.149 -0.05-0.053-0.104-0.105-0.158-0.156 -0.05-0.051-0.099-0.1-0.149-0.149 -0.043-0.051-0.097-0.1-0.149-0.149 -0.044-0.051-0.097-0.101-0.144-0.15 -0.049-0.051-0.104-0.102-0.152-0.153 -0.047-0.049-0.1-0.098-0.146-0.15 -0.051-0.051-0.101-0.1-0.152-0.151 -0.047-0.051-0.103-0.102-0.151-0.153 -0.048-0.052-0.101-0.101-0.149-0.152 -0.049-0.049-0.101-0.098-0.147-0.147 -0.048-0.051-0.101-0.102-0.147-0.151 -0.051-0.052-0.103-0.101-0.149-0.152 -0.05-0.051-0.104-0.102-0.154-0.153 -0.046-0.049-0.096-0.099-0.146-0.148 -0.051-0.051-0.102-0.102-0.15-0.151 -0.048-0.051-0.1-0.102-0.146-0.152 -0.049-0.051-0.102-0.1-0.152-0.151 -0.047-0.051-0.1-0.1-0.15-0.149 -0.046-0.052-0.1-0.1-0.146-0.152 -0.049-0.051-0.104-0.102-0.151-0.151 -0.048-0.051-0.103-0.1-0.147-0.149 -0.047-0.05-0.101-0.101-0.147-0.15 -0.052-0.053-0.104-0.104-0.158-0.157 -0.044-0.049-0.096-0.097-0.14-0.144 -0.051-0.053-0.104-0.104-0.158-0.157 -0.046-0.049-0.096-0.096-0.146-0.145 -0.049-0.052-0.101-0.105-0.153-0.156 -0.044-0.049-0.097-0.096-0.142-0.145 -0.049-0.051-0.101-0.1-0.148-0.152 -0.053-0.053-0.107-0.104-0.156-0.157 -0.045-0.049-0.098-0.096-0.146-0.146 -0.049-0.054-0.104-0.104-0.153-0.156 -0.046-0.047-0.097-0.096-0.142-0.143 -0.055-0.053-0.108-0.105-0.158-0.159 -0.049-0.049-0.096-0.098-0.145-0.146 -0.048-0.051-0.101-0.1-0.152-0.151 -0.049-0.051-0.102-0.101-0.148-0.152 -0.051-0.051-0.102-0.102-0.15-0.151 -0.045-0.051-0.1-0.1-0.149-0.15 -0.046-0.049-0.101-0.1-0.146-0.149 -0.049-0.051-0.104-0.102-0.152-0.153 -0.049-0.05-0.103-0.101-0.149-0.15 -0.048-0.051-0.101-0.102-0.151-0.153 -0.061-0.055-0.11-0.104-0.16-0.153 -0.051-0.052-0.104-0.103-0.154-0.154 -0.046-0.049-0.096-0.1-0.146-0.149 -0.048-0.051-0.1-0.101-0.148-0.152 -0.049-0.051-0.102-0.102-0.152-0.151 -0.048-0.051-0.096-0.1-0.145-0.15 -0.051-0.051-0.106-0.102-0.154-0.153 -0.046-0.049-0.1-0.1-0.146-0.149 -0.049-0.052-0.104-0.104-0.153-0.153 -0.046-0.051-0.101-0.1-0.15-0.151 -0.048-0.051-0.096-0.1-0.147-0.149 -0.047-0.052-0.101-0.103-0.149-0.154 -1.743-1.781-4.164-2.893-6.858-2.893 -0.594 0-1.17 0.087-1.734 0.201 -0.004-0.005-0.014-0.009-0.018-0.016 -0.043-0.047-0.096-0.089-0.138-0.136 -0.046-0.055-0.108-0.106-0.159-0.163 -0.046-0.05-0.098-0.093-0.146-0.144 -0.046-0.053-0.103-0.1-0.15-0.151 -0.046-0.054-0.1-0.1-0.149-0.154 -0.045-0.053-0.104-0.1-0.153-0.153 -0.044-0.051-0.101-0.096-0.146-0.147 -0.043-0.054-0.101-0.101-0.147-0.152 -0.048-0.051-0.104-0.098-0.154-0.151 -0.044-0.051-0.1-0.099-0.144-0.15 -0.051-0.053-0.104-0.1-0.154-0.153 -0.046-0.051-0.1-0.096-0.146-0.145 -0.051-0.056-0.107-0.105-0.153-0.16 -0.046-0.049-0.097-0.092-0.142-0.139 -0.051-0.055-0.108-0.106-0.162-0.165 -0.043-0.049-0.096-0.092-0.139-0.139 -2.271-2.352-5.343-3.824-8.768-3.824 -5.391 0-9.924 3.644-11.298 8.597 -0.812-0.255-1.656-0.43-2.552-0.43 -4.712 0-8.533 3.821-8.533 8.533 0 2.394 0.993 4.55 2.579 6.1 0.051 0.051 0.103 0.104 0.156 0.152 0.049 0.048 0.098 0.104 0.149 0.148 0.051 0.045 0.098 0.1 0.149 0.146 0.05 0.052 0.101 0.104 0.152 0.154 0.049 0.048 0.098 0.1 0.146 0.146 0.052 0.055 0.102 0.104 0.157 0.154 0.047 0.048 0.096 0.1 0.145 0.146 0.051 0.051 0.104 0.104 0.155 0.153 0.05 0.046 0.097 0.099 0.148 0.142 0.051 0.056 0.102 0.108 0.153 0.154 0.049 0.053 0.098 0.102 0.15 0.15 0.049 0.05 0.098 0.1 0.151 0.148 0.049 0.051 0.1 0.104 0.151 0.15 0.049 0.049 0.097 0.1 0.148 0.146 0.051 0.049 0.102 0.107 0.155 0.156 0.047 0.047 0.096 0.098 0.145 0.143 0.052 0.052 0.103 0.105 0.156 0.154 0.049 0.051 0.096 0.102 0.146 0.146 0.051 0.055 0.104 0.104 0.156 0.154 0.049 0.048 0.1 0.1 0.151 0.146 0.047 0.049 0.096 0.104 0.145 0.146 0.05 0.048 0.101 0.103 0.152 0.152 0.049 0.049 0.098 0.1 0.146 0.146 0.051 0.051 0.103 0.104 0.156 0.155 0.049 0.049 0.096 0.1 0.147 0.146 0.051 0.052 0.102 0.104 0.155 0.158 0.05 0.046 0.101 0.101 0.152 0.146 0.049 0.047 0.096 0.098 0.146 0.146 0.049 0.051 0.1 0.104 0.154 0.15 0.047 0.049 0.096 0.1 0.147 0.146 0.051 0.053 0.102 0.105 0.155 0.156 0.05 0.051 0.099 0.099 0.148 0.146 0.055 0.071 0.106 0.125 0.157 0.174 0.049 0.049 0.099 0.101 0.15 0.146 0.049 0.051 0.1 0.104 0.151 0.15 0.049 0.049 0.1 0.104 0.152 0.149 0.049 0.05 0.096 0.101 0.147 0.146 0.049 0.051 0.1 0.104 0.151 0.15 0.051 0.055 0.103 0.105 0.154 0.153 0.049 0.053 0.1 0.104 0.151 0.151 0.047 0.045 0.096 0.097 0.145 0.141 0.052 0.055 0.105 0.107 0.158 0.158 0.049 0.05 0.1 0.101 0.151 0.15 0.049 0.045 0.096 0.096 0.148 0.141 0.051 0.055 0.102 0.109 0.153 0.154 0.049 0.053 0.098 0.101 0.149 0.147 0.05 0.052 0.099 0.106 0.15 0.149 0.051 0.049 0.1 0.104 0.153 0.151 0.049 0.052 0.101 0.101 0.152 0.15 0.049 0.05 0.1 0.1 0.151 0.149 0.049 0.051 0.096 0.101 0.147 0.146 0.05 0.048 0.101 0.1 0.152 0.154 0.051 0.047 0.1 0.1 0.153 0.146 0.049 0.053 0.098 0.104 0.15 0.148 0.049 0.05 0.098 0.1 0.147 0.148 0.049 0.051 0.096 0.102 0.147 0.146 0.053 0.054 0.107 0.107 0.163 0.158 0.047 0.049 0.096 0.1 0.147 0.146 0.049 0.054 0.098 0.101 0.15 0.147 0.053 0.059 0.101 0.113 0.153 0.154 0.049 0.051 0.098 0.104 0.147 0.15 0.051 0.05 0.103 0.104 0.156 0.154 0.049 0.05 0.096 0.1 0.147 0.146 0.051 0.054 0.102 0.104 0.156 0.154 0.049 0.048 0.096 0.1 0.146 0.144 0.051 0.053 0.102 0.106 0.153 0.154 0.049 0.052 0.099 0.1 0.15 0.146 0.049 0.051 0.098 0.102 0.149 0.15 0.051 0.051 0.1 0.104 0.154 0.15 0.045 0.045 0.084 0.086 0.129 0.133l-1.478 5.518c-0.12 0.44 0.061 0.883 0.407 1.133 0.049 0.055 0.094 0.112 0.154 0.154 0.049 0.051 0.09 0.104 0.149 0.146 0.047 0.052 0.09 0.107 0.15 0.148 0.049 0.053 0.094 0.108 0.155 0.152 0.047 0.048 0.09 0.104 0.145 0.145 0.049 0.055 0.094 0.114 0.154 0.153 0.049 0.05 0.094 0.108 0.153 0.149 0.047 0.051 0.09 0.109 0.15 0.15 0.047 0.051 0.09 0.107 0.149 0.145 0.049 0.053 0.092 0.113 0.151 0.152 0.047 0.053 0.089 0.11 0.15 0.147 0.049 0.054 0.092 0.11 0.151 0.149 0.047 0.055 0.092 0.108 0.151 0.149 0.048 0.056 0.092 0.112 0.152 0.149 0.049 0.055 0.092 0.109 0.151 0.15 0.049 0.053 0.092 0.107 0.15 0.147 0.049 0.052 0.091 0.11 0.153 0.153 0.047 0.049 0.09 0.104 0.147 0.145 0.05 0.055 0.093 0.111 0.152 0.152 0.049 0.052 0.092 0.109 0.151 0.15 0.049 0.051 0.092 0.108 0.152 0.15 0.047 0.05 0.09 0.107 0.149 0.146 0.047 0.053 0.092 0.112 0.151 0.151 0.05 0.052 0.091 0.11 0.152 0.147 0.047 0.055 0.092 0.11 0.149 0.154 0.049 0.051 0.092 0.104 0.152 0.145 0.047 0.055 0.091 0.113 0.151 0.15 0.047 0.051 0.089 0.107 0.149 0.149 0.047 0.052 0.092 0.108 0.152 0.147 0.049 0.053 0.091 0.109 0.151 0.151 0.047 0.05 0.089 0.106 0.15 0.146 0.049 0.056 0.092 0.113 0.151 0.154 0.049 0.051 0.092 0.108 0.151 0.15 0.047 0.05 0.091 0.107 0.15 0.146 0.047 0.053 0.089 0.111 0.149 0.149 0.047 0.05 0.092 0.112 0.151 0.151 0.048 0.053 0.093 0.109 0.152 0.147 0.049 0.056 0.092 0.108 0.153 0.154 0.047 0.05 0.09 0.104 0.148 0.146 0.049 0.055 0.092 0.11 0.151 0.15 0.049 0.052 0.091 0.107 0.149 0.148 0.05 0.054 0.093 0.108 0.152 0.148 0.049 0.053 0.092 0.109 0.153 0.152 0.047 0.05 0.089 0.105 0.148 0.146 0.049 0.053 0.091 0.111 0.153 0.151 0.047 0.052 0.092 0.108 0.149 0.147 0.05 0.055 0.095 0.111 0.156 0.153 0.047 0.05 0.09 0.108 0.145 0.146 0.049 0.052 0.094 0.113 0.154 0.15 0.047 0.055 0.089 0.11 0.149 0.15 0.049 0.052 0.094 0.107 0.156 0.15 0.047 0.053 0.089 0.106 0.147 0.148 0.049 0.05 0.091 0.107 0.149 0.148 0.049 0.052 0.091 0.108 0.152 0.148 0.049 0.053 0.094 0.114 0.153 0.154 0.047 0.048 0.091 0.105 0.149 0.146 0.047 0.049 0.089 0.104 0.148 0.146 0.049 0.054 0.094 0.111 0.153 0.152 0.049 0.051 0.092 0.106 0.152 0.15 0.049 0.049 0.091 0.107 0.151 0.146 0.047 0.055 0.09 0.113 0.149 0.152 0.047 0.047 0.092 0.105 0.15 0.147 0.049 0.052 0.092 0.11 0.151 0.149 0.049 0.055 0.091 0.107 0.154 0.151 0.047 0.052 0.09 0.106 0.147 0.147 0.047 0.051 0.092 0.107 0.151 0.149 0.049 0.05 0.091 0.108 0.152 0.147 0.049 0.053 0.092 0.115 0.151 0.152 0.049 0.049 0.091 0.107 0.152 0.149 0.047 0.05 0.09 0.104 0.149 0.146 0.049 0.055 0.094 0.112 0.155 0.154 0.047 0.051 0.09 0.105 0.146 0.146 0.049 0.053 0.094 0.111 0.154 0.152 0.045 0.043 0.086 0.102 0.137 0.135 2.34-0.059 4.606-0.396 6.795-0.93 0.004 0.004 0.012 0.014 0.017 0.018 0.346-0.088 0.683-0.202 1.028-0.301 0.479-0.133 0.961-0.256 1.43-0.412 0.046-0.012 0.088-0.033 0.131-0.043 1.382-0.469 2.715-1.039 4.009-1.681 0.206-0.103 0.41-0.19 0.614-0.302 0.559-0.292 1.1-0.607 1.634-0.934 0.222-0.133 0.45-0.266 0.669-0.404 0.521-0.331 1.035-0.686 1.547-1.051 0.205-0.146 0.4-0.299 0.607-0.453 0.502-0.383 1.006-0.774 1.484-1.191 0.162-0.143 0.32-0.292 0.487-0.434 0.362-0.325 0.746-0.633 1.093-0.975 -0.01-0.01-0.021-0.018-0.029-0.027C59.827 49.471 63.396 42.15 63.9 33.979z"/></g><path fill="#FFFFFF" d="M44.792 18.833c-0.825 0-1.612 0.136-2.375 0.33 -1.95-3.775-5.884-6.363-10.425-6.363 -5.391 0-9.924 3.644-11.298 8.597 -0.812-0.255-1.656-0.43-2.552-0.43 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.288 25.118 0.242c5.302 0 9.601-4.301 9.601-9.6C54.391 23.132 50.096 18.833 44.792 18.833z"/><path fill="#CCF1FE" d="M31.925 52.217c-0.151 0.573-0.737 0.908-1.305 0.756l0 0c-0.57-0.154-0.906-0.738-0.755-1.306l2.208-8.242c0.152-0.569 0.737-0.907 1.307-0.754l0 0c0.571 0.149 0.904 0.741 0.755 1.304L31.925 52.217zM42.744 43.971c0.15-0.566-0.186-1.154-0.758-1.304l0 0c-0.569-0.149-1.153 0.187-1.303 0.754l-2.207 8.241c-0.153 0.57 0.184 1.154 0.756 1.309l0 0c0.57 0.15 1.154-0.186 1.305-0.754L42.744 43.971zM25.525 43.971c0.152-0.566-0.186-1.154-0.755-1.304l0 0c-0.569-0.149-1.154 0.187-1.306 0.754l-2.208 8.241c-0.153 0.57 0.183 1.154 0.755 1.309l0 0c0.57 0.15 1.154-0.186 1.307-0.754L25.525 43.971z"/></svg>'}}),'rainy-2':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="RAINY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="day_bg_3_"><circle fill="#89C4F4" cx="32" cy="32" r="32"/><path fill="#6BB9F0" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="8.03" y="14.933" width="55.762" height="49.051"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.03" y="14.933" width="55.762" height="49.051" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="402.7705" cy="-781.5986" r="37.333" gradientTransform="matrix(1 0 0 -1 -373.9707 -752.7988)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.2" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.792 35.542c-0.024-0.028-0.054-0.056-0.079-0.082 -0.051-0.052-0.102-0.103-0.15-0.147 -0.049-0.054-0.1-0.104-0.149-0.153s-0.104-0.104-0.158-0.152c-0.044-0.043-0.096-0.098-0.142-0.144 -0.047-0.051-0.1-0.102-0.146-0.149 -0.05-0.051-0.105-0.101-0.154-0.149 -0.047-0.049-0.1-0.104-0.149-0.15 -0.05-0.051-0.101-0.104-0.151-0.152 -0.048-0.047-0.099-0.102-0.148-0.146 -0.045-0.052-0.1-0.104-0.146-0.151 -0.048-0.051-0.105-0.104-0.156-0.154 -0.045-0.045-0.094-0.096-0.142-0.142 -0.048-0.053-0.101-0.104-0.149-0.153 -0.049-0.051-0.101-0.102-0.152-0.15 -0.049-0.055-0.1-0.104-0.151-0.154 -0.046-0.048-0.101-0.1-0.147-0.146 -0.049-0.049-0.098-0.099-0.147-0.147 -0.046-0.052-0.101-0.103-0.149-0.153 -0.049-0.05-0.101-0.101-0.15-0.148 -0.051-0.053-0.1-0.105-0.153-0.156 -0.046-0.049-0.097-0.096-0.142-0.145 -0.053-0.052-0.104-0.103-0.154-0.154 -0.048-0.049-0.102-0.099-0.146-0.147 -0.049-0.053-0.104-0.104-0.157-0.157 -0.046-0.05-0.097-0.099-0.142-0.146 -0.051-0.053-0.101-0.102-0.154-0.153 -0.047-0.049-0.096-0.098-0.146-0.147 -0.048-0.052-0.1-0.103-0.15-0.154 -0.049-0.053-0.104-0.104-0.155-0.155 -0.048-0.049-0.097-0.097-0.144-0.146 -0.047-0.051-0.103-0.102-0.149-0.153 -0.05-0.049-0.101-0.098-0.15-0.147 -0.046-0.051-0.1-0.103-0.149-0.154 -0.051-0.049-0.098-0.1-0.146-0.146 -0.052-0.053-0.107-0.106-0.162-0.161 -0.044-0.049-0.092-0.096-0.14-0.143 -0.048-0.053-0.104-0.104-0.152-0.155 -0.046-0.05-0.096-0.097-0.142-0.144 -0.055-0.053-0.108-0.106-0.16-0.16 -0.048-0.049-0.1-0.097-0.145-0.145 -0.049-0.054-0.104-0.104-0.153-0.154 -0.046-0.049-0.097-0.098-0.147-0.147 -0.049-0.051-0.101-0.103-0.147-0.154 -0.052-0.051-0.103-0.1-0.15-0.149 -0.048-0.051-0.104-0.1-0.149-0.152 -0.051-0.049-0.101-0.098-0.146-0.147 -0.054-0.053-0.104-0.104-0.154-0.153 -0.048-0.052-0.104-0.103-0.152-0.154 -0.043-0.049-0.096-0.096-0.139-0.143 -0.051-0.053-0.107-0.106-0.158-0.157 -0.051-0.05-0.101-0.099-0.146-0.148 -0.05-0.051-0.104-0.102-0.154-0.153 -0.045-0.049-0.1-0.099-0.146-0.148 -0.052-0.053-0.104-0.102-0.152-0.153 -0.048-0.049-0.102-0.098-0.147-0.147 -0.051-0.051-0.103-0.103-0.149-0.152 -0.05-0.051-0.101-0.1-0.149-0.151 -0.049-0.049-0.101-0.098-0.146-0.148 -0.05-0.053-0.104-0.104-0.154-0.155 -0.048-0.051-0.1-0.102-0.154-0.151 -0.043-0.05-0.096-0.099-0.144-0.148 -0.048-0.051-0.104-0.102-0.151-0.153 -0.045-0.049-0.101-0.098-0.149-0.149 -0.046-0.05-0.097-0.101-0.146-0.15 -0.052-0.053-0.104-0.104-0.154-0.155 -1.334-1.371-3.184-2.226-5.238-2.226 -0.458 0-0.896 0.065-1.325 0.153 -0.008-0.008-0.017-0.017-0.026-0.025 -0.049-0.052-0.103-0.099-0.147-0.15 -0.048-0.051-0.104-0.098-0.147-0.149 -0.049-0.051-0.105-0.101-0.153-0.152 -0.044-0.051-0.101-0.098-0.148-0.149 -0.046-0.051-0.1-0.1-0.149-0.151 -0.049-0.054-0.106-0.101-0.152-0.152 -0.046-0.051-0.1-0.098-0.146-0.149 -0.047-0.055-0.104-0.102-0.153-0.156 -0.048-0.051-0.104-0.098-0.148-0.146 -0.048-0.051-0.1-0.098-0.147-0.149 -0.045-0.052-0.1-0.098-0.147-0.15 -0.049-0.054-0.106-0.103-0.157-0.156 -1.633-1.783-3.966-2.903-6.574-2.903 -1.254 0-2.434 0.283-3.512 0.75 -0.205-0.017-0.4-0.062-0.609-0.062 -0.457 0-0.891 0.065-1.322 0.153 -0.01-0.011-0.021-0.019-0.031-0.029 -0.044-0.051-0.096-0.096-0.144-0.146 -0.044-0.051-0.103-0.098-0.15-0.149 -0.048-0.053-0.104-0.102-0.151-0.155 -0.047-0.052-0.102-0.099-0.15-0.15 -0.049-0.053-0.104-0.1-0.15-0.151 -0.048-0.051-0.101-0.096-0.146-0.147 -0.049-0.054-0.104-0.103-0.154-0.154 -0.049-0.053-0.103-0.1-0.151-0.151 -0.047-0.051-0.1-0.099-0.148-0.148 -0.048-0.053-0.104-0.1-0.152-0.151 -0.047-0.053-0.102-0.1-0.151-0.152 -0.047-0.051-0.101-0.098-0.15-0.147 -1.737-1.822-4.076-2.944-6.686-2.944 -4.102 0-7.552 2.771-8.598 6.541 -0.619-0.194-1.262-0.328-1.946-0.328 -3.584 0-6.492 2.907-6.492 6.494 0 1.83 0.764 3.477 1.983 4.657 0.049 0.051 0.101 0.102 0.154 0.153 0.049 0.051 0.1 0.1 0.151 0.149 0.047 0.051 0.096 0.101 0.147 0.148 0.052 0.053 0.103 0.104 0.156 0.154 0.049 0.05 0.096 0.1 0.146 0.147 0.049 0.054 0.101 0.103 0.152 0.152 0.051 0.05 0.102 0.101 0.153 0.153 0.049 0.049 0.1 0.101 0.15 0.146 0.049 0.046 0.098 0.1 0.146 0.146 0.049 0.049 0.1 0.1 0.151 0.148 0.049 0.053 0.098 0.102 0.152 0.152 0.049 0.052 0.1 0.102 0.151 0.152 0.049 0.053 0.1 0.102 0.151 0.148 0.05 0.05 0.101 0.104 0.152 0.15 0.049 0.05 0.1 0.102 0.151 0.148 0.049 0.051 0.098 0.104 0.15 0.146 0.049 0.052 0.1 0.104 0.151 0.152 0.047 0.047 0.096 0.102 0.147 0.146 0.052 0.05 0.101 0.104 0.154 0.154 0.049 0.047 0.1 0.1 0.151 0.146 0.049 0.049 0.098 0.104 0.15 0.148 0.049 0.05 0.1 0.102 0.151 0.148 0.051 0.051 0.1 0.104 0.153 0.154 0.05 0.046 0.099 0.102 0.15 0.148 0.049 0.047 0.098 0.1 0.149 0.146 0.049 0.048 0.098 0.102 0.15 0.15 0.051 0.049 0.102 0.104 0.155 0.152 0.047 0.047 0.096 0.098 0.145 0.143 0.055 0.063 0.106 0.113 0.158 0.164 0.049 0.05 0.098 0.1 0.149 0.146 0.049 0.049 0.098 0.104 0.147 0.148C14.737 37 14.789 37.05 14.839 37.1c0.049 0.049 0.1 0.102 0.151 0.148 0.049 0.052 0.099 0.1 0.15 0.146 0.049 0.051 0.098 0.104 0.149 0.146 0.051 0.055 0.1 0.104 0.153 0.154 0.05 0.05 0.099 0.104 0.15 0.148 0.049 0.051 0.098 0.104 0.149 0.15 0.049 0.048 0.1 0.1 0.152 0.146 0.049 0.053 0.1 0.106 0.151 0.152 0.049 0.051 0.1 0.102 0.151 0.15 0.05 0.05 0.101 0.1 0.152 0.148 0.049 0.051 0.098 0.102 0.149 0.148 0.049 0.052 0.1 0.102 0.152 0.15 0.049 0.049 0.098 0.102 0.149 0.146 0.051 0.054 0.102 0.104 0.153 0.157 0.05 0.049 0.099 0.097 0.148 0.145 0.049 0.051 0.1 0.1 0.151 0.148 0.049 0.052 0.1 0.102 0.152 0.15 0.051 0.051 0.103 0.104 0.155 0.154 0.047 0.05 0.096 0.098 0.145 0.146 0.049 0.047 0.101 0.101 0.152 0.147 0.049 0.052 0.1 0.104 0.151 0.151 0.051 0.051 0.1 0.103 0.154 0.15 0.049 0.049 0.098 0.1 0.147 0.145 0.051 0.052 0.1 0.105 0.153 0.154 0.049 0.051 0.099 0.102 0.15 0.15 0.049 0.048 0.1 0.1 0.151 0.146 0.049 0.049 0.096 0.104 0.147 0.148 0.052 0.051 0.103 0.105 0.156 0.154 0.049 0.05 0.098 0.1 0.151 0.146 0.049 0.049 0.099 0.1 0.148 0.149 0.051 0.05 0.102 0.104 0.155 0.153 0.049 0.049 0.098 0.097 0.147 0.145 0.05 0.055 0.101 0.105 0.152 0.154 0.049 0.048 0.098 0.1 0.149 0.146 0.049 0.051 0.098 0.1 0.152 0.146 0.049 0.055 0.098 0.104 0.149 0.154 0.03 0.028 0.051 0.063 0.082 0.092 -0.534-0.088-1.061 0.225-1.201 0.759l-2.208 8.282c-0.12 0.441 0.063 0.889 0.41 1.139 0.047 0.051 0.089 0.107 0.15 0.146 0.049 0.055 0.091 0.11 0.151 0.152 0.047 0.051 0.09 0.105 0.147 0.146 0.05 0.052 0.095 0.111 0.154 0.154 0.049 0.049 0.089 0.104 0.149 0.146 0.049 0.056 0.091 0.108 0.152 0.149 0.049 0.053 0.092 0.11 0.151 0.154 0.049 0.051 0.092 0.108 0.154 0.146 0.047 0.049 0.09 0.111 0.147 0.145 0.049 0.055 0.092 0.115 0.153 0.154 0.047 0.05 0.089 0.107 0.148 0.148 0.049 0.051 0.094 0.109 0.153 0.15 0.047 0.055 0.09 0.107 0.149 0.15 0.05 0.05 0.092 0.107 0.154 0.15 0.049 0.049 0.092 0.107 0.151 0.148 0.047 0.05 0.092 0.105 0.15 0.146 0.047 0.051 0.092 0.111 0.149 0.148 0.049 0.05 0.091 0.107 0.149 0.152 0.049 0.052 0.094 0.107 0.154 0.152 0.049 0.047 0.092 0.104 0.149 0.146 0.049 0.052 0.092 0.109 0.154 0.15 0.047 0.047 0.09 0.107 0.149 0.144 0.049 0.065 0.092 0.126 0.152 0.166 0.049 0.052 0.091 0.108 0.152 0.149 0.047 0.051 0.092 0.108 0.151 0.15 0.047 0.053 0.09 0.107 0.15 0.15 0.049 0.05 0.094 0.107 0.153 0.148 0.047 0.051 0.09 0.105 0.147 0.146 0.049 0.055 0.094 0.113 0.154 0.154 0.047 0.051 0.089 0.108 0.146 0.146 0.05 0.054 0.094 0.111 0.155 0.154 0.047 0.05 0.09 0.104 0.147 0.146 0.049 0.052 0.094 0.112 0.155 0.151 0.047 0.053 0.089 0.111 0.15 0.15 0.047 0.047 0.092 0.107 0.151 0.147 0.047 0.054 0.09 0.108 0.149 0.149 0.048 0.051 0.09 0.107 0.15 0.149 0.049 0.05 0.091 0.108 0.153 0.149 0.047 0.053 0.09 0.107 0.15 0.147 0.049 0.052 0.092 0.11 0.151 0.15 0.047 0.052 0.089 0.108 0.149 0.151 0.05 0.051 0.092 0.107 0.152 0.149 0.049 0.05 0.094 0.108 0.153 0.149 0.047 0.051 0.092 0.107 0.152 0.149 0.047 0.048 0.09 0.106 0.147 0.146 0.049 0.054 0.094 0.113 0.153 0.152 0.048 0.053 0.089 0.108 0.15 0.148 0.049 0.05 0.094 0.109 0.153 0.148 0.047 0.056 0.089 0.108 0.148 0.15 0.049 0.051 0.094 0.107 0.153 0.148 0.049 0.056 0.092 0.113 0.151 0.15 0.05 0.053 0.093 0.108 0.152 0.152 0.047 0.048 0.089 0.105 0.149 0.146 0.047 0.051 0.089 0.106 0.148 0.146 0.049 0.055 0.094 0.111 0.155 0.152 0.047 0.052 0.089 0.104 0.149 0.148 0.047 0.053 0.092 0.11 0.152 0.146 0.049 0.054 0.092 0.113 0.151 0.152 0.049 0.053 0.091 0.11 0.15 0.15 0.049 0.052 0.092 0.107 0.151 0.146 0.047 0.051 0.09 0.108 0.149 0.15 0.049 0.055 0.092 0.107 0.152 0.148 0.049 0.056 0.094 0.109 0.153 0.15 0.047 0.053 0.09 0.108 0.15 0.15 0.049 0.052 0.091 0.107 0.153 0.15 0.047 0.049 0.09 0.104 0.149 0.148 0.049 0.05 0.092 0.109 0.152 0.148 0.047 0.052 0.089 0.108 0.149 0.146 0.047 0.055 0.091 0.107 0.15 0.148 0.049 0.056 0.092 0.113 0.149 0.15 0.049 0.053 0.094 0.112 0.153 0.152 0.049 0.052 0.091 0.109 0.15 0.146 0.033 0.041 0.07 0.071 0.104 0.106 1.229 0.272 2.445 0.36 3.687 0.36C48.475 64 62.029 51.546 63.792 35.542z"/></g><path fill="#DFE0E1" d="M34.8 19.522c-0.625 0-1.221 0.105-1.806 0.252 -1.483-2.872-4.476-4.841-7.932-4.841 -4.102 0-7.552 2.771-8.598 6.541 -0.615-0.194-1.258-0.328-1.942-0.328 -3.584 0-6.492 2.907-6.492 6.494 0 3.584 2.907 6.491 6.492 6.491h0.983 19.111H34.8c4.038 0 7.31-3.271 7.31-7.304C42.107 22.795 38.838 19.522 34.8 19.522z"/><path fill="#FFFFFF" d="M48.667 23.422c-0.63 0-1.229 0.104-1.812 0.252 -1.48-2.874-4.476-4.843-7.932-4.843 -4.102 0-7.552 2.771-8.598 6.541 -0.617-0.194-1.26-0.33-1.943-0.33 -3.584 0-6.492 2.909-6.492 6.495 0 3.583 2.907 6.492 6.492 6.492h0.981 19.115 0.183c4.036 0 7.305-3.271 7.305-7.305C55.967 26.69 52.698 23.422 48.667 23.422z"/><path fill="#CCF1FE" d="M27.623 52.217c-0.152 0.573-0.739 0.908-1.306 0.756l0 0c-0.57-0.154-0.906-0.738-0.755-1.306l2.208-8.242c0.151-0.569 0.737-0.907 1.305-0.754l0 0c0.572 0.149 0.907 0.741 0.755 1.304L27.623 52.217zM38.441 43.971c0.149-0.566-0.188-1.154-0.754-1.304l0 0c-0.576-0.149-1.154 0.187-1.305 0.754l-2.205 8.241c-0.152 0.57 0.18 1.154 0.754 1.309l0 0c0.567 0.15 1.15-0.186 1.305-0.754L38.441 43.971zM47.05 43.971c0.15-0.566-0.188-1.154-0.754-1.304l0 0c-0.575-0.149-1.153 0.187-1.308 0.754l-2.205 8.241c-0.154 0.57 0.184 1.154 0.754 1.309l0 0c0.568 0.15 1.152-0.186 1.305-0.754L47.05 43.971zM21.223 43.971c0.151-0.566-0.187-1.154-0.755-1.304l0 0c-0.57-0.149-1.154 0.187-1.306 0.754l-2.208 8.241c-0.153 0.57 0.185 1.154 0.753 1.309l0 0c0.57 0.15 1.154-0.186 1.307-0.754L21.223 43.971z"/></svg>'}}),'rainy-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="RAINY" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><g id="night_bg_3_"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z"/></g><defs><filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="9.609" y="12.8" width="54.292" height="51.063"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></defs><mask maskUnits="userSpaceOnUse" x="9.609" y="12.8" width="54.292" height="51.063" id="SVGID_1_"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient id="SVGID_2_" cx="70.7803" cy="590.999" r="37.333" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.1126" stop-color="#E8E8E8"/><stop offset="0.3492" stop-color="#ADADAD"/><stop offset="0.6869" stop-color="#4E4E4E"/><stop offset="0.9519" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.333"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path d="M63.9 33.979c-0.01-0.006-0.018-0.015-0.025-0.022 -0.048-0.052-0.1-0.103-0.15-0.151 -0.05-0.055-0.102-0.104-0.152-0.154 -0.051-0.053-0.1-0.101-0.15-0.149 -0.048-0.05-0.1-0.101-0.15-0.151 -0.045-0.049-0.1-0.101-0.146-0.147 -0.048-0.054-0.102-0.104-0.152-0.152 -0.048-0.052-0.1-0.101-0.148-0.151 -0.051-0.049-0.102-0.101-0.148-0.148 -0.052-0.051-0.102-0.104-0.152-0.154 -0.047-0.051-0.1-0.101-0.148-0.149 -0.05-0.051-0.102-0.102-0.152-0.152 -0.048-0.053-0.1-0.102-0.152-0.152 -0.045-0.049-0.098-0.098-0.146-0.147 -0.05-0.051-0.1-0.101-0.149-0.152 -0.051-0.051-0.103-0.102-0.154-0.153 -0.051-0.049-0.098-0.098-0.146-0.147 -0.052-0.051-0.104-0.103-0.156-0.154 -0.047-0.049-0.098-0.096-0.144-0.145 -0.05-0.051-0.1-0.102-0.149-0.152 -0.051-0.053-0.104-0.104-0.154-0.155 -0.051-0.049-0.1-0.1-0.15-0.149 -0.049-0.05-0.1-0.098-0.148-0.148 -0.049-0.051-0.1-0.1-0.149-0.151 -0.051-0.051-0.101-0.102-0.151-0.153 -0.049-0.05-0.099-0.099-0.148-0.15 -0.048-0.051-0.098-0.098-0.146-0.149 -0.052-0.053-0.104-0.105-0.158-0.156 -0.049-0.051-0.098-0.1-0.149-0.149 -0.046-0.051-0.099-0.1-0.149-0.15 -0.045-0.051-0.096-0.1-0.146-0.149 -0.05-0.051-0.104-0.102-0.153-0.153 -0.046-0.049-0.099-0.098-0.146-0.15 -0.05-0.051-0.101-0.1-0.151-0.151s-0.104-0.102-0.152-0.153c-0.049-0.052-0.101-0.101-0.149-0.152 -0.05-0.049-0.101-0.098-0.149-0.147 -0.048-0.051-0.101-0.103-0.149-0.152 -0.05-0.051-0.101-0.1-0.15-0.151 -0.05-0.051-0.103-0.102-0.153-0.154 -0.045-0.049-0.097-0.098-0.146-0.146 -0.05-0.051-0.101-0.102-0.149-0.151 -0.051-0.051-0.103-0.102-0.149-0.152 -0.05-0.051-0.101-0.1-0.152-0.151 -0.048-0.051-0.103-0.1-0.149-0.149 -0.047-0.052-0.101-0.101-0.147-0.152 -0.052-0.051-0.104-0.102-0.151-0.151 -0.049-0.051-0.103-0.101-0.149-0.15 -0.048-0.049-0.099-0.1-0.148-0.149 -0.052-0.053-0.104-0.104-0.157-0.158 -0.047-0.049-0.097-0.096-0.143-0.143 -0.05-0.053-0.104-0.104-0.158-0.157 -0.046-0.049-0.096-0.096-0.146-0.146 -0.05-0.051-0.101-0.104-0.154-0.155 -0.046-0.049-0.096-0.096-0.142-0.145 -0.051-0.052-0.104-0.1-0.15-0.152 -0.052-0.053-0.107-0.104-0.158-0.157 -0.046-0.049-0.096-0.096-0.146-0.145 -0.05-0.054-0.103-0.105-0.154-0.156 -0.048-0.047-0.096-0.096-0.144-0.143 -0.053-0.053-0.106-0.105-0.156-0.158 -0.051-0.049-0.1-0.098-0.146-0.147 -0.05-0.051-0.1-0.1-0.15-0.152 -0.051-0.051-0.104-0.1-0.15-0.151 -0.052-0.051-0.104-0.102-0.152-0.151 -0.047-0.052-0.1-0.101-0.148-0.15 -0.048-0.049-0.102-0.1-0.148-0.149 -0.048-0.051-0.102-0.102-0.152-0.153 -0.047-0.05-0.1-0.101-0.148-0.15 -0.05-0.051-0.102-0.102-0.152-0.153 -0.047-0.049-0.098-0.099-0.146-0.148 -0.051-0.051-0.104-0.102-0.154-0.153 -0.046-0.049-0.096-0.1-0.146-0.149 -0.05-0.052-0.101-0.101-0.151-0.152 -0.048-0.051-0.102-0.102-0.152-0.151 -0.047-0.051-0.096-0.1-0.146-0.15 -0.072-0.059-0.124-0.109-0.174-0.161 -0.046-0.049-0.099-0.1-0.146-0.149 -0.051-0.052-0.104-0.103-0.154-0.152 -0.047-0.051-0.101-0.1-0.149-0.151 -0.05-0.051-0.099-0.101-0.149-0.15 -0.049-0.051-0.101-0.102-0.149-0.153 -1.744-1.781-4.167-2.893-6.858-2.893 -0.596 0-1.171 0.087-1.732 0.2 -0.006-0.004-0.014-0.008-0.018-0.015 -0.046-0.047-0.096-0.09-0.14-0.137 -0.048-0.055-0.108-0.106-0.16-0.162 -0.044-0.051-0.096-0.094-0.146-0.145 -0.047-0.053-0.102-0.1-0.148-0.151 -0.048-0.054-0.104-0.101-0.152-0.154 -0.048-0.053-0.104-0.1-0.154-0.153 -0.045-0.051-0.1-0.096-0.146-0.147 -0.046-0.053-0.103-0.1-0.149-0.151 -0.049-0.051-0.104-0.098-0.154-0.151 -0.045-0.051-0.1-0.099-0.146-0.15 -0.05-0.053-0.104-0.1-0.154-0.153 -0.045-0.051-0.1-0.096-0.146-0.146 -0.05-0.055-0.108-0.104-0.155-0.159 -0.045-0.049-0.099-0.092-0.143-0.139 -0.052-0.056-0.107-0.107-0.16-0.165 -0.046-0.049-0.097-0.092-0.142-0.139 -2.21-2.348-5.281-3.82-8.706-3.82 -5.391 0-9.924 3.644-11.298 8.597 -0.812-0.255-1.656-0.43-2.552-0.43 -4.712 0-8.533 3.821-8.533 8.533 0 2.394 0.993 4.55 2.579 6.1 0.051 0.053 0.103 0.104 0.156 0.154 0.049 0.051 0.098 0.102 0.149 0.148 0.051 0.048 0.098 0.1 0.149 0.146 0.05 0.053 0.101 0.104 0.152 0.154 0.049 0.048 0.098 0.1 0.146 0.146 0.051 0.055 0.102 0.104 0.156 0.153 0.047 0.05 0.096 0.101 0.145 0.146 0.051 0.053 0.104 0.104 0.155 0.156 0.05 0.049 0.097 0.098 0.148 0.145 0.051 0.054 0.102 0.105 0.153 0.154 0.049 0.051 0.098 0.1 0.15 0.148 0.049 0.051 0.098 0.102 0.151 0.15 0.049 0.05 0.1 0.102 0.151 0.148 0.049 0.051 0.097 0.102 0.148 0.148 0.051 0.052 0.102 0.105 0.155 0.156 0.047 0.049 0.096 0.098 0.145 0.146 0.052 0.05 0.103 0.104 0.156 0.153 0.049 0.051 0.096 0.102 0.146 0.146 0.051 0.055 0.104 0.104 0.156 0.154 0.049 0.051 0.1 0.104 0.151 0.15 0.047 0.049 0.096 0.1 0.145 0.146 0.05 0.05 0.101 0.103 0.152 0.153 0.049 0.051 0.098 0.099 0.146 0.146 0.051 0.053 0.103 0.104 0.156 0.156 0.049 0.049 0.096 0.1 0.147 0.145 0.051 0.055 0.102 0.105 0.155 0.158 0.05 0.049 0.101 0.1 0.152 0.146 0.049 0.049 0.096 0.1 0.146 0.146 0.049 0.053 0.1 0.104 0.154 0.151 0.047 0.051 0.096 0.101 0.147 0.147 0.051 0.053 0.102 0.106 0.155 0.156 0.05 0.051 0.099 0.098 0.148 0.146 0.055 0.074 0.106 0.125 0.157 0.175 0.049 0.051 0.099 0.101 0.15 0.149 0.049 0.051 0.1 0.101 0.151 0.15 0.049 0.051 0.1 0.102 0.152 0.148 0.049 0.051 0.096 0.102 0.147 0.146 0.049 0.053 0.1 0.104 0.151 0.152 0.051 0.053 0.103 0.104 0.154 0.152 0.049 0.053 0.1 0.104 0.151 0.153 0.047 0.046 0.096 0.097 0.145 0.142 0.052 0.055 0.105 0.106 0.158 0.158 0.049 0.051 0.1 0.1 0.151 0.15 0.049 0.048 0.096 0.096 0.148 0.145 0.051 0.051 0.102 0.105 0.153 0.153 0.049 0.052 0.098 0.101 0.149 0.147 0.05 0.052 0.099 0.104 0.15 0.15 0.051 0.049 0.1 0.104 0.153 0.153 0.049 0.05 0.101 0.101 0.152 0.149 0.049 0.049 0.1 0.101 0.151 0.149 0.049 0.05 0.096 0.101 0.147 0.146 0.05 0.051 0.101 0.104 0.152 0.154 0.051 0.051 0.1 0.104 0.153 0.15 0.049 0.052 0.098 0.104 0.15 0.148 0.049 0.051 0.098 0.102 0.147 0.15 0.049 0.051 0.096 0.098 0.147 0.146 0.053 0.055 0.107 0.107 0.163 0.16 0.047 0.047 0.096 0.099 0.147 0.146 0.049 0.052 0.098 0.101 0.15 0.147 0.049 0.053 0.098 0.104 0.149 0.149 0.049 0.05 0.098 0.101 0.147 0.147 0.051 0.053 0.103 0.105 0.156 0.156 0.049 0.049 0.096 0.1 0.147 0.146 0.051 0.054 0.102 0.104 0.156 0.155 0.049 0.049 0.096 0.099 0.146 0.145 0.051 0.053 0.102 0.105 0.153 0.154 0.049 0.052 0.099 0.1 0.15 0.148 0.049 0.051 0.098 0.102 0.149 0.15 0.051 0.05 0.1 0.102 0.154 0.148 0.042 0.047 0.084 0.088 0.129 0.133l-1.472 5.529c-0.12 0.44 0.061 0.883 0.407 1.135 0.049 0.055 0.094 0.111 0.154 0.154 0.049 0.051 0.09 0.104 0.149 0.146 0.047 0.054 0.09 0.108 0.15 0.149 0.049 0.055 0.094 0.109 0.155 0.153 0.047 0.05 0.09 0.104 0.145 0.146 0.049 0.055 0.094 0.113 0.154 0.151 0.049 0.054 0.094 0.11 0.153 0.152 0.047 0.052 0.09 0.108 0.15 0.149 0.047 0.053 0.09 0.108 0.149 0.147 0.049 0.052 0.092 0.11 0.151 0.151 0.047 0.055 0.089 0.109 0.15 0.149 0.049 0.054 0.092 0.108 0.151 0.15 0.047 0.055 0.092 0.108 0.151 0.149 0.048 0.055 0.092 0.11 0.152 0.149 0.049 0.056 0.092 0.108 0.151 0.151 0.049 0.053 0.092 0.106 0.15 0.147 0.049 0.056 0.091 0.111 0.153 0.154 0.047 0.051 0.09 0.104 0.147 0.146 0.05 0.055 0.093 0.112 0.152 0.151 0.049 0.054 0.092 0.11 0.151 0.151 0.049 0.053 0.092 0.109 0.152 0.15 0.047 0.053 0.09 0.108 0.149 0.146 0.047 0.054 0.092 0.111 0.151 0.152 0.05 0.053 0.091 0.11 0.152 0.15 0.047 0.055 0.092 0.107 0.149 0.15 0.049 0.054 0.092 0.106 0.152 0.148 0.047 0.055 0.091 0.11 0.151 0.148 0.047 0.054 0.089 0.109 0.149 0.15 0.047 0.055 0.092 0.108 0.152 0.15 0.049 0.055 0.091 0.109 0.151 0.152 0.047 0.052 0.089 0.104 0.15 0.146 0.049 0.055 0.092 0.112 0.151 0.154 0.049 0.05 0.092 0.105 0.151 0.148 0.047 0.051 0.091 0.108 0.15 0.148 0.047 0.052 0.089 0.109 0.149 0.148 0.047 0.054 0.092 0.11 0.151 0.152 0.048 0.053 0.093 0.107 0.152 0.15 0.049 0.054 0.092 0.107 0.153 0.15 0.047 0.053 0.09 0.106 0.148 0.148 0.049 0.055 0.092 0.109 0.151 0.148 0.049 0.056 0.091 0.108 0.149 0.15 0.05 0.055 0.091 0.107 0.152 0.15 0.049 0.054 0.092 0.109 0.153 0.152 0.047 0.051 0.089 0.104 0.148 0.146 0.049 0.054 0.091 0.111 0.153 0.152 0.047 0.052 0.092 0.106 0.149 0.146 0.05 0.055 0.095 0.111 0.156 0.154 0.047 0.052 0.09 0.107 0.145 0.146 0.049 0.053 0.094 0.11 0.154 0.152 0.047 0.052 0.089 0.107 0.149 0.15 0.049 0.052 0.094 0.107 0.156 0.15 0.047 0.053 0.089 0.105 0.147 0.148 0.049 0.05 0.091 0.107 0.149 0.148 0.049 0.053 0.091 0.108 0.152 0.15 0.049 0.055 0.094 0.111 0.153 0.154 0.047 0.05 0.091 0.105 0.149 0.149 0.047 0.048 0.089 0.104 0.148 0.146 0.049 0.055 0.094 0.113 0.153 0.154 0.049 0.051 0.092 0.106 0.152 0.149 0.049 0.051 0.091 0.108 0.151 0.147 0.047 0.053 0.09 0.11 0.149 0.152 0.047 0.051 0.092 0.105 0.15 0.148 0.049 0.053 0.092 0.109 0.151 0.15 0.049 0.055 0.091 0.108 0.154 0.151 0.047 0.054 0.09 0.106 0.147 0.147 0.047 0.053 0.092 0.108 0.151 0.15 0.049 0.053 0.091 0.107 0.152 0.148 0.049 0.056 0.092 0.113 0.151 0.154 0.049 0.051 0.091 0.106 0.152 0.15 0.047 0.05 0.09 0.104 0.149 0.146 0.049 0.054 0.094 0.111 0.155 0.153 0.047 0.05 0.09 0.106 0.146 0.146 0.049 0.056 0.094 0.113 0.155 0.154 0.045 0.047 0.086 0.101 0.138 0.139 2.34-0.061 4.605-0.396 6.793-0.93 0.004 0.004 0.012 0.012 0.018 0.017 0.346-0.087 0.684-0.202 1.029-0.3 0.479-0.133 0.959-0.256 1.429-0.412 0.046-0.014 0.088-0.033 0.129-0.047 1.384-0.467 2.717-1.037 4.009-1.68 0.204-0.102 0.412-0.191 0.614-0.3 0.56-0.291 1.099-0.61 1.634-0.935 0.223-0.133 0.447-0.264 0.669-0.402 0.524-0.334 1.037-0.688 1.546-1.055 0.204-0.146 0.403-0.297 0.607-0.45 0.505-0.384 1.005-0.776 1.488-1.19 0.162-0.143 0.319-0.293 0.484-0.435 0.364-0.324 0.743-0.634 1.09-0.976 -0.009-0.008-0.02-0.017-0.027-0.026C59.827 49.471 63.396 42.15 63.9 33.979z"/></g><path fill="#FFFFFF" d="M44.792 18.833c-0.825 0-1.612 0.136-2.375 0.33 -1.95-3.775-5.884-6.363-10.425-6.363 -5.391 0-9.924 3.644-11.298 8.597 -0.812-0.255-1.656-0.43-2.552-0.43 -4.712 0-8.533 3.821-8.533 8.533 0 4.713 3.821 8.533 8.533 8.533h1.288 25.118 0.242c5.302 0 9.601-4.301 9.601-9.6C54.391 23.132 50.096 18.833 44.792 18.833zM31.925 52.217c-0.151 0.57-0.737 0.908-1.305 0.756l0 0c-0.57-0.154-0.906-0.738-0.755-1.306l2.208-8.242c0.152-0.569 0.737-0.907 1.307-0.756l0 0c0.571 0.151 0.904 0.739 0.755 1.306L31.925 52.217zM42.744 43.971c0.15-0.566-0.186-1.154-0.758-1.304l0 0c-0.569-0.149-1.153 0.187-1.303 0.754l-2.209 8.241c-0.154 0.57 0.184 1.154 0.754 1.309l0 0c0.57 0.15 1.154-0.186 1.307-0.754L42.744 43.971zM25.525 43.971c0.152-0.566-0.186-1.154-0.755-1.304l0 0c-0.569-0.149-1.154 0.187-1.306 0.754l-2.208 8.241c-0.153 0.57 0.183 1.154 0.755 1.309l0 0c0.57 0.15 1.154-0.186 1.307-0.754L25.525 43.971z"/></svg>'}}),'rainy-2-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="64" height="64" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"><circle fill="#34495E" cx="32" cy="32" r="32"/><path fill="#2C3E50" d="M32 64c17.67 0 32-14.33 32-32S49.67 0 32 0V64z"/><defs><filter filterUnits="userSpaceOnUse" x="8.03" y="14.93" width="55.76" height="49.02"><feColorMatrix type="matrix" values="1"/></filter></defs><mask maskUnits="userSpaceOnUse" x="8.03" y="14.93" width="55.76" height="49.02"><g filter="url(#Adobe_OpacityMaskFilter)"><radialGradient cx="70.78" cy="591" r="37.33" gradientTransform="matrix(1 0 0 1 -41.9805 -562.1992)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.11" stop-color="#E8E8E8"/><stop offset="0.35" stop-color="#ADADAD"/><stop offset="0.69" stop-color="#4E4E4E"/><stop offset="0.95" stop-color="#000000"/></radialGradient><circle fill="url(#SVGID_2_)" cx="28.8" cy="28.8" r="37.33"/></g></mask><g opacity="0.4" mask="url(#SVGID_1_)"><path fill="#1A171B" d="M63.79 35.54c-0.02-0.03-0.05-0.06-0.08-0.08 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.09-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15s-0.1-0.1-0.15-0.15c-0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.06-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.11-0.11-0.16-0.16 -0.04-0.05-0.09-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.14-0.14 -0.05-0.05-0.11-0.11-0.16-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.16-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.16 -1.33-1.36-3.18-2.22-5.23-2.22 -0.46 0-0.89 0.07-1.32 0.15 -0.01-0.01-0.02-0.02-0.03-0.03 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.06-0.1-0.1-0.15-0.16 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.06-0.06-0.12-0.11-0.17-0.16 -1.63-1.78-3.97-2.9-6.57-2.9 -1.25 0-2.43 0.28-3.51 0.75 -0.2-0.02-0.4-0.06-0.61-0.06 -0.46 0-0.89 0.07-1.32 0.15 -0.01-0.01-0.02-0.02-0.03-0.03 -0.05-0.05-0.1-0.1-0.15-0.15 -0.04-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -0.05-0.05-0.1-0.1-0.15-0.15 -1.68-1.81-4.02-2.93-6.63-2.93 -4.1 0-7.55 2.77-8.6 6.54 -0.62-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.49 0 1.83 0.76 3.48 1.98 4.66 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.16 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.14 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.11 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.16 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.06 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.05 0.05 0.1 0.1 0.15 0.15 0.03 0.03 0.05 0.06 0.08 0.09 -0.53-0.09-1.06 0.23-1.2 0.76l-2.21 8.24c-0.12 0.44 0.06 0.89 0.41 1.14 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.1 0.11 0.15 0.15 0.05 0.05 0.09 0.1 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.1 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.16 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.1 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.16 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.06 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.05 0.05 0.09 0.11 0.15 0.15 0.03 0.04 0.07 0.07 0.1 0.1 1.23 0.23 2.44 0.31 3.69 0.31C48.48 64 62.03 51.55 63.79 35.54z"/></g><path fill="#DFE0E1" d="M34.8 19.52c-0.62 0-1.23 0.11-1.81 0.25 -1.48-2.87-4.48-4.84-7.93-4.84 -4.1 0-7.55 2.77-8.6 6.54 -0.61-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.49 0 3.58 2.91 6.49 6.49 6.49h0.98 19.11H34.8c4.04 0 7.31-3.27 7.31-7.3C42.11 22.8 38.84 19.52 34.8 19.52z"/><path fill="#FFFFFF" d="M48.67 23.42c-0.63 0-1.23 0.1-1.81 0.25 -1.48-2.87-4.48-4.84-7.93-4.84 -4.1 0-7.55 2.77-8.6 6.54 -0.62-0.19-1.26-0.33-1.94-0.33 -3.58 0-6.49 2.91-6.49 6.5 0 3.58 2.91 6.49 6.49 6.49h0.98 19.11 0.18c4.04 0 7.31-3.27 7.31-7.3C55.97 26.69 52.7 23.42 48.67 23.42z"/><path fill="#CCF1FE" d="M27.62 52.22c-0.15 0.57-0.74 0.91-1.31 0.76l0 0c-0.57-0.15-0.91-0.74-0.75-1.31l2.21-8.24c0.15-0.57 0.74-0.91 1.31-0.76l0 0c0.57 0.15 0.91 0.74 0.76 1.31L27.62 52.22zM38.44 43.97c0.15-0.57-0.19-1.15-0.76-1.3l0 0c-0.57-0.15-1.15 0.19-1.31 0.75l-2.2 8.24c-0.15 0.57 0.18 1.15 0.75 1.31l0 0c0.57 0.15 1.15-0.19 1.31-0.75L38.44 43.97zM47.05 43.97c0.15-0.57-0.19-1.15-0.76-1.3l0 0c-0.57-0.15-1.15 0.19-1.31 0.75l-2.21 8.24c-0.15 0.57 0.18 1.15 0.76 1.31l0 0c0.57 0.15 1.15-0.19 1.31-0.75L47.05 43.97zM21.22 43.97c0.15-0.57-0.19-1.15-0.75-1.3l0 0c-0.57-0.15-1.15 0.19-1.31 0.75l-2.21 8.24c-0.15 0.57 0.19 1.15 0.75 1.31l0 0c0.57 0.15 1.15-0.19 1.31-0.75L21.22 43.97z"/></svg>'}}),'clear-night':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'night_bg_5_\'><circle fill=\'#34495E\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#2C3E50\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'15.58\' y=\'18.142\' width=\'47.24\' height=\'44.781\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'15.58\' y=\'18.142\' width=\'47.24\' height=\'44.781\' id=\'SVGID_1_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_2_\' cx=\'91.7705\' cy=\'-523.5986\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 -1 -62.9707 -494.7988)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.1126\' stop-color=\'#E8E8E8\'/><stop offset=\'0.3492\' stop-color=\'#ADADAD\'/><stop offset=\'0.6869\' stop-color=\'#4E4E4E\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_2_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g opacity=\'0.4\' mask=\'url(#SVGID_1_)\'><path fill=\'#1A171B\' d=\'M40.109 62.923c-0.026-0.03-0.058-0.057-0.084-0.085 -0.051-0.046-0.103-0.104-0.15-0.15 -0.052-0.049-0.1-0.104-0.152-0.152 -0.048-0.044-0.098-0.102-0.146-0.146 -0.05-0.047-0.103-0.104-0.15-0.152 -0.052-0.049-0.1-0.103-0.147-0.146 -0.051-0.048-0.103-0.104-0.15-0.148 -0.054-0.051-0.104-0.108-0.154-0.156 -0.05-0.045-0.096-0.098-0.144-0.145 -0.052-0.045-0.103-0.102-0.151-0.15 -0.055-0.047-0.103-0.104-0.15-0.151 -0.055-0.048-0.104-0.104-0.152-0.151 -0.05-0.045-0.102-0.103-0.148-0.148 -0.051-0.048-0.1-0.102-0.146-0.148 -0.053-0.047-0.102-0.102-0.15-0.146 -0.052-0.049-0.104-0.105-0.154-0.153 -0.049-0.048-0.1-0.104-0.152-0.153 -0.05-0.045-0.096-0.101-0.143-0.143 -0.053-0.05-0.101-0.104-0.148-0.148 -0.05-0.049-0.102-0.104-0.148-0.149 -0.056-0.052-0.106-0.108-0.158-0.158 -0.051-0.046-0.098-0.101-0.146-0.146 -0.055-0.047-0.104-0.104-0.151-0.149 -0.049-0.045-0.101-0.104-0.148-0.151 -0.051-0.043-0.098-0.099-0.146-0.145 -0.054-0.051-0.106-0.109-0.16-0.162 -0.047-0.044-0.096-0.102-0.144-0.145 -0.05-0.047-0.097-0.102-0.146-0.147 -0.055-0.046-0.104-0.104-0.156-0.153 -0.049-0.045-0.096-0.101-0.146-0.146 -0.056-0.047-0.104-0.104-0.154-0.154 -0.053-0.046-0.1-0.104-0.149-0.15 -0.049-0.045-0.096-0.1-0.146-0.146 -0.049-0.05-0.101-0.104-0.153-0.153 -0.05-0.047-0.097-0.104-0.147-0.149 -0.053-0.046-0.103-0.104-0.151-0.149 -0.05-0.046-0.099-0.104-0.149-0.148 -0.048-0.045-0.097-0.1-0.142-0.144 -0.058-0.052-0.108-0.106-0.162-0.161 -0.052-0.047-0.097-0.101-0.146-0.146 -0.054-0.045-0.102-0.104-0.15-0.148 -0.051-0.047-0.1-0.104-0.149-0.15 -0.05-0.049-0.101-0.104-0.149-0.148 -0.047-0.045-0.092-0.098-0.142-0.143 -0.06-0.055-0.112-0.112-0.169-0.168 -0.053-0.045-0.098-0.1-0.146-0.144 -0.053-0.048-0.098-0.103-0.146-0.149 -0.052-0.049-0.099-0.103-0.148-0.146 -0.053-0.048-0.103-0.104-0.152-0.152 -0.051-0.043-0.098-0.103-0.148-0.146 -0.053-0.045-0.102-0.104-0.154-0.152 -0.05-0.047-0.099-0.102-0.148-0.15 -0.052-0.047-0.099-0.1-0.149-0.148 -0.051-0.046-0.099-0.102-0.15-0.15 -0.051-0.043-0.095-0.096-0.146-0.146 -0.058-0.052-0.112-0.112-0.167-0.163 -0.047-0.046-0.092-0.098-0.139-0.143 -0.049-0.045-0.096-0.098-0.145-0.146 -0.053-0.049-0.104-0.104-0.158-0.153 -0.051-0.047-0.1-0.104-0.151-0.15 -0.051-0.045-0.096-0.1-0.146-0.146 -0.054-0.05-0.104-0.107-0.159-0.156 -0.049-0.047-0.096-0.102-0.145-0.146 -0.051-0.047-0.1-0.104-0.154-0.15 -0.053-0.047-0.098-0.104-0.149-0.149 -0.051-0.045-0.098-0.104-0.149-0.147 -0.054-0.051-0.103-0.105-0.156-0.154 -0.047-0.047-0.092-0.096-0.139-0.143 -0.051-0.046-0.1-0.104-0.151-0.148 -0.056-0.051-0.105-0.107-0.161-0.158 -0.051-0.047-0.098-0.104-0.149-0.148 -0.054-0.047-0.101-0.104-0.154-0.152 -0.049-0.045-0.096-0.098-0.145-0.145 -0.051-0.051-0.098-0.104-0.149-0.15 -0.054-0.049-0.103-0.104-0.156-0.153 -0.053-0.05-0.1-0.104-0.153-0.153 -0.05-0.046-0.095-0.099-0.146-0.146 -0.051-0.047-0.098-0.1-0.149-0.147 -0.053-0.049-0.1-0.103-0.154-0.151 -0.051-0.045-0.098-0.101-0.149-0.148 -0.053-0.047-0.1-0.102-0.151-0.148 -0.056-0.053-0.105-0.108-0.16-0.16 -0.047-0.045-0.09-0.094-0.134-0.137 -0.055-0.049-0.106-0.107-0.163-0.158 -0.049-0.045-0.094-0.102-0.143-0.145 -0.051-0.049-0.1-0.104-0.151-0.146 -0.053-0.051-0.102-0.108-0.158-0.158 -0.053-0.049-0.1-0.104-0.153-0.151 -0.047-0.045-0.089-0.099-0.138-0.142 -0.053-0.049-0.105-0.104-0.159-0.157 -0.049-0.043-0.096-0.097-0.145-0.142 -0.055-0.051-0.107-0.108-0.163-0.164 -0.049-0.045-0.092-0.096-0.141-0.143 -0.053-0.045-0.1-0.1-0.153-0.148 -0.054-0.049-0.103-0.106-0.158-0.155 -0.049-0.048-0.096-0.101-0.147-0.147 -0.051-0.045-0.098-0.101-0.15-0.148 -0.051-0.045-0.098-0.102-0.149-0.15 -0.053-0.045-0.102-0.104-0.155-0.152 -0.05-0.047-0.097-0.102-0.146-0.146 -0.047-0.047-0.09-0.096-0.139-0.139 -0.06-0.055-0.115-0.113-0.173-0.172 -0.047-0.045-0.09-0.094-0.137-0.137 -0.053-0.052-0.104-0.109-0.157-0.158 -0.052-0.047-0.097-0.101-0.148-0.146 -0.053-0.049-0.102-0.105-0.153-0.152 -0.051-0.047-0.098-0.102-0.149-0.148 -0.05-0.043-0.097-0.102-0.146-0.145 -0.051-0.048-0.1-0.104-0.151-0.152 -0.053-0.045-0.103-0.104-0.156-0.152 -0.053-0.045-0.103-0.104-0.155-0.154 -0.049-0.045-0.094-0.096-0.141-0.141 -0.051-0.047-0.099-0.102-0.15-0.15 -0.055-0.049-0.104-0.104-0.157-0.156 -0.051-0.043-0.096-0.1-0.148-0.145 -0.053-0.049-0.102-0.107-0.153-0.158 -0.049-0.043-0.094-0.096-0.143-0.139 -0.053-0.049-0.105-0.105-0.159-0.158 -0.051-0.049-0.098-0.104-0.149-0.148 -0.053-0.049-0.102-0.106-0.156-0.158 -0.049-0.041-0.096-0.096-0.145-0.143 -0.049-0.045-0.094-0.098-0.143-0.141 -0.053-0.051-0.102-0.107-0.156-0.156 -0.053-0.049-0.102-0.105-0.155-0.156 -0.049-0.045-0.094-0.098-0.143-0.143 -0.056-0.049-0.105-0.107-0.16-0.158 -0.049-0.045-0.094-0.1-0.145-0.145 -0.053-0.047-0.1-0.105-0.154-0.154 -0.051-0.045-0.098-0.102-0.149-0.148 -0.053-0.049-0.102-0.104-0.156-0.153 -0.049-0.048-0.096-0.101-0.145-0.146 -0.049-0.048-0.094-0.097-0.143-0.144 -0.058-0.052-0.108-0.106-0.165-0.16 -0.049-0.043-0.094-0.099-0.143-0.146 -0.055-0.049-0.104-0.105-0.157-0.156 -0.05-0.047-0.093-0.096-0.142-0.141 -0.935-0.857-1.755-1.871-2.423-3.025 -3.54-6.139-1.44-13.968 4.68-17.503 1.649-0.953 3.424-1.482 5.203-1.649 -0.043 0.06-0.072 0.128-0.115 0.188 0.09-0.01 0.177-0.029 0.267-0.039 -0.042 0.063-0.075 0.13-0.116 0.191 0.09-0.008 0.177-0.03 0.267-0.039 -0.043 0.059-0.072 0.128-0.115 0.188 0.089-0.01 0.177-0.03 0.265-0.039 -0.043 0.061-0.073 0.128-0.116 0.189 0.089-0.01 0.177-0.029 0.267-0.038 -0.042 0.06-0.073 0.127-0.116 0.19 0.09-0.008 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.114 0.189 0.089-0.01 0.177-0.029 0.267-0.039 -0.043 0.061-0.073 0.128-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.038 -0.042 0.059-0.072 0.128-0.114 0.189 0.089-0.011 0.177-0.03 0.267-0.039 -0.043 0.059-0.073 0.128-0.116 0.19 0.089-0.011 0.177-0.03 0.265-0.039 -0.043 0.06-0.073 0.128-0.116 0.19 0.089-0.011 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.115 0.188 0.09-0.011 0.177-0.029 0.265-0.039 -0.042 0.06-0.073 0.128-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.039 -0.045 0.062-0.075 0.13-0.115 0.189 0.089-0.008 0.176-0.03 0.267-0.038 -0.042 0.06-0.073 0.128-0.113 0.188 0.087-0.011 0.175-0.029 0.264-0.038 -0.042 0.059-0.075 0.127-0.115 0.189 0.089-0.008 0.177-0.03 0.267-0.039 -0.043 0.06-0.072 0.128-0.115 0.188 0.09-0.01 0.177-0.03 0.265-0.039 -0.043 0.063-0.075 0.13-0.116 0.191 0.09-0.01 0.177-0.03 0.267-0.039 -0.042 0.059-0.073 0.128-0.116 0.189 0.091-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.115 0.188 0.089-0.01 0.177-0.029 0.267-0.039 -0.045 0.063-0.075 0.131-0.116 0.19 0.09-0.011 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.114 0.19 0.089-0.011 0.177-0.029 0.267-0.039 -0.046 0.069-0.076 0.137-0.119 0.197 0.09-0.012 0.177-0.03 0.265-0.039 -0.043 0.06-0.073 0.128-0.116 0.188 0.091-0.01 0.177-0.03 0.267-0.039 -0.042 0.061-0.072 0.128-0.114 0.19 0.089-0.011 0.177-0.029 0.267-0.038 -0.043 0.059-0.073 0.127-0.116 0.188 0.089-0.011 0.177-0.03 0.267-0.039 -0.042 0.059-0.072 0.128-0.115 0.189 0.09-0.01 0.177-0.03 0.267-0.039 -0.043 0.061-0.073 0.128-0.116 0.189 0.087-0.01 0.177-0.029 0.265-0.037 -0.043 0.059-0.073 0.128-0.116 0.189 0.089-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.115 0.189 0.09-0.008 0.177-0.029 0.267-0.039 -0.042 0.061-0.073 0.128-0.115 0.188 0.089-0.011 0.177-0.03 0.267-0.038 -0.043 0.061-0.074 0.13-0.115 0.189 0.09-0.011 0.177-0.029 0.267-0.039 -0.042 0.061-0.073 0.128-0.116 0.188 0.09-0.011 0.177-0.03 0.265-0.039 -0.042 0.06-0.073 0.128-0.116 0.189 0.09-0.01 0.177-0.03 0.267-0.039 -0.042 0.06-0.072 0.128-0.114 0.19 0.089-0.008 0.177-0.029 0.266-0.038 -0.042 0.059-0.072 0.127-0.115 0.189 0.09-0.01 0.178-0.03 0.265-0.039 -0.042 0.06-0.071 0.128-0.114 0.188 0.09-0.01 0.177-0.03 0.267-0.039 -0.043 0.061-0.072 0.128-0.115 0.19 0.09-0.009 0.178-0.029 0.268-0.038 -0.043 0.062-0.073 0.129-0.114 0.189 0.09-0.008 0.177-0.03 0.267-0.039 -0.041 0.06-0.07 0.128-0.113 0.188 0.09-0.01 0.178-0.029 0.266-0.039 -0.043 0.061-0.073 0.128-0.116 0.188 0.091-0.011 0.179-0.03 0.267-0.039 -0.041 0.06-0.069 0.128-0.112 0.19 0.088-0.011 0.176-0.03 0.269-0.039 -0.047 0.063-0.076 0.13-0.117 0.19 0.09-0.009 0.178-0.03 0.268-0.039 -0.041 0.06-0.072 0.128-0.117 0.188 0.094-0.011 0.182-0.03 0.268-0.039 -0.043 0.06-0.071 0.128-0.114 0.189 0.092-0.01 0.178-0.029 0.266-0.038 -0.043 0.06-0.073 0.128-0.114 0.188 0.088-0.012 0.176-0.03 0.268-0.039 -0.047 0.062-0.076 0.13-0.115 0.189 0.09-0.008 0.178-0.03 0.268-0.039 -0.043 0.061-0.071 0.128-0.115 0.188 0.041-0.004 0.08-0.013 0.121-0.017 0.011-0.032 0.037-0.064 0.048-0.094 0.206-0.686 0.522-0.804 0.774-0.405 0.053 0.037 0.103 0.072 0.148 0.145 0.049 0.039 0.104 0.077 0.152 0.154 0.049 0.036 0.102 0.074 0.146 0.149 0.051 0.037 0.104 0.074 0.152 0.151 0.053 0.036 0.104 0.077 0.152 0.154 0.049 0.036 0.1 0.074 0.146 0.149 0.051 0.036 0.104 0.075 0.151 0.151 0.052 0.037 0.103 0.075 0.146 0.15 0.053 0.037 0.105 0.077 0.154 0.153 0.049 0.036 0.1 0.075 0.146 0.15 0.054 0.035 0.104 0.074 0.148 0.149 0.051 0.037 0.104 0.075 0.153 0.149 0.049 0.037 0.104 0.075 0.15 0.154 0.049 0.036 0.102 0.076 0.15 0.151 0.047 0.037 0.1 0.075 0.146 0.15 0.051 0.036 0.102 0.074 0.147 0.149 0.051 0.037 0.104 0.077 0.151 0.151 0.045 0.032 0.092 0.052 0.133 0.115 0.037 0.023 0.054 0.047 0.076 0.072 0.027 0.026 0.053 0.043 0.078 0.079 0.031 0.024 0.045 0.047 0.072 0.073 0.027 0.025 0.048 0.041 0.072 0.077 0.037 0.025 0.055 0.049 0.08 0.076 0.025 0.026 0.047 0.041 0.072 0.075 0.033 0.024 0.049 0.047 0.075 0.073 0.025 0.025 0.048 0.042 0.072 0.078 0.035 0.024 0.049 0.048 0.076 0.073 0.024 0.026 0.051 0.042 0.075 0.079 0.035 0.023 0.052 0.049 0.074 0.075 0.027 0.025 0.049 0.04 0.075 0.074 0.034 0.026 0.048 0.049 0.075 0.075 0.025 0.026 0.048 0.042 0.072 0.077 0.035 0.023 0.053 0.047 0.078 0.072 0.022 0.026 0.049 0.042 0.072 0.079 0.038 0.024 0.053 0.047 0.075 0.073 0.027 0.025 0.05 0.043 0.074 0.077 0.034 0.023 0.051 0.046 0.075 0.072 0.029 0.026 0.052 0.045 0.078 0.082 0.033 0.023 0.05 0.047 0.072 0.072 0.027 0.026 0.049 0.044 0.073 0.077 0.032 0.024 0.05 0.047 0.075 0.073 0.023 0.025 0.05 0.043 0.074 0.079 0.035 0.023 0.051 0.047 0.074 0.072 0.028 0.026 0.053 0.044 0.074 0.079 0.038 0.024 0.055 0.047 0.077 0.071 0.026 0.025 0.048 0.044 0.074 0.08 0.034 0.024 0.049 0.048 0.075 0.073 0.023 0.026 0.048 0.043 0.072 0.079 0.037 0.023 0.051 0.047 0.074 0.073 0.027 0.025 0.051 0.042 0.075 0.076 0.038 0.024 0.052 0.049 0.077 0.075 0.027 0.026 0.048 0.043 0.072 0.077 0.037 0.025 0.051 0.049 0.08 0.076 0.021 0.025 0.045 0.043 0.068 0.074 0.036 0.027 0.057 0.05 0.079 0.076 0.024 0.024 0.046 0.042 0.069 0.076 0.037 0.025 0.054 0.051 0.08 0.076 0.024 0.025 0.05 0.043 0.072 0.076 0.035 0.023 0.049 0.047 0.074 0.072 0.027 0.025 0.049 0.045 0.075 0.076 0.036 0.024 0.053 0.051 0.077 0.076 0.023 0.022 0.048 0.041 0.074 0.076 0.033 0.022 0.049 0.047 0.074 0.071 0.024 0.024 0.049 0.041 0.072 0.078 0.036 0.024 0.053 0.047 0.077 0.073 0.024 0.023 0.051 0.043 0.073 0.076 0.033 0.023 0.052 0.051 0.076 0.07 0.024 0.027 0.049 0.045 0.074 0.084 0.033 0.021 0.049 0.043 0.07 0.07 0.029 0.023 0.055 0.041 0.079 0.078 0.034 0.025 0.051 0.047 0.075 0.072 0.023 0.026 0.05 0.045 0.074 0.08 0.037 0.021 0.051 0.047 0.076 0.071 0.025 0.026 0.049 0.043 0.073 0.08 0.035 0.021 0.05 0.047 0.079 0.073 0.021 0.025 0.046 0.041 0.068 0.074 0.033 0.025 0.052 0.049 0.076 0.074s0.049 0.043 0.074 0.078c0.033 0.021 0.051 0.049 0.075 0.072s0.05 0.041 0.073 0.074c0.037 0.027 0.052 0.051 0.08 0.074 0.023 0.026 0.049 0.047 0.07 0.08 0.037 0.024 0.053 0.047 0.078 0.071 0.025 0.026 0.047 0.045 0.071 0.076 0.037 0.026 0.054 0.047 0.079 0.075 0.023 0.025 0.046 0.041 0.068 0.076 0.033 0.021 0.052 0.045 0.076 0.07 0.026 0.025 0.051 0.043 0.078 0.078 0.033 0.025 0.049 0.049 0.075 0.074 0.021 0.025 0.046 0.043 0.067 0.074 0.041 0.025 0.054 0.047 0.08 0.072 0.025 0.026 0.053 0.045 0.076 0.08 0.032 0.022 0.047 0.043 0.07 0.067 0.025 0.026 0.051 0.045 0.075 0.08 0.039 0.024 0.054 0.047 0.079 0.073 0.023 0.025 0.048 0.045 0.068 0.076 0.033 0.023 0.051 0.045 0.076 0.069 0.028 0.028 0.053 0.046 0.078 0.081 0.033 0.025 0.047 0.049 0.073 0.072 0.024 0.025 0.048 0.039 0.071 0.076 0.039 0.022 0.056 0.047 0.08 0.074 0.025 0.022 0.049 0.043 0.069 0.073 0.037 0.025 0.056 0.048 0.079 0.072 0.023 0.026 0.051 0.045 0.075 0.082 0.032 0.024 0.05 0.045 0.073 0.065 0.025 0.028 0.052 0.045 0.074 0.084 0.037 0.021 0.051 0.043 0.071 0.069 0.029 0.024 0.052 0.042 0.079 0.079 0.033 0.021 0.049 0.044 0.073 0.068 0.026 0.027 0.052 0.045 0.077 0.08 0.033 0.025 0.05 0.047 0.074 0.072 0.023 0.022 0.051 0.041 0.073 0.073 0.036 0.026 0.052 0.052 0.075 0.074 0.025 0.026 0.048 0.045 0.075 0.075 0.034 0.025 0.05 0.05 0.079 0.078 0.023 0.025 0.046 0.043 0.066 0.074 0.037 0.025 0.053 0.047 0.078 0.071 0.024 0.024 0.049 0.042 0.074 0.075 0.035 0.027 0.051 0.05 0.079 0.078 0.024 0.025 0.046 0.043 0.071 0.076 0.033 0.021 0.05 0.045 0.074 0.07 0.023 0.022 0.053 0.041 0.075 0.08 0.036 0.021 0.05 0.045 0.071 0.064 0.025 0.027 0.052 0.046 0.076 0.082 0.037 0.023 0.051 0.05 0.078 0.074 0.023 0.025 0.047 0.043 0.07 0.076 0.034 0.021 0.049 0.045 0.075 0.069 0.024 0.024 0.054 0.044 0.079 0.079 0.033 0.025 0.049 0.046 0.072 0.072 0.027 0.027 0.049 0.045 0.076 0.078 0.035 0.023 0.047 0.045 0.074 0.069 0.025 0.027 0.053 0.046 0.071 0.079 0.036 0.023 0.051 0.046 0.075 0.068 0.027 0.025 0.052 0.048 0.078 0.084 0.035 0.021 0.049 0.046 0.074 0.07 0.025 0.025 0.049 0.043 0.07 0.075 0.039 0.024 0.051 0.05 0.08 0.075 0.023 0.023 0.045 0.041 0.07 0.074 0.037 0.025 0.05 0.051 0.074 0.074 0.028 0.024 0.051 0.043 0.076 0.076 0.036 0.023 0.051 0.049 0.077 0.073 0.024 0.022 0.05 0.041 0.072 0.077 0.036 0.021 0.049 0.048 0.077 0.07 0.023 0.025 0.052 0.043 0.074 0.08 0.033 0.022 0.051 0.045 0.07 0.066 0.029 0.029 0.055 0.047 0.08 0.083 0.032 0.021 0.047 0.044 0.069 0.065 0.028 0.029 0.054 0.047 0.079 0.082 0.033 0.021 0.051 0.049 0.076 0.072 0.026 0.024 0.049 0.047 0.074 0.08 0.032 0.021 0.049 0.045 0.073 0.065 0.024 0.026 0.052 0.045 0.075 0.083 0.035 0.021 0.05 0.046 0.074 0.068 0.027 0.025 0.054 0.045 0.074 0.078 0.033 0.022 0.051 0.047 0.074 0.07 0.025 0.027 0.051 0.044 0.078 0.081 0.035 0.022 0.047 0.046 0.072 0.071 0.023 0.023 0.051 0.043 0.074 0.078 0.035 0.025 0.051 0.049 0.074 0.07 0.026 0.028 0.051 0.047 0.076 0.08 0.032 0.023 0.049 0.047 0.073 0.071 0.024 0.026 0.052 0.044 0.075 0.077 0.037 0.023 0.05 0.046 0.076 0.072 0.023 0.023 0.049 0.043 0.072 0.076 0.035 0.024 0.051 0.045 0.074 0.07 0.027 0.025 0.051 0.044 0.076 0.079 0.037 0.024 0.049 0.046 0.074 0.071 0.027 0.023 0.053 0.046 0.076 0.078 0.035 0.023 0.049 0.047 0.072 0.07 0.026 0.026 0.051 0.043 0.077 0.078 0.037 0.025 0.052 0.051 0.076 0.075 0.024 0.026 0.049 0.044 0.071 0.079 0.037 0.021 0.052 0.044 0.078 0.07 0.023 0.023 0.049 0.041 0.07 0.074 0.037 0.024 0.051 0.045 0.076 0.072 0.027 0.025 0.049 0.044 0.076 0.079 0.034 0.024 0.051 0.048 0.076 0.073 0.023 0.023 0.047 0.041 0.07 0.074 0.037 0.025 0.053 0.051 0.078 0.08 0.024 0.021 0.049 0.039 0.071 0.068 0.037 0.023 0.054 0.046 0.078 0.075 0.024 0.024 0.051 0.046 0.075 0.079 0.033 0.021 0.046 0.046 0.07 0.064 0.027 0.027 0.055 0.045 0.078 0.084 0.035 0.022 0.049 0.045 0.07 0.066 0.029 0.029 0.055 0.046 0.08 0.083 0.031 0.024 0.047 0.046 0.072 0.071 0.025 0.022 0.049 0.041 0.074 0.074 0.035 0.023 0.053 0.051 0.08 0.078 0.022 0.022 0.047 0.043 0.067 0.07 0.037 0.025 0.051 0.048 0.078 0.074 0.026 0.025 0.049 0.043 0.075 0.074 0.035 0.025 0.05 0.051 0.076 0.076 0.025 0.028 0.051 0.045 0.072 0.078 0.033 0.024 0.051 0.047 0.072 0.068 0.027 0.027 0.053 0.044 0.08 0.081 0.031 0.022 0.047 0.044 0.072 0.071 0.027 0.022 0.051 0.043 0.074 0.078 0.037 0.024 0.051 0.049 0.073 0.075 0.025 0.022 0.052 0.041 0.076 0.074 0.033 0.022 0.049 0.045 0.074 0.069 0.028 0.027 0.051 0.043 0.077 0.078 0.033 0.023 0.048 0.047 0.072 0.072 0.025 0.025 0.053 0.043 0.08 0.078 0.029 0.023 0.045 0.047 0.068 0.07 0.025 0.025 0.051 0.042 0.078 0.078 0.033 0.025 0.049 0.052 0.076 0.076 0.024 0.024 0.047 0.041 0.07 0.076 0.037 0.022 0.051 0.045 0.073 0.067 0.026 0.026 0.052 0.045 0.076 0.08 0.034 0.022 0.049 0.045 0.073 0.069 0.025 0.025 0.054 0.045 0.08 0.084 0.033 0.021 0.047 0.041 0.072 0.068 0.025 0.026 0.049 0.043 0.074 0.076 0.035 0.023 0.053 0.047 0.076 0.07 0.025 0.029 0.052 0.046 0.076 0.078 0.031 0.024 0.047 0.049 0.074 0.076 0.024 0.024 0.049 0.041 0.074 0.073 0.032 0.025 0.049 0.05 0.069 0.07 0.028 0.028 0.052 0.047 0.08 0.08 0.032 0.022 0.051 0.045 0.073 0.071 0.025 0.027 0.052 0.045 0.076 0.08 0.033 0.023 0.049 0.045 0.074 0.072 0.023 0.023 0.049 0.041 0.074 0.078 0.033 0.021 0.049 0.045 0.07 0.066 0.029 0.029 0.055 0.045 0.08 0.08 0.031 0.022 0.045 0.045 0.07 0.07 0.028 0.025 0.055 0.045 0.08 0.081 0.032 0.022 0.049 0.048 0.073 0.066 0.022 0.028 0.05 0.047 0.074 0.084 0.034 0.021 0.049 0.047 0.073 0.069 0.025 0.025 0.052 0.043 0.076 0.078 0.032 0.025 0.049 0.047 0.072 0.07 0.025 0.025 0.053 0.043 0.078 0.08 0.031 0.021 0.049 0.047 0.068 0.066 0.029 0.029 0.055 0.045 0.078 0.084 0.039 0.021 0.055 0.047 0.08 0.074 0.024 0.024 0.045 0.041 0.068 0.071 0.034 0.022 0.055 0.05 0.079 0.073 0.026 0.029 0.048 0.046 0.074 0.078 0.034 0.021 0.053 0.052 0.077 0.076 0.021 0.023 0.045 0.039 0.07 0.068 0.032 0.027 0.049 0.049 0.074 0.076 0.027 0.023 0.053 0.043 0.078 0.078 0.029 0.025 0.047 0.047 0.068 0.068 0.027 0.026 0.053 0.043 0.078 0.084 0.037 0.021 0.049 0.047 0.076 0.067 0.024 0.026 0.047 0.046 0.072 0.078 0.034 0.024 0.051 0.047 0.075 0.071 0.028 0.023 0.052 0.046 0.077 0.078 0.033 0.023 0.05 0.049 0.072 0.072 0.027 0.027 0.051 0.045 0.076 0.08 0.034 0.021 0.047 0.043 0.072 0.068 0.027 0.025 0.05 0.045 0.076 0.078 0.035 0.025 0.053 0.047 0.078 0.07 0.023 0.028 0.047 0.045 0.074 0.08 0.035 0.022 0.049 0.049 0.074 0.073 0.024 0.024 0.047 0.041 0.069 0.074 0.037 0.024 0.051 0.051 0.08 0.075 0.024 0.025 0.05 0.046 0.071 0.076 0.035 0.025 0.054 0.049 0.078 0.074 0.023 0.025 0.047 0.043 0.069 0.072 0.035 0.025 0.05 0.049 0.075 0.072 0.029 0.027 0.054 0.045 0.078 0.08 0.033 0.023 0.049 0.045 0.07 0.068 0.028 0.028 0.055 0.045 0.08 0.082 0.032 0.021 0.051 0.047 0.073 0.067 0.025 0.028 0.052 0.045 0.075 0.082 0.034 0.022 0.048 0.047 0.075 0.071 0.024 0.023 0.048 0.043 0.073 0.078 0.033 0.025 0.052 0.047 0.076 0.07 0.023 0.025 0.049 0.041 0.073 0.08 0.033 0.021 0.052 0.045 0.073 0.066 0.027 0.027 0.052 0.045 0.076 0.082 0.033 0.023 0.049 0.045 0.07 0.066 0.028 0.028 0.055 0.045 0.08 0.084 0.036 0.022 0.053 0.047 0.075 0.071 0.022 0.026 0.05 0.043 0.07 0.074 0.034 0.022 0.053 0.049 0.077 0.069 0.027 0.027 0.051 0.045 0.074 0.082 0.035 0.025 0.051 0.047 0.076 0.07 0.025 0.025 0.049 0.043 0.078 0.08 0.031 0.023 0.047 0.045 0.068 0.068 0.027 0.025 0.054 0.043 0.078 0.08 0.035 0.024 0.049 0.047 0.076 0.072 0.025 0.024 0.047 0.045 0.074 0.077 0.032 0.021 0.049 0.046 0.071 0.07 0.026 0.026 0.054 0.043 0.079 0.077 0.033 0.025 0.046 0.048 0.07 0.072 0.024 0.023 0.053 0.041 0.076 0.078 0.035 0.025 0.049 0.047 0.075 0.072 0.022 0.021 0.043 0.039 0.063 0.068C53.969 56.417 47.57 60.971 40.109 62.923zM54.486 31.554c-0.023-0.026-0.041-0.049-0.076-0.075 -0.021-0.036-0.049-0.051-0.072-0.076 -0.025-0.026-0.042-0.05-0.074-0.075 -0.027-0.037-0.051-0.051-0.076-0.077 -0.023-0.025-0.043-0.049-0.078-0.075 -0.021-0.034-0.047-0.049-0.07-0.074 -0.023-0.026-0.046-0.051-0.079-0.077 -0.021-0.034-0.046-0.049-0.071-0.075 -0.025-0.025-0.045-0.051-0.076-0.074 -0.025-0.037-0.047-0.052-0.072-0.077 -0.028-0.026-0.043-0.049-0.078-0.075 -0.023-0.034-0.047-0.051-0.07-0.076 -0.029-0.026-0.046-0.049-0.078-0.075 -0.025-0.034-0.047-0.051-0.072-0.077 -0.025-0.025-0.045-0.051-0.078-0.077 -0.024-0.034-0.051-0.049-0.07-0.074 -0.027-0.026-0.046-0.049-0.079-0.075 -0.022-0.035-0.048-0.049-0.071-0.075 -0.027-0.025-0.043-0.051-0.076-0.076 -0.025-0.034-0.047-0.049-0.073-0.075 -0.025-0.026-0.044-0.049-0.077-0.075 -0.023-0.034-0.046-0.051-0.07-0.076 -0.029-0.026-0.046-0.05-0.078-0.075 -0.024-0.035-0.05-0.051-0.076-0.077 -0.023-0.025-0.041-0.049-0.073-0.075 -0.025-0.035-0.048-0.051-0.075-0.078 -0.023-0.026-0.042-0.049-0.075-0.075 -0.022-0.037-0.05-0.051-0.073-0.077 -0.025-0.025-0.041-0.049-0.074-0.072 -0.025-0.035-0.049-0.049-0.076-0.075 -0.023-0.026-0.041-0.051-0.076-0.077 -0.021-0.033-0.046-0.049-0.07-0.074 -0.027-0.026-0.043-0.052-0.08-0.077 -0.022-0.035-0.047-0.049-0.072-0.075 -0.023-0.025-0.041-0.049-0.073-0.074 -0.026-0.035-0.049-0.052-0.075-0.077 -0.023-0.026-0.044-0.049-0.079-0.075 -0.021-0.034-0.046-0.049-0.067-0.075 -0.026-0.025-0.043-0.051-0.078-0.076 -0.027-0.037-0.049-0.051-0.075-0.077 -0.024-0.026-0.044-0.049-0.077-0.075 -0.023-0.036-0.046-0.051-0.07-0.076 -0.026-0.024-0.041-0.05-0.074-0.073 -0.024-0.036-0.051-0.051-0.077-0.079 -0.026-0.025-0.039-0.049-0.074-0.073 -0.026-0.036-0.049-0.053-0.075-0.078 -0.023-0.026-0.044-0.049-0.076-0.073 -0.021-0.035-0.047-0.049-0.07-0.075 -0.026-0.025-0.043-0.051-0.08-0.076 -0.023-0.034-0.045-0.049-0.069-0.075 -0.024-0.026-0.042-0.051-0.079-0.077 -0.025-0.034-0.046-0.049-0.07-0.074 -0.024-0.026-0.047-0.051-0.08-0.077 -0.022-0.036-0.049-0.051-0.073-0.077 -0.024-0.025-0.041-0.049-0.074-0.072 -0.024-0.036-0.049-0.052-0.071-0.077 -0.027-0.026-0.046-0.049-0.078-0.075 -0.025-0.037-0.047-0.051-0.072-0.077 -0.026-0.025-0.043-0.049-0.078-0.074 -0.023-0.035-0.045-0.049-0.069-0.075 -0.026-0.026-0.044-0.051-0.079-0.075 -0.025-0.033-0.046-0.051-0.07-0.076 -0.028-0.026-0.047-0.052-0.08-0.077 -0.022-0.035-0.047-0.049-0.071-0.077 -0.026-0.025-0.043-0.049-0.074-0.073 -0.024-0.038-0.053-0.053-0.077-0.081 -0.025-0.026-0.046-0.049-0.078-0.073 -0.023-0.034-0.045-0.049-0.07-0.075 -0.024-0.025-0.041-0.051-0.076-0.074 -0.023-0.037-0.049-0.052-0.073-0.077 -0.024-0.026-0.042-0.049-0.077-0.075 -0.022-0.035-0.048-0.051-0.072-0.077 -0.024-0.025-0.043-0.048-0.075-0.074 -0.023-0.034-0.05-0.049-0.074-0.075 -0.024-0.025-0.041-0.051-0.074-0.076 -0.024-0.035-0.049-0.05-0.073-0.075 -0.025-0.026-0.043-0.051-0.078-0.077 -0.027-0.034-0.049-0.049-0.072-0.075 -0.023-0.025-0.041-0.051-0.08-0.074 -0.021-0.034-0.045-0.051-0.068-0.077 -0.027-0.026-0.043-0.049-0.076-0.075 -0.026-0.035-0.047-0.051-0.074-0.076 -0.024-0.026-0.045-0.052-0.077-0.077 -0.026-0.034-0.048-0.049-0.072-0.077 -0.045-0.026-0.062-0.05-0.096-0.076 -0.021-0.034-0.046-0.049-0.07-0.074 -0.026-0.026-0.043-0.051-0.078-0.077 -0.024-0.036-0.047-0.051-0.075-0.077 -0.023-0.025-0.039-0.049-0.072-0.074 -0.025-0.037-0.051-0.052-0.074-0.077 -0.028-0.026-0.045-0.049-0.078-0.075 -0.023-0.034-0.047-0.049-0.072-0.077 -0.025-0.025-0.043-0.049-0.078-0.074 -0.024-0.034-0.045-0.049-0.069-0.077 -0.029-0.026-0.046-0.049-0.08-0.075 -0.022-0.034-0.048-0.049-0.07-0.074 -0.028-0.026-0.047-0.049-0.079-0.075 -0.025-0.037-0.05-0.051-0.074-0.077 -0.025-0.025-0.043-0.049-0.076-0.074 -0.021-0.034-0.045-0.049-0.068-0.075 -0.029-0.026-0.047-0.051-0.08-0.077 -0.025-0.035-0.049-0.049-0.07-0.072 -0.029-0.026-0.043-0.052-0.08-0.077 -0.024-0.035-0.045-0.051-0.074-0.077 -0.024-0.025-0.041-0.049-0.077-0.075 -0.022-0.035-0.048-0.051-0.072-0.076 -0.026-0.026-0.041-0.049-0.073-0.075 -0.027-0.034-0.05-0.049-0.076-0.075 -0.023-0.025-0.041-0.049-0.072-0.074 -0.025-0.039-0.053-0.054-0.078-0.081 -0.025-0.024-0.045-0.047-0.076-0.071 -0.023-0.035-0.047-0.051-0.07-0.077 -0.027-0.026-0.045-0.049-0.078-0.074 -0.026-0.034-0.049-0.051-0.074-0.077 -0.024-0.026-0.045-0.051-0.077-0.074 -0.021-0.035-0.048-0.05-0.07-0.075 -0.026-0.026-0.043-0.051-0.077-0.077 -0.025-0.034-0.05-0.049-0.074-0.075 -0.025-0.025-0.043-0.05-0.075-0.075 -0.024-0.036-0.048-0.051-0.075-0.079 -0.023-0.026-0.043-0.049-0.078-0.075 -0.021-0.037-0.047-0.051-0.07-0.078 -0.025-0.024-0.043-0.048-0.076-0.073 -0.024-0.036-0.049-0.051-0.076-0.079 -0.024-0.025-0.045-0.049-0.077-0.075 -0.022-0.035-0.046-0.051-0.07-0.076 -0.028-0.026-0.043-0.049-0.077-0.075 -0.025-0.037-0.05-0.051-0.074-0.077 -0.025-0.025-0.043-0.049-0.074-0.074 -0.027-0.035-0.049-0.052-0.072-0.077 -0.025-0.026-0.047-0.049-0.08-0.075 -0.025-0.036-0.047-0.051-0.07-0.077 -0.029-0.025-0.045-0.049-0.08-0.074 -0.024-0.034-0.045-0.049-0.07-0.077 -0.028-0.026-0.047-0.049-0.079-0.075 -0.022-0.035-0.046-0.049-0.072-0.076 -0.024-0.026-0.043-0.05-0.075-0.075 -0.025-0.036-0.052-0.051-0.076-0.077 -0.023-0.025-0.041-0.049-0.074-0.075 -0.047-0.062-0.09-0.081-0.137-0.113 -0.049-0.077-0.101-0.118-0.151-0.154 -0.046-0.076-0.099-0.115-0.149-0.151 -0.047-0.075-0.096-0.11-0.146-0.147 -0.052-0.079-0.104-0.118-0.154-0.154 -0.045-0.074-0.099-0.113-0.149-0.149 -0.045-0.077-0.097-0.116-0.146-0.151 -0.048-0.077-0.104-0.115-0.152-0.152 -0.045-0.075-0.098-0.113-0.148-0.149 -0.047-0.077-0.098-0.116-0.147-0.152 -0.049-0.076-0.103-0.114-0.151-0.151 -0.049-0.077-0.101-0.116-0.148-0.151 -0.049-0.077-0.102-0.114-0.15-0.15 -0.047-0.074-0.1-0.112-0.148-0.149 -0.046-0.077-0.102-0.118-0.148-0.154 -0.048-0.074-0.102-0.113-0.15-0.149 -0.047-0.075-0.1-0.114-0.148-0.149 -0.046-0.077-0.099-0.116-0.15-0.152 -0.254-0.399-0.566-0.277-0.777 0.408 -0.271 0.868-1.194 1.798-2.063 2.063 -0.688 0.211-0.812 0.529-0.408 0.786 0.037 0.051 0.076 0.1 0.149 0.149 0.037 0.051 0.072 0.102 0.149 0.151 0.037 0.052 0.074 0.1 0.148 0.15 0.037 0.051 0.076 0.103 0.149 0.151 0.038 0.051 0.075 0.102 0.149 0.151 0.037 0.052 0.076 0.103 0.149 0.152 0.037 0.051 0.074 0.1 0.149 0.149 0.037 0.053 0.074 0.104 0.15 0.154 0.039 0.051 0.076 0.1 0.147 0.149 0.038 0.051 0.075 0.1 0.149 0.149 0.036 0.054 0.075 0.103 0.153 0.154 0.033 0.051 0.072 0.102 0.149 0.149 0.037 0.051 0.072 0.102 0.148 0.15 0.035 0.051 0.071 0.102 0.146 0.151 0.039 0.051 0.074 0.102 0.15 0.151 0.036 0.052 0.075 0.103 0.153 0.152 0.034 0.053 0.074 0.102 0.147 0.151 0.033 0.045 0.054 0.089 0.113 0.134 0.025 0.037 0.051 0.051 0.074 0.077 0.025 0.025 0.043 0.049 0.078 0.075 0.021 0.033 0.045 0.049 0.068 0.074 0.026 0.028 0.045 0.051 0.08 0.079 0.026 0.035 0.047 0.051 0.073 0.077 0.024 0.025 0.039 0.049 0.076 0.074 0.022 0.034 0.047 0.052 0.071 0.077 0.027 0.026 0.044 0.049 0.078 0.075 0.023 0.034 0.047 0.049 0.072 0.077 0.023 0.025 0.043 0.049 0.076 0.074 0.021 0.035 0.049 0.051 0.072 0.077 0.027 0.026 0.041 0.049 0.076 0.075 0.025 0.037 0.049 0.051 0.072 0.076 0.026 0.026 0.045 0.05 0.08 0.075 0.024 0.037 0.045 0.051 0.069 0.077 0.028 0.025 0.047 0.051 0.084 0.077 0.021 0.031 0.043 0.047 0.065 0.072 0.023 0.026 0.046 0.051 0.078 0.077 0.025 0.037 0.047 0.051 0.074 0.077 0.025 0.025 0.041 0.049 0.076 0.074 0.023 0.037 0.045 0.052 0.07 0.077 0.027 0.026 0.045 0.049 0.078 0.075 0.025 0.033 0.047 0.049 0.07 0.075 0.028 0.025 0.047 0.051 0.082 0.076 0.022 0.035 0.043 0.049 0.069 0.075 0.024 0.026 0.045 0.051 0.078 0.077 0.022 0.033 0.047 0.049 0.069 0.074 0.029 0.026 0.045 0.051 0.078 0.077 0.025 0.037 0.049 0.051 0.072 0.077 0.027 0.025 0.045 0.051 0.078 0.074 0.023 0.037 0.045 0.051 0.074 0.077 0.023 0.026 0.041 0.049 0.076 0.075 0.022 0.034 0.043 0.047 0.068 0.072 0.026 0.026 0.047 0.052 0.079 0.077 0.025 0.034 0.048 0.049 0.07 0.075 0.028 0.025 0.047 0.051 0.08 0.077 0.022 0.034 0.049 0.049 0.071 0.074 0.025 0.026 0.043 0.051 0.078 0.075 0.025 0.035 0.049 0.049 0.072 0.075 0.025 0.025 0.043 0.051 0.076 0.076 0.025 0.034 0.047 0.05 0.074 0.075 0.023 0.026 0.043 0.049 0.076 0.075 0.022 0.033 0.049 0.049 0.07 0.074 0.026 0.026 0.045 0.051 0.079 0.075 0.025 0.037 0.048 0.051 0.072 0.077 0.026 0.025 0.045 0.049 0.08 0.074 0.021 0.037 0.045 0.052 0.069 0.077 0.028 0.026 0.043 0.049 0.08 0.075 0.023 0.036 0.047 0.051 0.07 0.079 0.027 0.025 0.045 0.049 0.076 0.072 0.025 0.037 0.047 0.051 0.074 0.077 0.023 0.026 0.045 0.049 0.076 0.075 0.022 0.034 0.045 0.049 0.07 0.074 0.026 0.026 0.045 0.052 0.079 0.077 0.024 0.034 0.046 0.049 0.07 0.077 0.028 0.025 0.047 0.051 0.082 0.077 0.022 0.031 0.043 0.047 0.067 0.07 0.025 0.026 0.041 0.051 0.08 0.079 0.023 0.034 0.049 0.051 0.072 0.077 0.021 0.019 0.016 0.038 0.039 0.055 -0.154 0.044-0.311 0.228-0.428 0.612 -0.271 0.868-1.195 1.798-2.063 2.063 -0.685 0.211-0.81 0.527-0.409 0.783 0.037 0.051 0.074 0.102 0.148 0.151 0.037 0.051 0.076 0.102 0.15 0.15 0.037 0.053 0.074 0.104 0.148 0.15 0.038 0.051 0.075 0.104 0.148 0.15 0.037 0.052 0.074 0.104 0.15 0.15 0.037 0.053 0.074 0.104 0.152 0.15 0.035 0.055 0.076 0.104 0.15 0.152 0.037 0.051 0.072 0.102 0.148 0.147 0.038 0.054 0.073 0.101 0.146 0.147 0.039 0.053 0.074 0.104 0.152 0.153 0.034 0.052 0.073 0.101 0.147 0.149 0.039 0.051 0.075 0.104 0.151 0.148 0.035 0.055 0.074 0.104 0.149 0.154 0.04 0.051 0.075 0.1 0.147 0.146 0.039 0.054 0.074 0.104 0.146 0.149 0.04 0.054 0.079 0.104 0.153 0.152 0.041 0.05 0.075 0.1 0.149 0.146 0.033 0.045 0.051 0.092 0.116 0.137 0.024 0.037 0.048 0.055 0.075 0.078 0.023 0.024 0.041 0.047 0.07 0.07 0.023 0.038 0.051 0.053 0.076 0.079 0.024 0.024 0.045 0.048 0.074 0.071 0.026 0.037 0.053 0.054 0.077 0.08 0.024 0.027 0.042 0.049 0.074 0.07 0.024 0.037 0.049 0.053 0.075 0.077 0.023 0.024 0.041 0.05 0.072 0.07 0.026 0.04 0.053 0.055 0.078 0.083 0.027 0.023 0.045 0.046 0.075 0.07 0.022 0.033 0.044 0.047 0.069 0.07 0.025 0.028 0.043 0.051 0.078 0.076 0.023 0.036 0.049 0.053 0.074 0.077 0.024 0.024 0.043 0.052 0.074 0.075 0.024 0.035 0.051 0.05 0.075 0.078 0.024 0.021 0.042 0.047 0.074 0.072 0.024 0.032 0.051 0.051 0.077 0.077 0.023 0.024 0.039 0.048 0.072 0.068 0.026 0.04 0.051 0.057 0.08 0.081 0.023 0.021 0.038 0.046 0.069 0.066 0.024 0.039 0.05 0.055 0.075 0.082 0.023 0.021 0.041 0.047 0.074 0.072 0.023 0.032 0.051 0.049 0.074 0.076 0.024 0.025 0.041 0.049 0.074 0.072 0.025 0.037 0.051 0.05 0.075 0.078 0.028 0.024 0.046 0.047 0.078 0.072 0.021 0.034 0.047 0.049 0.071 0.073 0.023 0.026 0.041 0.049 0.074 0.074 0.024 0.034 0.051 0.053 0.074 0.079 0.027 0.023 0.042 0.049 0.077 0.07 0.024 0.037 0.048 0.051 0.073 0.076 0.025 0.027 0.045 0.049 0.078 0.074 0.024 0.034 0.047 0.049 0.069 0.072 0.025 0.025 0.042 0.049 0.077 0.076 0.025 0.037 0.048 0.053 0.077 0.078 0.024 0.024 0.042 0.047 0.069 0.069 0.027 0.039 0.052 0.056 0.08 0.082 0.024 0.022 0.041 0.05 0.074 0.071 0.024 0.035 0.049 0.052 0.075 0.076 0.024 0.023 0.041 0.051 0.072 0.07 0.026 0.037 0.05 0.053 0.075 0.078s0.043 0.049 0.076 0.074c0.021 0.033 0.047 0.051 0.069 0.076 0.027 0.023 0.044 0.046 0.08 0.072 0.022 0.035 0.048 0.053 0.074 0.078 0.024 0.024 0.042 0.049 0.073 0.069 0.025 0.039 0.052 0.056 0.078 0.082 0.026 0.024 0.039 0.047 0.07 0.065 0.026 0.039 0.053 0.058 0.079 0.082 0.024 0.021 0.039 0.043 0.067 0.068 0.027 0.037 0.053 0.055 0.08 0.08 0.023 0.023 0.041 0.049 0.074 0.068 0.024 0.039 0.051 0.055 0.076 0.084 0.021 0.025 0.039 0.047 0.073 0.07 0.022 0.033 0.05 0.051 0.073 0.08 0.025 0.022 0.043 0.045 0.074 0.067 0.025 0.039 0.051 0.052 0.076 0.078 0.024 0.024 0.041 0.049 0.074 0.073 0.023 0.035 0.049 0.05 0.072 0.074 0.027 0.025 0.044 0.049 0.076 0.074 0.025 0.035 0.052 0.051 0.076 0.078 0.023 0.025 0.041 0.047 0.076 0.07 0.024 0.037 0.049 0.055 0.076 0.08 0.021 0.025 0.04 0.045 0.071 0.07 0.024 0.034 0.05 0.051 0.073 0.08 0.025 0.022 0.047 0.045 0.076 0.069 0.023 0.034 0.049 0.051 0.074 0.078 0.024 0.024 0.041 0.047 0.076 0.071 0.023 0.037 0.049 0.049 0.077 0.078 0.022 0.023 0.037 0.047 0.069 0.068 0.026 0.039 0.052 0.057 0.08 0.086 0.023 0.021 0.041 0.045 0.074 0.064 0.024 0.037 0.049 0.053 0.072 0.08 0.027 0.024 0.039 0.045 0.075 0.07 0.022 0.036 0.048 0.053 0.073 0.079 0.025 0.022 0.045 0.046 0.072 0.07 0.027 0.036 0.051 0.055 0.076 0.077 0.023 0.025 0.043 0.048 0.078 0.072 0.021 0.037 0.047 0.051 0.073 0.078 0.026 0.023 0.038 0.049 0.073 0.07 0.026 0.037 0.049 0.053 0.076 0.078 0.023 0.025 0.043 0.047 0.075 0.072 0.025 0.035 0.052 0.053 0.075 0.08 0.025 0.022 0.042 0.047 0.075 0.067 0.022 0.035 0.048 0.056 0.071 0.08 0.027 0.022 0.043 0.047 0.076 0.074 0.025 0.034 0.053 0.051 0.076 0.073 0.023 0.025 0.041 0.05 0.074 0.074 0.025 0.033 0.051 0.051 0.074 0.078 0.025 0.027 0.041 0.049 0.076 0.068 0.022 0.037 0.047 0.055 0.074 0.078 0.023 0.025 0.041 0.049 0.071 0.07 0.026 0.039 0.054 0.055 0.079 0.084 0.027 0.024 0.044 0.045 0.074 0.067 0.025 0.035 0.049 0.05 0.068 0.074 0.029 0.026 0.045 0.049 0.078 0.075 0.027 0.039 0.051 0.054 0.076 0.076 0.023 0.027 0.041 0.051 0.072 0.072 0.027 0.037 0.053 0.053 0.078 0.082 0.027 0.025 0.045 0.047 0.076 0.07 0.022 0.033 0.047 0.051 0.071 0.074 0.024 0.025 0.041 0.051 0.074 0.072 0.026 0.041 0.051 0.053 0.079 0.082 0.021 0.024 0.04 0.045 0.07 0.069 0.023 0.035 0.051 0.052 0.074 0.076 0.024 0.022 0.041 0.049 0.078 0.073 0.025 0.037 0.047 0.054 0.074 0.078 0.023 0.025 0.043 0.047 0.072 0.069 0.025 0.038 0.05 0.052 0.074 0.081 0.026 0.025 0.047 0.047 0.08 0.07 0.022 0.033 0.045 0.051 0.067 0.07 0.026 0.028 0.043 0.055 0.08 0.078 0.024 0.033 0.047 0.051 0.071 0.075 0.023 0.029 0.041 0.052 0.078 0.076 0.023 0.035 0.047 0.049 0.07 0.078 0.026 0.021 0.043 0.045 0.074 0.069 0.029 0.037 0.053 0.056 0.08 0.078 0.023 0.025 0.041 0.047 0.07 0.071 0.025 0.034 0.05 0.052 0.076 0.079 0.024 0.025 0.045 0.048 0.076 0.072 0.022 0.035 0.047 0.049 0.071 0.074 0.026 0.026 0.043 0.049 0.078 0.074 0.024 0.036 0.047 0.055 0.071 0.077 0.027 0.025 0.045 0.05 0.076 0.07 0.027 0.039 0.053 0.058 0.078 0.084 0.027 0.021 0.041 0.043 0.072 0.065 0.023 0.037 0.051 0.056 0.075 0.082 0.024 0.021 0.042 0.047 0.075 0.069 0.024 0.034 0.048 0.052 0.074 0.077 0.024 0.027 0.045 0.05 0.075 0.07 0.023 0.037 0.048 0.053 0.072 0.08 0.026 0.022 0.043 0.047 0.076 0.072 0.024 0.034 0.051 0.053 0.075 0.077 0.023 0.022 0.041 0.048 0.074 0.07 0.027 0.038 0.051 0.057 0.078 0.082 0.025 0.022 0.041 0.045 0.072 0.065 0.023 0.039 0.049 0.06 0.076 0.084 0.025 0.021 0.039 0.043 0.07 0.064 0.026 0.037 0.052 0.059 0.078 0.084 0.024 0.025 0.041 0.046 0.073 0.066 0.022 0.037 0.048 0.055 0.074 0.082 0.024 0.022 0.041 0.047 0.073 0.07 0.025 0.036 0.052 0.053 0.076 0.079 0.023 0.022 0.041 0.046 0.074 0.069 0.025 0.037 0.051 0.054 0.076 0.08 0.025 0.025 0.045 0.045 0.074 0.068 0.025 0.039 0.049 0.053 0.078 0.082 0.021 0.023 0.039 0.045 0.07 0.068 0.026 0.035 0.049 0.051 0.074 0.08 0.024 0.023 0.045 0.045 0.077 0.07 0.026 0.035 0.048 0.053 0.072 0.08 0.024 0.022 0.041 0.045 0.077 0.068 0.023 0.038 0.048 0.051 0.072 0.079 0.025 0.024 0.043 0.046 0.078 0.071 0.023 0.035 0.047 0.054 0.07 0.078s0.045 0.045 0.078 0.07c0.025 0.037 0.049 0.053 0.074 0.079 0.025 0.024 0.043 0.048 0.074 0.069 0.024 0.039 0.047 0.054 0.071 0.08 0.027 0.025 0.048 0.045 0.08 0.072 0.022 0.031 0.045 0.049 0.065 0.067 0.029 0.029 0.045 0.056 0.084 0.079 0.023 0.04 0.048 0.057 0.074 0.079 0.023 0.026 0.041 0.049 0.072 0.069 0.027 0.037 0.053 0.059 0.078 0.084 0.025 0.021 0.041 0.041 0.07 0.066 0.025 0.037 0.051 0.055 0.078 0.081 0.023 0.022 0.041 0.048 0.074 0.067 0.024 0.039 0.049 0.056 0.071 0.08 0.026 0.027 0.045 0.047 0.076 0.07 0.026 0.039 0.052 0.057 0.078 0.084 0.024 0.023 0.045 0.045 0.075 0.067 0.021 0.035 0.047 0.052 0.072 0.076 0.023 0.024 0.041 0.051 0.074 0.073 0.025 0.037 0.051 0.052 0.074 0.08 0.025 0.022 0.045 0.045 0.076 0.07 0.023 0.035 0.049 0.051 0.074 0.079 0.028 0.024 0.045 0.046 0.076 0.067 0.022 0.037 0.049 0.054 0.071 0.078 0.024 0.023 0.043 0.049 0.076 0.072 0.026 0.039 0.049 0.053 0.077 0.082 0.025 0.023 0.044 0.045 0.074 0.069 0.026 0.035 0.049 0.05 0.074 0.073 0.025 0.025 0.039 0.052 0.072 0.072 0.025 0.035 0.051 0.057 0.074 0.08 0.027 0.026 0.043 0.047 0.076 0.07 0.004 0.008 0.012 0.01 0.016 0.02 1.742-2.76 3.066-5.801 3.904-9.043 -0.004-0.004-0.01-0.008-0.014-0.013 -0.023-0.026-0.043-0.05-0.078-0.073 -0.021-0.037-0.047-0.049-0.068-0.076 -0.026-0.023-0.043-0.049-0.078-0.078 -0.027-0.032-0.049-0.049-0.073-0.072 -0.026-0.025-0.042-0.048-0.075-0.072 -0.026-0.037-0.047-0.051-0.074-0.076 -0.026-0.024-0.041-0.049-0.075-0.072 -0.022-0.035-0.048-0.055-0.074-0.08 -0.024-0.024-0.041-0.047-0.076-0.074 -0.026-0.033-0.049-0.048-0.073-0.075 -0.025-0.024-0.045-0.046-0.078-0.071 -0.021-0.037-0.047-0.049-0.07-0.074s-0.043-0.049-0.08-0.073c-0.021-0.037-0.045-0.052-0.068-0.075 -0.024-0.027-0.045-0.052-0.078-0.078 -0.026-0.033-0.047-0.049-0.071-0.074 -0.029-0.024-0.041-0.049-0.078-0.07 -0.022-0.039-0.047-0.055-0.076-0.079 -0.024-0.024-0.041-0.05-0.073-0.073 -0.025-0.035-0.05-0.052-0.076-0.076 -0.023-0.025-0.041-0.051-0.072-0.076 -0.027-0.033-0.049-0.047-0.072-0.074 -0.027-0.023-0.045-0.047-0.08-0.071 -0.023-0.035-0.045-0.054-0.068-0.077 -0.029-0.023-0.045-0.05-0.08-0.072 -0.024-0.035-0.047-0.053-0.074-0.076 -0.024-0.024-0.04-0.047-0.071-0.07 -0.022-0.041-0.051-0.055-0.078-0.084 -0.024-0.023-0.041-0.045-0.073-0.07 -0.025-0.033-0.047-0.048-0.074-0.072 -0.023-0.026-0.043-0.053-0.08-0.078 -0.021-0.033-0.045-0.045-0.066-0.069 -0.025-0.028-0.043-0.056-0.08-0.078 -0.023-0.035-0.047-0.051-0.07-0.075 -0.026-0.025-0.045-0.05-0.078-0.074 -0.024-0.033-0.045-0.051-0.071-0.074 -0.024-0.024-0.045-0.047-0.074-0.072 -0.024-0.041-0.053-0.053-0.078-0.079 -0.026-0.024-0.043-0.048-0.073-0.073 -0.025-0.035-0.052-0.05-0.076-0.074 -0.023-0.026-0.041-0.051-0.072-0.076 -0.025-0.037-0.053-0.051-0.078-0.077 -0.027-0.024-0.045-0.05-0.076-0.07 -0.023-0.038-0.047-0.051-0.07-0.077 -0.026-0.025-0.043-0.048-0.076-0.072 -0.024-0.035-0.049-0.051-0.073-0.078 -0.024-0.024-0.045-0.047-0.078-0.07 -0.021-0.038-0.047-0.053-0.071-0.079 -0.024-0.024-0.041-0.05-0.078-0.071 -0.023-0.037-0.047-0.05-0.071-0.076 -0.026-0.026-0.044-0.053-0.079-0.076 -0.021-0.034-0.046-0.047-0.07-0.071 -0.023-0.026-0.045-0.052-0.08-0.074 -0.023-0.038-0.045-0.053-0.068-0.079 -0.028-0.023-0.047-0.048-0.08-0.074 -0.022-0.033-0.045-0.049-0.069-0.072 -0.026-0.026-0.047-0.049-0.08-0.076 -0.024-0.034-0.045-0.051-0.069-0.075 -0.028-0.024-0.043-0.052-0.08-0.071 -0.023-0.037-0.045-0.049-0.068-0.078 -0.029-0.024-0.047-0.049-0.08-0.076 -0.023-0.032-0.045-0.047-0.07-0.071 -0.027-0.026-0.047-0.049-0.078-0.073 -0.024-0.037-0.047-0.054-0.07-0.078 -0.028-0.023-0.045-0.045-0.079-0.07 -0.025-0.039-0.05-0.055-0.074-0.082 -0.024-0.023-0.043-0.045-0.076-0.066 -0.024-0.037-0.045-0.053-0.069-0.076 -0.025-0.027-0.047-0.055-0.08-0.078 -0.023-0.033-0.049-0.049-0.073-0.074 -0.024-0.024-0.042-0.051-0.075-0.075 -0.023-0.033-0.047-0.05-0.07-0.074 -0.029-0.026-0.047-0.051-0.078-0.073 -0.024-0.039-0.051-0.052-0.076-0.076 -0.022-0.023-0.021-0.004-0.055-0.023 -0.023-0.035-0.047-0.051-0.074-0.08 -0.026-0.023-0.043-0.047-0.078-0.068 -0.024-0.039-0.047-0.053-0.071-0.076 -0.022-0.024-0.045-0.049-0.078-0.076 -0.024-0.034-0.047-0.049-0.069-0.075 -0.025-0.026-0.047-0.052-0.08-0.076 -0.023-0.034-0.045-0.051-0.07-0.075 -0.029-0.025-0.044-0.05-0.078-0.074 -0.025-0.037-0.047-0.053-0.07-0.08 -0.025-0.023-0.043-0.047-0.074-0.07 -0.025-0.037-0.051-0.055-0.078-0.08 -0.024-0.025-0.043-0.047-0.076-0.072 -0.024-0.037-0.051-0.051-0.075-0.078 -0.022-0.025-0.041-0.051-0.074-0.072 -0.024-0.037-0.049-0.051-0.073-0.078 -0.025-0.024-0.043-0.049-0.076-0.073 -0.023-0.035-0.045-0.052-0.072-0.076s-0.044-0.049-0.076-0.073c-0.025-0.037-0.051-0.052-0.076-0.078 -0.023-0.023-0.041-0.049-0.074-0.072 -0.023-0.035-0.045-0.053-0.069-0.076 -0.029-0.023-0.046-0.051-0.079-0.076 -0.023-0.033-0.049-0.049-0.073-0.072 -0.024-0.027-0.048-0.049-0.084-0.074 -0.024-0.034-0.051-0.051-0.075-0.077 -0.025-0.024-0.041-0.051-0.074-0.073 -0.024-0.035-0.049-0.051-0.076-0.076 -0.023-0.025-0.038-0.049-0.073-0.074 -0.024-0.037-0.048-0.053-0.075-0.079 -0.023-0.025-0.041-0.05-0.076-0.074 -0.022-0.036-0.049-0.051-0.076-0.077 -0.022-0.026-0.043-0.049-0.074-0.075 -0.022-0.034-0.047-0.049-0.071-0.074 -0.026-0.026-0.044-0.052-0.078-0.077 -0.021-0.034-0.047-0.049-0.071-0.075 -0.024-0.025-0.043-0.051-0.076-0.077C54.533 31.595 54.514 31.578 54.486 31.554z\'/></g><path fill=\'#F5D76E\' d=\'M21.928 21.962c1.649-0.953 3.424-1.482 5.203-1.649 -2.801 3.955-3.233 9.332-0.654 13.8 2.581 4.47 7.453 6.783 12.279 6.334 -1.031 1.461-2.379 2.73-4.031 3.687 -6.121 3.533-13.953 1.437-17.483-4.684C13.708 33.329 15.808 25.498 21.928 21.962zM45.759 29.463c-0.263-0.867-0.7-0.867-0.967 0 -0.271 0.869-1.196 1.798-2.063 2.063 -0.871 0.267-0.871 0.708 0 0.975 0.867 0.267 1.791 1.194 2.063 2.065 0.267 0.867 0.704 0.867 0.967 0 0.271-0.871 1.199-1.799 2.063-2.065 0.869-0.267 0.869-0.708 0-0.975C46.958 31.261 46.029 30.333 45.759 29.463zM41.491 18.799c-0.263-0.867-0.699-0.867-0.966 0 -0.271 0.869-1.196 1.798-2.063 2.063 -0.871 0.267-0.871 0.708 0 0.975 0.866 0.267 1.791 1.195 2.063 2.063 0.267 0.866 0.703 0.866 0.966 0 0.271-0.869 1.2-1.799 2.063-2.063 0.869-0.267 0.869-0.708 0-0.975C42.691 20.595 41.764 19.667 41.491 18.799zM35.092 27.33c-0.263-0.867-0.699-0.867-0.967 0 -0.271 0.869-1.197 1.798-2.063 2.065 -0.87 0.267-0.87 0.706 0 0.975 0.866 0.265 1.793 1.195 2.063 2.064 0.268 0.866 0.704 0.866 0.967 0 0.271-0.869 1.2-1.799 2.063-2.064 0.871-0.269 0.871-0.708 0-0.975C36.292 29.128 35.361 28.199 35.092 27.33z\'/></svg>'}}),'sunny':_react2.default.createElement('span',{dangerouslySetInnerHTML:{__html:'<svg x=\'0px\' y=\'0px\' width=\'64px\' height=\'64px\' viewBox=\'0 0 64 64\' enable-background=\'new 0 0 64 64\'><g id=\'day_bg_6_\'><circle fill=\'#89C4F4\' cx=\'32\' cy=\'32\' r=\'32\'/><path fill=\'#6BB9F0\' d=\'M32 64c17.673 0 32-14.327 32-32S49.673 0 32 0V64z\'/></g><defs><filter id=\'Adobe_OpacityMaskFilter\' filterUnits=\'userSpaceOnUse\' x=\'12.267\' y=\'12.268\' width=\'51.471\' height=\'51.473\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0\'/></filter></defs><mask maskUnits=\'userSpaceOnUse\' x=\'12.267\' y=\'12.268\' width=\'51.471\' height=\'51.473\' id=\'_x3C_Tracciato_x3E__2_\'><g filter=\'url(#Adobe_OpacityMaskFilter)\'><radialGradient id=\'SVGID_1_\' cx=\'70.7803\' cy=\'590.999\' r=\'37.333\' gradientTransform=\'matrix(1 0 0 1 -41.9805 -562.1992)\' gradientUnits=\'userSpaceOnUse\'><stop offset=\'0\' stop-color=\'#FFFFFF\'/><stop offset=\'0.2394\' stop-color=\'#B2B2B2\'/><stop offset=\'0.496\' stop-color=\'#676767\'/><stop offset=\'0.7089\' stop-color=\'#2F2F2F\'/><stop offset=\'0.8666\' stop-color=\'#0D0D0D\'/><stop offset=\'0.9519\' stop-color=\'#000000\'/></radialGradient><circle fill=\'url(#SVGID_1_)\' cx=\'28.8\' cy=\'28.8\' r=\'37.333\'/></g></mask><g id=\'_x3C_Tracciato_x3E_\' opacity=\'0.2\' mask=\'url(#_x3C_Tracciato_x3E__2_)\'><path d=\'M36.018 63.721l0.004-0.017 -0.188 0.037 0.038-0.188 -0.188 0.038 0.039-0.188 -0.189 0.037 0.037-0.188 -0.188 0.038 0.037-0.188 -0.188 0.037 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.038 0.036-0.188 -0.188 0.037 0.041-0.188 -0.189 0.04 0.037-0.188 -0.188 0.037 0.037-0.188 -0.188 0.036 0.038-0.188 -0.188 0.04 0.036-0.188 -0.188 0.037 0.039-0.188 -0.188 0.038 0.037-0.189 -0.188 0.039 0.037-0.188 -0.188 0.037 0.037-0.191 -0.188 0.04 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.038 0.037-0.188 -0.188 0.037 0.039-0.189 -0.188 0.039 0.038-0.188 -0.188 0.04 0.037-0.191 -0.189 0.039 0.039-0.188 -0.188 0.04 0.038-0.188 -0.188 0.039 0.039-0.189 -0.188 0.037 0.038-0.19 -0.188 0.04 0.038-0.188 -0.188 0.039 0.049-0.186 -0.216 0.021 0.039-0.188 -0.188 0.038 0.039-0.188 -0.188 0.037 0.038-0.189 -0.188 0.039 0.039-0.188 -0.188 0.037 0.039-0.188 -0.188 0.037 0.039-0.189 -0.19 0.04 0.039-0.188 -0.188 0.037 0.039-0.188 -0.188 0.037 0.039-0.189 -0.188 0.04 0.039-0.188 -0.188 0.037 0.038-0.19 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.189 -0.203 0.029 0.039-0.188 -0.19 0.037 0.039-0.191 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.191 -0.188 0.038 0.037-0.188 -0.188 0.039 0.039-0.188 -0.188 0.04 0.039-0.192 -0.188 0.039 0.038-0.189 -0.188 0.039 0.039-0.188 -0.188 0.04 0.039-0.19 -0.188 0.037 0.024-0.191 -0.188 0.037 0.039-0.191L27.4 55.297l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.037 0.038-0.188 -0.188 0.037 0.039-0.188 -0.188 0.038 0.039-0.188 -0.188 0.037 0.038-0.191L26.5 54.402l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.192 -0.188 0.04 0.039-0.188 -0.188 0.039 0.039-0.189 -0.189 0.039 0.039-0.19 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.191 -0.188 0.039 0.039-0.189 -0.188 0.041 0.038-0.189 -0.189 0.037 0.039-0.188L24.708 52.6l0.039-0.188 -0.188 0.04 0.037-0.188 -0.188 0.039 0.039-0.191L24.26 52.15l0.039-0.188 -0.189 0.04 0.039-0.189 -0.188 0.037L24 51.662 23.813 51.7l0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.039-0.19 -0.189 0.038 0.039-0.188 -0.189 0.039 0.039-0.189 -0.189 0.038 0.039-0.188L22.917 50.8l0.038-0.188 -0.188 0.041 0.039-0.189L22.618 50.5l0.039-0.188 -0.186 0.037 0.038-0.188L22.321 50.2l0.039-0.188 -0.188 0.039 0.039-0.189L22.022 49.9l0.039-0.188 -0.188 0.038 0.039-0.188L21.724 49.6l0.039-0.188 -0.189 0.038 0.039-0.188L21.425 49.3l0.039-0.188 -0.188 0.039 0.039-0.188L21.126 49l0.039-0.188 -0.188 0.037 0.039-0.188L20.828 48.7l0.038-0.188 -0.188 0.038 0.039-0.188L20.529 48.4l0.039-0.188 -0.189 0.038 0.038-0.188L20.23 48.1l0.039-0.188 -0.188 0.04 0.039-0.188L19.931 47.8l0.039-0.188 -0.188 0.039 0.039-0.188L19.633 47.5l0.039-0.188 -0.187 0.037 0.039-0.188L19.336 47.2l0.039-0.188 -0.187 0.038 0.039-0.188L19.038 46.9l0.039-0.188 -0.188 0.038 0.039-0.188L18.74 46.6l0.037-0.188 -0.188 0.04 0.039-0.188L18.44 46.3l0.039-0.19 -0.188 0.039 0.039-0.188 -0.281-0.004 0.753-3.772 0.303 0.303 0.149 0.147 0.604 0.604 0.452 0.449 2.109 2.112 0.905 0.904h0.002l0.902 0.903 0.303 0.303 0.904 0.904 0.002 0.002 0.905 0.904 0.904 0.903 0.303 0.304 0.904 0.904 0.301 0.301 0.303 0.305 0.301 0.299 1.657 1.658 0.904 0.904 0.454 0.454 0.451 0.45 0.902 0.904 0.307 0.307 0.599 0.598 0.304 0.305 0.002 0.002 0.602 0.601 0.302 0.302 0.002 0.004 0.753 0.75 0.153 0.154 0.752 0.752 0.151 0.152 0.303 0.302 0.148 0.147 0.301 0.303 0.152 0.152 0.303 0.301 0.449 0.453 0.307 0.305 0.055 0.054C38.467 63.333 37.256 63.564 36.018 63.721zM12.417 32.153l0.189 0.126 -0.039 0.025 0.188 0.127 -0.039 0.024 0.188 0.126 -0.039 0.026 0.188 0.125 -0.039 0.025 0.188 0.126 -0.039 0.025 0.188 0.125 -0.038 0.026 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.024 0.188 0.127 -0.039 0.025 0.188 0.127 -0.039 0.024 0.188 0.125 -0.025 0.017 0.188 0.127 -0.039 0.023 0.188 0.125 -0.039 0.025 0.188 0.125 -0.034 0.027 0.188 0.125 -0.039 0.023 0.188 0.127 -0.038 0.023 0.189 0.131 -0.041 0.023 0.188 0.125 -0.039 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.041 0.023 0.188 0.127 -0.039 0.027 0.188 0.125 -0.038 0.025 0.189 0.129 -0.041 0.024 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.025 0.188 0.125 -0.032 0.035 0.188 0.127 -0.038 0.024 0.19 0.128 -0.041 0.025 0.188 0.125 -0.019 0.006 0.188 0.125 -0.039 0.023 0.189 0.126 -0.041 0.029 0.188 0.125 -0.039 0.024 0.188 0.125 -0.039 0.024 0.19 0.13 -0.04 0.023 0.188 0.128 -0.039 0.024 0.188 0.127 -0.039 0.025 0.19 0.125 -0.041 0.027 0.188 0.125 -0.039 0.025 0.188 0.125 -0.039 0.027 0.191 0.127 -0.041 0.025 0.188 0.127 -0.037 0.029 0.19 0.129 -0.023 0.008 0.188 0.127 -0.037 0.021 0.188 0.128 -0.035 0.025 0.189 0.128L19.2 38.938l0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.026 0.189 0.125 -0.041 0.026 0.188 0.127 -0.039 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.037 0.025 0.188 0.125 -0.038 0.027 0.188 0.127 -0.038 0.025 0.189 0.125 -0.041 0.029 0.188 0.125 -0.038 0.023 0.188 0.125 -0.039 0.027 0.189 0.127 -0.023 0.01 0.188 0.127 -0.039 0.023 0.188 0.129 -0.039 0.025 0.188 0.127 -0.036 0.025 0.188 0.125 -0.039 0.025 0.189 0.129 -0.04 0.024 0.188 0.125 -0.039 0.024 0.188 0.127 -0.039 0.027 0.191 0.125 -0.041 0.026 0.188 0.127 -0.039 0.024 0.188 0.125 -0.038 0.025 0.19 0.129 -0.039 0.024 0.188 0.125 -0.039 0.026 0.189 0.132 -0.035 0.024 0.188 0.125 -0.039 0.024L23.296 43l-0.041 0.029 0.188 0.125 -0.038 0.023 0.189 0.131 -0.039 0.023 0.188 0.127 -0.039 0.025 0.191 0.127 -0.038 0.029 0.188 0.127 -0.039 0.024 0.188 0.125 -0.036 0.024 0.19 0.129 -0.041 0.025 0.188 0.125 -0.039 0.024 0.189 0.127L24.608 44.4l0.188 0.125 -0.039 0.024 0.189 0.125 -0.041 0.029 0.188 0.125 -0.039 0.024 0.189 0.129 -0.038 0.025 0.188 0.125 -0.036 0.027 0.188 0.127 -0.039 0.025 0.188 0.125 -0.039 0.024 0.19 0.127 -0.041 0.026 0.188 0.125 -0.039 0.027 0.189 0.127 -0.039 0.024 0.189 0.127 -0.039 0.026 0.188 0.125 -0.039 0.025 0.189 0.129 -0.038 0.024 0.188 0.125 -0.039 0.024 0.19 0.129 -0.039 0.025 0.188 0.125 -0.039 0.026 0.188 0.128 -0.039 0.023 0.188 0.125L27.3 47.133l0.19 0.125 -0.041 0.029 0.188 0.125 -0.039 0.023 0.189 0.131L27.75 47.59l0.188 0.127 -0.039 0.025 0.188 0.127L28.053 47.9l0.188 0.125 -0.038 0.023 0.189 0.127 -0.041 0.027 0.188 0.125L28.5 48.355l0.191 0.127 -0.039 0.024 0.188 0.127 -0.039 0.026 0.188 0.125 -0.039 0.025 0.19 0.129 -0.039 0.024 0.188 0.125 -0.039 0.024 0.19 0.13 -0.038 0.024 0.188 0.125 -0.039 0.026 0.188 0.127L29.7 49.57l0.188 0.125 -0.039 0.025 0.188 0.127 -0.039 0.024 0.189 0.127 -0.039 0.026 0.191 0.127L30.3 50.178l0.188 0.127 -0.039 0.027 0.188 0.125 -0.038 0.023 0.188 0.125 -0.039 0.025 0.19 0.127 -0.041 0.027 0.188 0.125 -0.038 0.025 0.189 0.129 -0.039 0.025 0.188 0.125 -0.039 0.027 0.188 0.125L31.501 51.4l0.189 0.129 -0.039 0.023 0.179 0.121 0.004 0.01 -0.033 0.021 0.089 0.06 0.108-0.029 0.019-0.029 0.021 0.014 0.006 0.01L32.01 51.75l0.09 0.059 0.049 0.075 0.021-0.028 0.022 0.017 0.004 0.004L32.162 51.9l0.09 0.058 0.049 0.075 0.02-0.029 0.02 0.016 0.004 0.006L32.31 52.05l0.089 0.058 0.052 0.076 0.02-0.029 0.021 0.016 0.004 0.006L32.461 52.2l0.089 0.056 0.054 0.077 0.019-0.028 0.017 0.008 0.008 0.014 -0.035 0.021 0.089 0.057 0.053 0.08 0.021-0.031 0.021 0.016 0.004 0.008L32.76 52.5l0.092 0.059 0.049 0.075 0.021-0.028 0.021 0.015 0.004 0.006 -0.032 0.024 0.09 0.057 0.052 0.077 0.02-0.029 0.017 0.009 0.009 0.014 -0.029 0.027 0.09 0.059 0.052 0.076 0.021-0.029 0.021 0.018 0.002 0.004 -0.035 0.024 0.092 0.06 0.051 0.074 0.017-0.029 0.021 0.014 0.008 0.01 -0.036 0.023 0.092 0.061 0.048 0.074 0.021-0.031 0.024 0.018v0.006l-0.033 0.022 0.09 0.062 0.048 0.072 0.021-0.029 0.02 0.018 0.005 0.004 -0.036 0.025 0.092 0.059 0.051 0.074 0.021-0.027 0.021 0.014 0.004 0.007 -0.032 0.024 0.088 0.057 0.052 0.076 0.02-0.028 0.021 0.013 0.004 0.012 -0.032 0.021 0.09 0.061 0.047 0.074 0.021-0.029 0.022 0.017 0.003 0.004 -0.036 0.024 0.092 0.063 0.048 0.07 0.021-0.029 0.02 0.015 0.006 0.008 -0.033 0.023 0.082 0.057 0.056 0.08 0.021-0.031 0.018 0.011 0.009 0.013 -0.035 0.022 0.089 0.06 0.051 0.073 0.02-0.028 0.021 0.018 0.004 0.004 -0.034 0.023 0.092 0.06 0.048 0.075 0.021-0.029 0.02 0.014 0.006 0.012 -0.033 0.021 0.088 0.059 0.051 0.078 0.021-0.029 0.021 0.013 0.005 0.008 -0.025 0.031 0.092 0.06 0.049 0.076 0.019-0.031 0.025 0.018 0.004 0.006 -0.037 0.023 0.091 0.063 0.051 0.07 0.02-0.029 0.02 0.018 0.006 0.004 -0.035 0.024 0.088 0.06 0.054 0.078 0.021-0.033 0.02 0.016 0.006 0.01 -0.033 0.021 0.088 0.059 0.051 0.077 0.019-0.03 0.022 0.014 0.005 0.011 -0.035 0.022 0.091 0.062 0.048 0.069 0.021-0.023 0.021 0.012 0.005 0.01 -0.033 0.021 0.09 0.057 0.029 0.066 0.017-0.031 0.024 0.016 0.004 0.008 -0.037 0.021 0.092 0.063 0.051 0.072 0.021-0.031 0.021 0.018 0.005 0.006 -0.038 0.027 0.097 0.061 0.045 0.068 0.02-0.025 0.023 0.014 0.004 0.009 -0.035 0.022 0.09 0.057 0.051 0.079 0.016-0.031 0.022 0.015 0.005 0.008 -0.035 0.021 0.092 0.059 0.048 0.076 0.021-0.031 0.023 0.018 0.004 0.008 -0.033 0.021 0.086 0.059 0.053 0.075 0.019-0.028 0.019 0.012 0.01 0.013 -0.035 0.022 0.089 0.058 0.051 0.079 0.017-0.031 0.022 0.016 0.004 0.008 -0.034 0.021 0.092 0.06 0.047 0.076 0.02-0.029 0.021 0.016 0.008 0.007 -0.033 0.022 0.083 0.059 0.056 0.079 0.021-0.033 0.017 0.013 0.01 0.012 -0.035 0.023 0.089 0.057 0.05 0.078 0.02-0.03 0.022 0.015 0.004 0.01 -0.037 0.021 0.093 0.063 0.049 0.074 0.021-0.031 0.021 0.016L37.324 57l-0.035 0.025 0.092 0.059 0.046 0.072 0.019-0.026 0.022 0.013 0.005 0.008 -0.035 0.023 0.09 0.057 0.05 0.078 0.019-0.029 0.023 0.014 0.004 0.01 -0.035 0.02 0.092 0.064 0.049 0.074 0.021-0.031 0.019 0.016 0.008 0.006 -0.033 0.023 0.083 0.057 0.054 0.08 0.021-0.033 0.017 0.013 0.008 0.013 -0.034 0.022 0.09 0.06 0.049 0.076 0.02-0.029 0.023 0.014 0.006 0.008 -0.035 0.025 0.092 0.059 0.047 0.075 0.021-0.029 0.021 0.013 0.006 0.008 -0.035 0.025 0.089 0.057 0.05 0.076 0.021-0.028 0.021 0.013 0.004 0.01 -0.035 0.023 0.091 0.057 0.049 0.077 0.02-0.028 0.023 0.012 0.004 0.009 -0.035 0.022 0.091 0.062 0.048 0.073 0.021-0.03 0.019 0.015 0.007 0.01 -0.033 0.023 0.088 0.059 0.033 0.061 0.021-0.029 0.021 0.014 0.004 0.008 -0.033 0.025 0.088 0.057 0.066 0.094 0.02-0.029 0.027 0.016v0.006l-0.033 0.023 0.089 0.058 0.048 0.077 0.021-0.029 0.017 0.009 0.008 0.013 -0.032 0.024 0.088 0.06 0.049 0.074 0.021-0.029 0.021 0.014 0.004 0.008 -0.033 0.025 0.087 0.057 0.052 0.076 0.021-0.028 0.021 0.015 0.004 0.006 -0.033 0.025 0.09 0.057 0.051 0.076 0.02-0.028 0.02 0.009 0.006 0.014 -0.033 0.021 0.086 0.057 0.053 0.079 0.021-0.03 0.021 0.014 0.008 0.009 -0.035 0.024 0.091 0.059 0.048 0.074 0.02-0.028 0.021 0.015 0.01 0.01 -0.039 0.021 0.092 0.061 0.049 0.074 0.02-0.029 0.024 0.017 0.004 0.004 -0.037 0.024 0.093 0.064 0.049 0.069 0.02-0.028 0.021 0.018 0.004 0.004 -0.035 0.025 0.092 0.063 0.048 0.07 0.019-0.029 0.021 0.016 0.004 0.006 -0.033 0.024 0.088 0.058 0.053 0.078 0.021-0.031 0.019 0.008 0.006 0.016 -0.033 0.023 0.089 0.058 0.048 0.075 0.021-0.029 0.021 0.014 0.006 0.008 -0.035 0.024 0.088 0.056 0.05 0.078 0.021-0.031 0.021 0.016 0.008 0.01 -0.037 0.023 0.092 0.061 0.049 0.072 0.019-0.027 0.021 0.012 0.004 0.011 -0.032 0.022 0.09 0.059 0.048 0.074 0.021-0.028 0.021 0.013 0.005 0.01 -0.033 0.023 0.09 0.059 0.048 0.076 0.021-0.029 0.021 0.015 0.007 0.01 -0.035 0.021 0.091 0.063 0.049 0.072 0.02-0.031 0.023 0.017v0.008l-0.033 0.021 0.091 0.059 0.048 0.076 0.021-0.029 0.022 0.017 0.004 0.005 -0.032 0.024 0.086 0.06 0.053 0.073 0.018-0.028 0.021 0.01 0.007 0.016 -0.036 0.021 0.092 0.058 0.049 0.077 0.019-0.031 0.024 0.018 0.004 0.006 -0.037 0.022 0.093 0.063 0.05 0.07 0.02-0.029 0.022 0.018 0.004 0.004 -0.035 0.025 0.089 0.058 0.051 0.075 0.018-0.029 0.021 0.014 0.006 0.008 -0.035 0.025 0.088 0.059 0.052 0.076 0.022-0.03 0.018 0.011 0.004 0.012 -0.033 0.023 0.092 0.059 0.049 0.077 0.02-0.03 0.023 0.017 0.005 0.008 -0.036 0.022 0.082 0.053c9.217-3.204 16.504-10.487 19.708-19.706l-0.009-0.004 -0.053-0.08 -0.021 0.03 -0.018-0.01 -0.004-0.011 0.033-0.022 -0.086-0.059 -0.052-0.076 -0.022 0.028 -0.02-0.013 -0.009-0.008 0.038-0.025 -0.092-0.059 -0.051-0.076 -0.017 0.029 -0.026-0.017 -0.003-0.004 0.037-0.024 -0.092-0.063 -0.05-0.07 -0.021 0.029 -0.017-0.015 -0.009-0.008 0.037-0.023 -0.09-0.059L61.525 41.8l-0.021 0.029 -0.018-0.013 -0.008-0.008 0.037-0.025 -0.092-0.063 -0.05-0.07 -0.017 0.027 -0.021-0.012 -0.007-0.01 0.034-0.023 -0.086-0.059 -0.053-0.077 -0.022 0.028 -0.021-0.014 -0.006-0.005 0.038-0.024 -0.092-0.06 -0.05-0.077 -0.021 0.031 -0.017-0.014 -0.009-0.008 0.037-0.024 -0.092-0.058 -0.05-0.076 -0.019 0.029 -0.02-0.013 -0.007-0.009 0.036-0.023 -0.088-0.06 -0.053-0.079 -0.022 0.033 -0.017-0.016 -0.008-0.008 0.037-0.023 -0.093-0.063 -0.05-0.072 -0.02 0.03 -0.022-0.017 -0.004-0.006 0.036-0.022 -0.09-0.063 -0.052-0.07 -0.019 0.029 -0.02-0.014 -0.006-0.008 0.033-0.025 -0.086-0.059 -0.055-0.079 -0.021 0.033 -0.019-0.015 -0.006-0.008 0.037-0.023 -0.093-0.061 -0.05-0.074 -0.02 0.031 -0.021-0.018L60.12 40.45l0.036-0.022 -0.09-0.059 -0.051-0.075 -0.02 0.028 -0.021-0.012 -0.006-0.008 0.035-0.025 -0.09-0.059 -0.051-0.08 -0.021 0.031 -0.02-0.012 -0.007-0.012 0.037-0.021 -0.09-0.063 -0.052-0.072 -0.021 0.031 -0.021-0.018 -0.005-0.007 0.038-0.022 -0.092-0.063 -0.051-0.071 -0.019 0.029 -0.022-0.017 -0.004-0.004 0.034-0.025 -0.09-0.059 -0.05-0.078 -0.021 0.031 -0.019-0.016 -0.007-0.006 0.037-0.023 -0.092-0.059 -0.05-0.077 -0.021 0.03 -0.018-0.014 -0.008-0.009 0.033-0.022 -0.088-0.06 -0.051-0.073 -0.019 0.027L59.066 39.4l-0.004-0.004 0.035-0.023 -0.09-0.059 -0.051-0.08 -0.021 0.031 -0.018-0.015 -0.007-0.009 0.038-0.021 -0.092-0.063 -0.051-0.073 -0.021 0.028L58.77 39.1l-0.008-0.006 0.032-0.023 -0.083-0.059 -0.055-0.078 -0.021 0.032 -0.017-0.013 -0.009-0.01 0.035-0.023 -0.086-0.059 -0.054-0.08 -0.021 0.033 -0.02-0.017 -0.006-0.009 0.037-0.021 -0.092-0.063 -0.051-0.075 -0.021 0.031 -0.024-0.017 -0.002-0.004 0.034-0.022 -0.092-0.063 -0.048-0.072 -0.02 0.031 -0.021-0.018 -0.009-0.008 0.039-0.023 -0.096-0.063 -0.043-0.069 -0.021 0.024 -0.022-0.012 -0.004-0.009 0.035-0.024 -0.092-0.063 -0.05-0.069 -0.018 0.027 -0.021-0.016 -0.006-0.006 0.035-0.024 -0.088-0.056 -0.053-0.08 -0.021 0.031 -0.018-0.015L57.7 38.035l0.038-0.021 -0.09-0.062 -0.053-0.075 0.004 0.048 -0.017-0.013 -0.008-0.008 0.036-0.025L57.52 37.82l-0.049-0.074 -0.018 0.029 -0.021-0.014 -0.007-0.009 0.036-0.024 -0.088-0.057 -0.053-0.078L57.3 37.625l-0.017-0.016 -0.008-0.006 0.037-0.022 -0.092-0.062 -0.051-0.074 -0.021 0.029 -0.017-0.013 -0.009-0.009 0.035-0.025 -0.09-0.058 -0.051-0.075 -0.017 0.029 -0.021-0.012 -0.006-0.01 0.034-0.025 -0.088-0.059 -0.052-0.076 -0.023 0.03 -0.017-0.015L56.82 37.15l0.037-0.023 -0.092-0.061 -0.05-0.074 -0.019 0.031 -0.023-0.018 -0.004-0.005 0.035-0.024 -0.087-0.059 -0.052-0.074 -0.021 0.028 -0.021-0.013 -0.006-0.008 0.037-0.025 -0.093-0.059 -0.05-0.078L56.4 36.723l-0.018-0.013 -0.015-0.017 0.034-0.022 -0.092-0.063 -0.047-0.072 -0.02 0.031 -0.021-0.018 -0.004-0.006 0.035-0.023 -0.089-0.061 -0.052-0.076 -0.021 0.028L56.073 36.4l-0.005-0.006 0.035-0.023 -0.09-0.059 -0.052-0.08 -0.021 0.031 -0.018-0.013 -0.006-0.011 0.035-0.021 -0.092-0.061 -0.049-0.075 -0.019 0.03L55.775 36.1l-0.006-0.006 0.033-0.021 -0.089-0.059 -0.05-0.076 -0.02 0.029 -0.021-0.013 -0.004-0.009 0.033-0.024 -0.09-0.06 -0.049-0.074 -0.021 0.029L55.475 35.8l-0.006-0.008 0.035-0.021 -0.092-0.063 -0.049-0.071 -0.018 0.03 -0.021-0.017 -0.004-0.008 0.033-0.021 -0.086-0.059 -0.055-0.08 -0.021 0.033 -0.019-0.013 -0.004-0.008 0.033-0.024 -0.085-0.06 -0.053-0.079 -0.022 0.033 -0.019-0.018 -0.008-0.008 0.035-0.021L54.96 35.26l-0.048-0.076 -0.02 0.028L54.875 35.2l-0.009-0.007 0.038-0.022 -0.092-0.062 -0.051-0.076 -0.021 0.029 -0.017-0.01 -0.009-0.012 0.037-0.023 -0.092-0.061 -0.05-0.074 -0.02 0.031L54.573 34.9l-0.005-0.01 0.035-0.021 -0.092-0.063 -0.05-0.074 -0.017 0.031 -0.021-0.016 -0.006-0.006 0.035-0.023 -0.088-0.059 -0.053-0.079 -0.021 0.032L54.275 34.6l-0.01-0.008 0.027-0.031L54.202 34.5l-0.05-0.075 -0.02 0.029 -0.021-0.013 -0.004-0.008 0.035-0.023 -0.092-0.061 -0.048-0.074 -0.021 0.031 -0.021-0.016 -0.005-0.01 0.032-0.02 -0.086-0.06 -0.051-0.077 -0.021 0.031 -0.021-0.016 -0.004-0.01 0.032-0.025L53.75 34.05l-0.048-0.077 -0.019 0.031 -0.021-0.013 -0.004-0.009 0.033-0.021 -0.088-0.06 -0.051-0.078 -0.021 0.031 -0.018-0.012 -0.006-0.013 0.033-0.021 -0.088-0.063 -0.051-0.075 -0.021 0.029 -0.019-0.012 -0.008-0.01 0.033-0.021 -0.088-0.058 -0.05-0.08L53.23 33.55l-0.021-0.012 -0.005-0.009 0.036-0.022 -0.092-0.062L53.1 33.371 53.079 33.4l-0.024-0.018 -0.002-0.004 0.035-0.021L53 33.3l-0.05-0.075 -0.017 0.029 -0.021-0.014 -0.006-0.008 0.035-0.024 -0.092-0.062 -0.049-0.074L52.783 33.1l-0.021-0.012 -0.004-0.005 0.035-0.022 -0.092-0.062 -0.049-0.075 -0.021 0.027 -0.021-0.014 -0.006-0.008 0.033-0.021 -0.082-0.06 -0.056-0.08 -0.021 0.031 -0.021-0.012 -0.007-0.01 0.034-0.023L52.4 32.695l-0.049-0.074 -0.02 0.027 -0.021-0.016 -0.004-0.005 0.033-0.022 -0.09-0.061 -0.048-0.076 -0.021 0.029 -0.023-0.015 -0.006-0.006 0.037-0.024 -0.09-0.06 -0.05-0.074 -0.017 0.027 -0.021-0.014 -0.006-0.006 0.036-0.023 -0.092-0.061 -0.048-0.076 -0.02 0.029 -0.021-0.012 -0.008-0.009 0.037-0.024 -0.09-0.059 -0.05-0.075 -0.019 0.03 -0.021-0.013 -0.005-0.009 0.022-0.025 -0.09-0.06 -0.05-0.077 -0.019 0.03 -0.023-0.016 -0.111-0.167 -0.025 0.037 -0.125-0.188 -0.023 0.041 -0.13-0.189 -0.024 0.039 -0.121-0.191 -0.024 0.037 -0.128-0.188 -0.021 0.039 -0.129-0.188 -0.025 0.038 -0.125-0.188 -0.027 0.036 -0.125-0.188 -0.025 0.039 -0.121-0.19 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.129-0.188 -0.023 0.039 -0.125-0.188 -0.025 0.039 -0.129-0.188L49.6 29.944l-0.125-0.188 -0.023 0.039 -0.129-0.19 -0.025 0.039 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.024 0.039 -0.13-0.189 -0.023 0.039 -0.125-0.188 -0.025 0.037 -0.129-0.189 -0.024 0.037 -0.125-0.188 -0.024 0.037 -0.128-0.189 -0.026 0.039 -0.125-0.188 -0.024 0.039 -0.129-0.188 -0.024 0.037L47.8 28.1l-0.024 0.041 -0.129-0.189 -0.024 0.039 -0.125-0.188 -0.026 0.038 -0.128-0.188 -0.024 0.037 -0.125-0.188 -0.024 0.039 -0.13-0.188 -0.023 0.037 -0.127-0.19 -0.027 0.039 -0.127-0.19 -0.025 0.038 -0.127-0.188 -0.023 0.039L46.43 26.75l-0.023 0.037 -0.125-0.188 -0.025 0.037 -0.129-0.188L46.1 26.485l-0.127-0.188 -0.023 0.039 -0.127-0.19 -0.027 0.039 -0.125-0.188 -0.027 0.039 -0.125-0.189 -0.024 0.039 -0.13-0.189 -0.023 0.037 -0.125-0.188 -0.025 0.035 -0.127-0.188 -0.026 0.039 -0.127-0.188 -0.028 0.036 -0.127-0.188 -0.023 0.035 -0.127-0.187 -0.024 0.039 -0.129-0.187 -0.025 0.037L44.3 24.64l-0.026 0.039 -0.127-0.189 -0.024 0.038 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.024 0.037 -0.125-0.188 -0.024 0.039 -0.13-0.188 -0.023 0.036 -0.127-0.188 -0.029 0.037 -0.127-0.189 -0.026 0.038 -0.127-0.188 -0.024 0.037 -0.125-0.188 -0.025 0.036 -0.125-0.188 -0.026 0.038 -0.127-0.188L42.6 23.021l-0.127-0.188 -0.025 0.039 -0.129-0.191 -0.024 0.039 -0.127-0.188 -0.024 0.037 -0.125-0.189 -0.025 0.039 -0.129-0.188 -0.025 0.039 -0.125-0.188 -0.027 0.036 -0.127-0.188 -0.024 0.039 -0.127-0.188 -0.028 0.039 -0.125-0.188 -0.023 0.035 -0.127-0.187 -0.026 0.039 -0.127-0.188 -0.025 0.039 -0.127-0.188 -0.024 0.036 -0.127-0.188 -0.024 0.039 -0.13-0.188 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.127-0.188 -0.024 0.039 -0.128-0.188 -0.025 0.039 -0.125-0.188 -0.029 0.038 -0.127-0.19 -0.024 0.039 -0.127-0.189 -0.024 0.039 -0.125-0.188 -0.025 0.039 -0.129-0.19 -0.025 0.036 -0.127-0.188 -0.025 0.036 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.025 0.038 -0.014-0.214 -0.024 0.035 -0.125-0.188 -0.024 0.039 -0.127-0.187 -0.028 0.039L38.323 18.6l-0.025 0.035 -0.127-0.188 -0.024 0.039 -0.129-0.188 -0.025 0.039 -0.125-0.188 -0.024 0.037 -0.125-0.188 -0.026 0.039 -0.127-0.189 -0.025 0.039 -0.129-0.189 -0.016 0.035 -0.125-0.188 -0.021 0.039 -0.127-0.191 -0.025 0.039 -0.125-0.188 -0.025 0.036 -0.125-0.188 -0.024 0.038 -0.129-0.19 -0.024 0.039 -0.125-0.188 -0.025 0.037 -0.123-0.188 -0.025 0.039 -0.127-0.189 -0.027 0.036 -0.127-0.188 -0.024 0.039 -0.128-0.189 -0.026 0.037 -0.125-0.188 -0.024 0.036 -0.125-0.188 -0.025 0.039 -0.129-0.188 -0.025 0.037 -0.127-0.188 -0.025 0.035 -0.127-0.188 -0.025 0.039L35 15.283l-0.014 0.039 -0.129-0.189 -0.024 0.037 -0.125-0.188 -0.026 0.039 -0.127-0.19 -0.021 0.039 -0.125-0.188 -0.024 0.038 -0.13-0.188 -0.023 0.037 -0.121-0.191 -0.025 0.039 -0.127-0.188 -0.027 0.039 -0.125-0.188 -0.025 0.037 -0.125-0.188 -0.024 0.039 -0.127-0.188 -0.026 0.039L33.35 13.63l-0.023 0.037L33.2 13.48l-0.027 0.039 -0.125-0.188 -0.026 0.037 -0.125-0.188 -0.024 0.038 -0.126-0.189 -0.021 0.032L32.6 12.873l-0.022 0.036 -0.129-0.188 -0.022 0.037 -0.127-0.188 -0.025 0.039 -0.128-0.189 -0.024 0.036 -0.126-0.188 -2.133 3.2h0.252l-0.099 0.152h0.252l-0.1 0.152h0.251l-0.1 0.149h0.25l-0.1 0.152h0.251l-0.1 0.151h0.252l-0.101 0.152h0.25l-0.098 0.149h0.251l-0.1 0.151h0.252l-0.1 0.152h0.249l-0.1 0.151h0.252l-0.101 0.151h0.252l-0.1 0.15h0.251l-0.1 0.151h0.252l-0.107 0.147h0.252l-0.1 0.152h0.251l-0.1 0.149h0.25l-0.101 0.152h0.25l-0.1 0.151h0.252l-0.101 0.15h0.252l-0.102 0.151h0.253l-0.103 0.149h0.252l-0.1 0.152h0.252l-0.102 0.151h0.253l-0.101 0.151h0.25l-0.101 0.15h0.255l-0.076 0.106c-0.6-0.085-1.199-0.143-1.815-0.143 -2.801 0-5.38 0.909-7.487 2.434l-0.081-0.016 0.1-0.1 -0.252-0.049 0.103-0.102 -0.252-0.049 0.1-0.101 -0.249-0.049 0.1-0.1 -0.254-0.051 0.102-0.1 -0.251-0.05 0.1-0.1 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.1 -0.252-0.05 0.101-0.1 -0.252-0.049 0.1-0.1 -0.251-0.049 0.1-0.101 -0.252-0.049 0.101-0.1 -0.252-0.049 0.1-0.1 -0.253-0.049 0.101-0.101 -0.253-0.049 0.102-0.102 -0.249-0.049 0.1-0.1 -0.253-0.049 0.101-0.101 -0.245-0.064 0.1-0.102 -0.249-0.052 0.1-0.1 -3.774-0.753 0.755 3.772 0.1-0.1 0.049 0.251 0.101-0.1 0.051 0.252 0.1-0.101 0.049 0.25 0.1-0.1 0.049 0.25 0.101-0.101 0.051 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.052 0.252 0.1-0.1L20 23.029l0.1-0.1 0.049 0.249 0.101-0.1 0.051 0.252 0.1-0.1 0.049 0.251 0.1-0.1 0.049 0.25L20.7 23.53l0.049 0.252 0.1-0.1 0.049 0.252 0.1-0.101 0.05 0.25 0.1-0.1 0.049 0.251 0.1-0.1 0.049 0.252 0.101-0.101 0.049 0.252 0.1-0.1 0.017 0.085C20.106 26.624 19.2 29.203 19.2 32c0 0.619 0.057 1.221 0.143 1.816l-0.108 0.07v-0.25l-0.152 0.1v-0.254l-0.149 0.103v-0.252l-0.151 0.101v-0.25l-0.152 0.101v-0.255l-0.149 0.1v-0.25l-0.15 0.102v-0.252l-0.152 0.1v-0.252l-0.151 0.105v-0.25l-0.152 0.102v-0.252l-0.149 0.102v-0.252l-0.149 0.1v-0.252l-0.152 0.101v-0.252l-0.151 0.1v-0.251l-0.152 0.1v-0.252l-0.149 0.1v-0.251l-0.151 0.1v-0.251l-0.152 0.1V31.07l-0.151 0.1v-0.251l-0.15 0.098v-0.25l-0.151 0.101v-0.252l-0.151 0.1v-0.252l-0.152 0.101v-0.25l-0.151 0.1v-0.251l-0.15 0.1v-0.252l-0.149 0.109v-0.252l-3.2 2.133 0.188 0.126L12.417 32.153zM54.354 26.675l0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.189 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.037-0.19L53.3 25.628l0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.184 0.038 0.037-0.188 -0.187 0.038 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.036-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.188 -0.189 0.038 0.041-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.189 0.037 0.021-0.219 -0.188 0.038 0.04-0.188 -0.191 0.039 0.039-0.189 -0.188 0.039 0.04-0.188 -0.189 0.036 0.037-0.188 -0.188 0.039 0.037-0.189 -0.188 0.039 0.038-0.188 -0.189 0.039 0.039-0.19 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188L49.08 21.41l0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.188 -0.189 0.038 0.04-0.188 -0.188 0.038 0.037-0.188 -0.19 0.039 0.04-0.189 -0.188 0.038 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.037-0.188L47.73 20.06l0.039-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.189 0.039 0.041-0.188 -0.19 0.039 0.04-0.188 -0.191 0.039 0.039-0.19 -0.188 0.039 0.04-0.188 -0.188 0.039 0.039-0.189 -0.188 0.039 0.038-0.188 -0.209 0.014 0.041-0.19 -0.188 0.039 0.039-0.188 -0.19 0.039 0.037-0.189 -0.188 0.039 0.04-0.188 -3.772 0.755 0.305 0.303 0.149 0.149 0.601 0.604 0.453 0.452 0.754 0.755 0.15 0.149 0.754 0.756 0.904 0.905 0.454 0.454 0.45 0.45 3.017 3.019 0.904 0.904 0.905 0.905 0 0 0.301 0.301 0.906 0.904 0.354 0.354 1 1.004 0 0h0.004l0.389 0.386 0.515 0.517h0.002l0 0 0.901 0.902 0.903 0.903 0.529 0.529 0.528 0.528 0.904 0.906 0.452 0.449 0.903 0.904 2.111 2.111 0.357 0.358c0.294-1.192 0.527-2.407 0.684-3.646l-0.022 0.004 0.036-0.191 -0.188 0.037 0.038-0.188L63.4 35.727l0.037-0.188 -0.188 0.039 0.038-0.191L63.1 35.424l0.037-0.188 -0.188 0.039 0.037-0.188 -0.188 0.04 0.038-0.19 -0.188 0.041 0.037-0.191 -0.189 0.039 0.04-0.189 -0.188 0.041 0.037-0.191 -0.188 0.039 0.037-0.188 -0.189 0.037 0.04-0.188 -0.188 0.041 0.037-0.189 -0.19 0.037 0.04-0.188 -0.188 0.036 0.038-0.188 -0.188 0.041 0.037-0.188 -0.188 0.04 0.038-0.188 -0.188 0.037 0.039-0.191 -0.188 0.039 0.038-0.188 -0.192 0.039 0.04-0.189 -0.188 0.039 0.039-0.188 -0.209 0.009 0.039-0.188 -0.188 0.037 0.037-0.188 -0.188 0.039 0.037-0.188 -0.189 0.038 0.041-0.189 -0.189 0.038 0.039-0.188 -0.188 0.038 0.037-0.187 -0.188 0.039 0.037-0.188 -0.189 0.039 0.039-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.037-0.189 -0.188 0.037 0.041-0.188L58.872 31.2l0.037-0.189 -0.188 0.039 0.037-0.188L58.568 30.9l0.041-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.039-0.188 -0.19 0.039 0.04-0.188 -0.2 0.024 0.038-0.189 -0.188 0.039 0.039-0.188 -0.189 0.039 0.037-0.188 -0.188 0.038 0.038-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.036-0.188 -0.188 0.038 0.039-0.188 -0.188 0.039 0.038-0.188 -0.188 0.038 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.036-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.189 0.039 0.04-0.19 -0.19 0.039 0.04-0.188 -0.188 0.039 0.037-0.188 -0.188 0.039 0.038-0.188 -0.188 0.039 0.039-0.188 -0.188 0.039 0.038-0.188 -0.192 0.039 0.04-0.188 -0.188 0.037 0.039-0.188 -0.188 0.039 0.038-0.188L54.354 26.675z\'/></g><path id=\'_x3C_Tracciato_x3E__1_\' fill=\'#F5D76E\' d=\'M34.134 48.533L32 51.732l-2.133-3.199H34.134zM34.131 15.469l-2.133-3.2 -2.133 3.2H34.131zM15.467 29.869l-3.2 2.133 3.2 2.135V29.869zM48.531 34.134L51.73 32l-3.199-2.133V34.134zM18.801 42.184l-0.753 3.772 3.77-0.756L18.801 42.184zM45.195 21.82l0.757-3.772 -3.772 0.755L45.195 21.82zM42.18 45.2l3.774 0.754L45.2 42.184 42.18 45.2zM21.818 18.803l-3.774-0.753 0.755 3.772L21.818 18.803zM32 19.2c-7.068 0-12.8 5.732-12.8 12.8 0 7.066 5.732 12.8 12.8 12.8 7.066 0 12.8-5.733 12.8-12.8C44.8 24.932 39.066 19.2 32 19.2z\'/></svg>'}})};
 
-},{"react":275}],26:[function(require,module,exports){
+},{"react":276}],27:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -1909,25 +1919,20 @@ var WeatherWidget = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(WeatherWidget).call(this, props));
 
-    _localforage2.default.get('Weather').then(function (data) {
-      return _this.setState({
-        units: data.units,
-        unitString: data.units === 'imperial' ? '° F' : '° C'
-      });
-    });
-
-    _localforage2.default.on('Weather.data', function (data) {
+    _localforage2.default.on('Weather', function (data) {
       return _this.setState(data);
     });
-    (0, _weather2.default)().then(function (data) {
-      return data && _this.setState(data);
+    _localforage2.default.on('Weather.data', function (data) {
+      return _this.setState(Object.assign(data, { error: '' }));
+    });
+    Promise.all([(0, _weather2.default)(), _localforage2.default.get('Weather')]).then(function (data) {
+      return _this.setState(Object.assign(data[0], data[1], { error: '' }));
     }).catch(function (error) {
-      return _this.setState({ error: error });
+      return _this.setState({ error: error[0] });
     });
 
     _this.state = {
       units: '',
-      unitString: '',
       temp: '',
       code: '',
       forecast: [],
@@ -1947,8 +1952,18 @@ var WeatherWidget = function (_React$Component) {
   }, {
     key: 'getTemp',
     value: function getTemp(temp) {
+      if (this.state.temp === '') return '';
       if (this.state.units === 'metric') return temp;
       return Math.round(temp * 9 / 5 + 32);
+    }
+  }, {
+    key: 'renderError',
+    value: function renderError() {
+      return this.state.error ? _react2.default.createElement(
+        'h2',
+        null,
+        this.state.error
+      ) : '';
     }
   }, {
     key: 'renderForecast',
@@ -1979,15 +1994,6 @@ var WeatherWidget = function (_React$Component) {
       });
     }
   }, {
-    key: 'renderError',
-    value: function renderError() {
-      return this.state.error ? _react2.default.createElement(
-        'h2',
-        null,
-        this.state.error
-      ) : '';
-    }
-  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -2004,13 +2010,13 @@ var WeatherWidget = function (_React$Component) {
             _react2.default.createElement(
               'span',
               { className: 'widget-weather__units' },
-              this.state.unitString
+              this.state.units === 'imperial' ? '° F' : '° C'
             )
           ),
           _react2.default.createElement(
             'span',
             { className: 'widget-weather__icon' },
-            _icons2.default[this.state.code.icon + (new Date().getHours() > 17 ? '-night' : '')]
+            _icons2.default[this.state.code.icon + (new Date().getHours() > 17 || new Date().getHours() < 6 ? '-night' : '')]
           ),
           _react2.default.createElement(
             'span',
@@ -2032,14 +2038,14 @@ var WeatherWidget = function (_React$Component) {
 
 exports.default = WeatherWidget;
 
-},{"../../services/touch":9,"../../services/weather":11,"./icons":25,"classnames":28,"localforage":58,"react":275}],27:[function(require,module,exports){
+},{"../../services/touch":9,"../../services/weather":11,"./icons":26,"classnames":29,"localforage":59,"react":276}],28:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -2065,11 +2071,13 @@ var WebsitesWidget = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(WebsitesWidget).call(this, props));
 
-    _localforage2.default.get('Websites.list').then(function (websites) {
-      return _this.setState({ websites: websites });
+    _localforage2.default.get('Websites').then(function (websites) {
+      return _this.setState({ websites: websites.list });
     });
 
-    _this.state = { websites: [] };
+    _this.state = {
+      websites: []
+    };
     return _this;
   }
 
@@ -2117,7 +2125,7 @@ exports.default = WebsitesWidget;
 
 WebsitesWidget.propTypes = {};
 
-},{"localforage":58,"react":275}],28:[function(require,module,exports){
+},{"localforage":59,"react":276}],29:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -2167,23 +2175,23 @@ WebsitesWidget.propTypes = {};
 	}
 }());
 
-},{}],29:[function(require,module,exports){
-
-(function(document, promise) {
-
+},{}],30:[function(require,module,exports){
+(function (document, promise) {
   if (typeof module !== 'undefined') module.exports = promise
   else document.ready = promise
+})(window.document, function (chainVal) {
+  'use strict'
 
-})(window.document, function(chainVal) {
-
-  var d = document, w = window,
+  var d = document,
+      w = window,
       loaded = /^loaded|^i|^c/.test(d.readyState),
-      DOMContentLoaded = 'DOMContentLoaded', load = 'load'
+      DOMContentLoaded = 'DOMContentLoaded',
+      load = 'load'
 
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     if (loaded) return resolve(chainVal)
 
-    function onReady() {
+    function onReady () {
       resolve(chainVal)
       d.removeEventListener(DOMContentLoaded, onReady)
       w.removeEventListener(load, onReady)
@@ -2194,8 +2202,7 @@ WebsitesWidget.propTypes = {};
   })
 })
 
-
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -3167,7 +3174,7 @@ WebsitesWidget.propTypes = {};
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":135}],31:[function(require,module,exports){
+},{"_process":136}],32:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3255,7 +3262,7 @@ var EventListener = {
 module.exports = EventListener;
 }).call(this,require('_process'))
 
-},{"./emptyFunction":38,"_process":135}],32:[function(require,module,exports){
+},{"./emptyFunction":39,"_process":136}],33:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3292,7 +3299,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3325,7 +3332,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3366,7 +3373,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":33}],35:[function(require,module,exports){
+},{"./camelize":34}],36:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3422,7 +3429,7 @@ function containsNode(_x, _x2) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":48}],36:[function(require,module,exports){
+},{"./isTextNode":49}],37:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3508,7 +3515,7 @@ function createArrayFromMixed(obj) {
 }
 
 module.exports = createArrayFromMixed;
-},{"./toArray":56}],37:[function(require,module,exports){
+},{"./toArray":57}],38:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3596,7 +3603,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 }).call(this,require('_process'))
 
-},{"./ExecutionEnvironment":32,"./createArrayFromMixed":36,"./getMarkupWrap":42,"./invariant":46,"_process":135}],38:[function(require,module,exports){
+},{"./ExecutionEnvironment":33,"./createArrayFromMixed":37,"./getMarkupWrap":43,"./invariant":47,"_process":136}],39:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3635,7 +3642,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3659,7 +3666,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = emptyObject;
 }).call(this,require('_process'))
 
-},{"_process":135}],40:[function(require,module,exports){
+},{"_process":136}],41:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3686,7 +3693,7 @@ function focusNode(node) {
 }
 
 module.exports = focusNode;
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3722,7 +3729,7 @@ function getActiveElement() /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3821,7 +3828,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 }).call(this,require('_process'))
 
-},{"./ExecutionEnvironment":32,"./invariant":46,"_process":135}],43:[function(require,module,exports){
+},{"./ExecutionEnvironment":33,"./invariant":47,"_process":136}],44:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3860,7 +3867,7 @@ function getUnboundedScrollPosition(scrollable) {
 }
 
 module.exports = getUnboundedScrollPosition;
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3894,7 +3901,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3934,7 +3941,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":44}],46:[function(require,module,exports){
+},{"./hyphenate":45}],47:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3988,7 +3995,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 }).call(this,require('_process'))
 
-},{"_process":135}],47:[function(require,module,exports){
+},{"_process":136}],48:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4012,7 +4019,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4038,7 +4045,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":47}],49:[function(require,module,exports){
+},{"./isNode":48}],50:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4090,7 +4097,7 @@ var keyMirror = function (obj) {
 module.exports = keyMirror;
 }).call(this,require('_process'))
 
-},{"./invariant":46,"_process":135}],50:[function(require,module,exports){
+},{"./invariant":47,"_process":136}],51:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4126,7 +4133,7 @@ var keyOf = function (oneKeyObj) {
 };
 
 module.exports = keyOf;
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4178,7 +4185,7 @@ function mapObject(object, callback, context) {
 }
 
 module.exports = mapObject;
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4210,7 +4217,7 @@ function memoizeStringOnly(callback) {
 }
 
 module.exports = memoizeStringOnly;
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4234,7 +4241,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = performance || {};
-},{"./ExecutionEnvironment":32}],54:[function(require,module,exports){
+},{"./ExecutionEnvironment":33}],55:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4269,7 +4276,7 @@ if (performance.now) {
 }
 
 module.exports = performanceNow;
-},{"./performance":53}],55:[function(require,module,exports){
+},{"./performance":54}],56:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4320,7 +4327,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4381,7 +4388,7 @@ function toArray(obj) {
 module.exports = toArray;
 }).call(this,require('_process'))
 
-},{"./invariant":46,"_process":135}],57:[function(require,module,exports){
+},{"./invariant":47,"_process":136}],58:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -4442,7 +4449,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = warning;
 }).call(this,require('_process'))
 
-},{"./emptyFunction":38,"_process":135}],58:[function(require,module,exports){
+},{"./emptyFunction":39,"_process":136}],59:[function(require,module,exports){
 (function (process,global){
 /*!
     localForage -- Offline Storage, Improved
@@ -7304,7 +7311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 ;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":135}],59:[function(require,module,exports){
+},{"_process":136}],60:[function(require,module,exports){
 /**
  * Gets the last element of `array`.
  *
@@ -7325,10 +7332,10 @@ function last(array) {
 
 module.exports = last;
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = require('./forEach');
 
-},{"./forEach":61}],61:[function(require,module,exports){
+},{"./forEach":62}],62:[function(require,module,exports){
 var arrayEach = require('../internal/arrayEach'),
     baseEach = require('../internal/baseEach'),
     createForEach = require('../internal/createForEach');
@@ -7367,7 +7374,7 @@ var forEach = createForEach(arrayEach, baseEach);
 
 module.exports = forEach;
 
-},{"../internal/arrayEach":66,"../internal/baseEach":75,"../internal/createForEach":99}],62:[function(require,module,exports){
+},{"../internal/arrayEach":67,"../internal/baseEach":76,"../internal/createForEach":100}],63:[function(require,module,exports){
 var arrayMap = require('../internal/arrayMap'),
     baseCallback = require('../internal/baseCallback'),
     baseMap = require('../internal/baseMap'),
@@ -7437,7 +7444,7 @@ function map(collection, iteratee, thisArg) {
 
 module.exports = map;
 
-},{"../internal/arrayMap":67,"../internal/baseCallback":72,"../internal/baseMap":85,"../lang/isArray":120}],63:[function(require,module,exports){
+},{"../internal/arrayMap":68,"../internal/baseCallback":73,"../internal/baseMap":86,"../lang/isArray":121}],64:[function(require,module,exports){
 var map = require('./map'),
     property = require('../utility/property');
 
@@ -7470,7 +7477,7 @@ function pluck(collection, path) {
 
 module.exports = pluck;
 
-},{"../utility/property":133,"./map":62}],64:[function(require,module,exports){
+},{"../utility/property":134,"./map":63}],65:[function(require,module,exports){
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -7530,7 +7537,7 @@ function restParam(func, start) {
 
 module.exports = restParam;
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (global){
 var cachePush = require('./cachePush'),
     getNative = require('./getNative');
@@ -7564,7 +7571,7 @@ module.exports = SetCache;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./cachePush":94,"./getNative":105}],66:[function(require,module,exports){
+},{"./cachePush":95,"./getNative":106}],67:[function(require,module,exports){
 /**
  * A specialized version of `_.forEach` for arrays without support for callback
  * shorthands and `this` binding.
@@ -7588,7 +7595,7 @@ function arrayEach(array, iteratee) {
 
 module.exports = arrayEach;
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  * A specialized version of `_.map` for arrays without support for callback
  * shorthands and `this` binding.
@@ -7611,7 +7618,7 @@ function arrayMap(array, iteratee) {
 
 module.exports = arrayMap;
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  * Appends the elements of `values` to `array`.
  *
@@ -7633,7 +7640,7 @@ function arrayPush(array, values) {
 
 module.exports = arrayPush;
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  * A specialized version of `_.some` for arrays without support for callback
  * shorthands and `this` binding.
@@ -7658,7 +7665,7 @@ function arraySome(array, predicate) {
 
 module.exports = arraySome;
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var keys = require('../object/keys');
 
 /**
@@ -7692,7 +7699,7 @@ function assignWith(object, source, customizer) {
 
 module.exports = assignWith;
 
-},{"../object/keys":128}],71:[function(require,module,exports){
+},{"../object/keys":129}],72:[function(require,module,exports){
 var baseCopy = require('./baseCopy'),
     keys = require('../object/keys');
 
@@ -7713,7 +7720,7 @@ function baseAssign(object, source) {
 
 module.exports = baseAssign;
 
-},{"../object/keys":128,"./baseCopy":73}],72:[function(require,module,exports){
+},{"../object/keys":129,"./baseCopy":74}],73:[function(require,module,exports){
 var baseMatches = require('./baseMatches'),
     baseMatchesProperty = require('./baseMatchesProperty'),
     bindCallback = require('./bindCallback'),
@@ -7750,7 +7757,7 @@ function baseCallback(func, thisArg, argCount) {
 
 module.exports = baseCallback;
 
-},{"../utility/identity":132,"../utility/property":133,"./baseMatches":86,"./baseMatchesProperty":87,"./bindCallback":92}],73:[function(require,module,exports){
+},{"../utility/identity":133,"../utility/property":134,"./baseMatches":87,"./baseMatchesProperty":88,"./bindCallback":93}],74:[function(require,module,exports){
 /**
  * Copies properties of `source` to `object`.
  *
@@ -7775,7 +7782,7 @@ function baseCopy(source, props, object) {
 
 module.exports = baseCopy;
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var baseIndexOf = require('./baseIndexOf'),
     cacheIndexOf = require('./cacheIndexOf'),
     createCache = require('./createCache');
@@ -7832,7 +7839,7 @@ function baseDifference(array, values) {
 
 module.exports = baseDifference;
 
-},{"./baseIndexOf":81,"./cacheIndexOf":93,"./createCache":98}],75:[function(require,module,exports){
+},{"./baseIndexOf":82,"./cacheIndexOf":94,"./createCache":99}],76:[function(require,module,exports){
 var baseForOwn = require('./baseForOwn'),
     createBaseEach = require('./createBaseEach');
 
@@ -7849,7 +7856,7 @@ var baseEach = createBaseEach(baseForOwn);
 
 module.exports = baseEach;
 
-},{"./baseForOwn":79,"./createBaseEach":96}],76:[function(require,module,exports){
+},{"./baseForOwn":80,"./createBaseEach":97}],77:[function(require,module,exports){
 var arrayPush = require('./arrayPush'),
     isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
@@ -7892,7 +7899,7 @@ function baseFlatten(array, isDeep, isStrict, result) {
 
 module.exports = baseFlatten;
 
-},{"../lang/isArguments":119,"../lang/isArray":120,"./arrayPush":68,"./isArrayLike":107,"./isObjectLike":112}],77:[function(require,module,exports){
+},{"../lang/isArguments":120,"../lang/isArray":121,"./arrayPush":69,"./isArrayLike":108,"./isObjectLike":113}],78:[function(require,module,exports){
 var createBaseFor = require('./createBaseFor');
 
 /**
@@ -7911,7 +7918,7 @@ var baseFor = createBaseFor();
 
 module.exports = baseFor;
 
-},{"./createBaseFor":97}],78:[function(require,module,exports){
+},{"./createBaseFor":98}],79:[function(require,module,exports){
 var baseFor = require('./baseFor'),
     keysIn = require('../object/keysIn');
 
@@ -7930,7 +7937,7 @@ function baseForIn(object, iteratee) {
 
 module.exports = baseForIn;
 
-},{"../object/keysIn":129,"./baseFor":77}],79:[function(require,module,exports){
+},{"../object/keysIn":130,"./baseFor":78}],80:[function(require,module,exports){
 var baseFor = require('./baseFor'),
     keys = require('../object/keys');
 
@@ -7949,7 +7956,7 @@ function baseForOwn(object, iteratee) {
 
 module.exports = baseForOwn;
 
-},{"../object/keys":128,"./baseFor":77}],80:[function(require,module,exports){
+},{"../object/keys":129,"./baseFor":78}],81:[function(require,module,exports){
 var toObject = require('./toObject');
 
 /**
@@ -7980,7 +7987,7 @@ function baseGet(object, path, pathKey) {
 
 module.exports = baseGet;
 
-},{"./toObject":117}],81:[function(require,module,exports){
+},{"./toObject":118}],82:[function(require,module,exports){
 var indexOfNaN = require('./indexOfNaN');
 
 /**
@@ -8009,7 +8016,7 @@ function baseIndexOf(array, value, fromIndex) {
 
 module.exports = baseIndexOf;
 
-},{"./indexOfNaN":106}],82:[function(require,module,exports){
+},{"./indexOfNaN":107}],83:[function(require,module,exports){
 var baseIsEqualDeep = require('./baseIsEqualDeep'),
     isObject = require('../lang/isObject'),
     isObjectLike = require('./isObjectLike');
@@ -8039,7 +8046,7 @@ function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
 
 module.exports = baseIsEqual;
 
-},{"../lang/isObject":124,"./baseIsEqualDeep":83,"./isObjectLike":112}],83:[function(require,module,exports){
+},{"../lang/isObject":125,"./baseIsEqualDeep":84,"./isObjectLike":113}],84:[function(require,module,exports){
 var equalArrays = require('./equalArrays'),
     equalByTag = require('./equalByTag'),
     equalObjects = require('./equalObjects'),
@@ -8143,7 +8150,7 @@ function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, 
 
 module.exports = baseIsEqualDeep;
 
-},{"../lang/isArray":120,"../lang/isTypedArray":125,"./equalArrays":100,"./equalByTag":101,"./equalObjects":102}],84:[function(require,module,exports){
+},{"../lang/isArray":121,"../lang/isTypedArray":126,"./equalArrays":101,"./equalByTag":102,"./equalObjects":103}],85:[function(require,module,exports){
 var baseIsEqual = require('./baseIsEqual'),
     toObject = require('./toObject');
 
@@ -8197,7 +8204,7 @@ function baseIsMatch(object, matchData, customizer) {
 
 module.exports = baseIsMatch;
 
-},{"./baseIsEqual":82,"./toObject":117}],85:[function(require,module,exports){
+},{"./baseIsEqual":83,"./toObject":118}],86:[function(require,module,exports){
 var baseEach = require('./baseEach'),
     isArrayLike = require('./isArrayLike');
 
@@ -8222,7 +8229,7 @@ function baseMap(collection, iteratee) {
 
 module.exports = baseMap;
 
-},{"./baseEach":75,"./isArrayLike":107}],86:[function(require,module,exports){
+},{"./baseEach":76,"./isArrayLike":108}],87:[function(require,module,exports){
 var baseIsMatch = require('./baseIsMatch'),
     getMatchData = require('./getMatchData'),
     toObject = require('./toObject');
@@ -8254,7 +8261,7 @@ function baseMatches(source) {
 
 module.exports = baseMatches;
 
-},{"./baseIsMatch":84,"./getMatchData":104,"./toObject":117}],87:[function(require,module,exports){
+},{"./baseIsMatch":85,"./getMatchData":105,"./toObject":118}],88:[function(require,module,exports){
 var baseGet = require('./baseGet'),
     baseIsEqual = require('./baseIsEqual'),
     baseSlice = require('./baseSlice'),
@@ -8301,7 +8308,7 @@ function baseMatchesProperty(path, srcValue) {
 
 module.exports = baseMatchesProperty;
 
-},{"../array/last":59,"../lang/isArray":120,"./baseGet":80,"./baseIsEqual":82,"./baseSlice":90,"./isKey":110,"./isStrictComparable":113,"./toObject":117,"./toPath":118}],88:[function(require,module,exports){
+},{"../array/last":60,"../lang/isArray":121,"./baseGet":81,"./baseIsEqual":83,"./baseSlice":91,"./isKey":111,"./isStrictComparable":114,"./toObject":118,"./toPath":119}],89:[function(require,module,exports){
 /**
  * The base implementation of `_.property` without support for deep paths.
  *
@@ -8317,7 +8324,7 @@ function baseProperty(key) {
 
 module.exports = baseProperty;
 
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var baseGet = require('./baseGet'),
     toPath = require('./toPath');
 
@@ -8338,7 +8345,7 @@ function basePropertyDeep(path) {
 
 module.exports = basePropertyDeep;
 
-},{"./baseGet":80,"./toPath":118}],90:[function(require,module,exports){
+},{"./baseGet":81,"./toPath":119}],91:[function(require,module,exports){
 /**
  * The base implementation of `_.slice` without an iteratee call guard.
  *
@@ -8372,7 +8379,7 @@ function baseSlice(array, start, end) {
 
 module.exports = baseSlice;
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 /**
  * Converts `value` to a string if it's not one. An empty string is returned
  * for `null` or `undefined` values.
@@ -8387,7 +8394,7 @@ function baseToString(value) {
 
 module.exports = baseToString;
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var identity = require('../utility/identity');
 
 /**
@@ -8428,7 +8435,7 @@ function bindCallback(func, thisArg, argCount) {
 
 module.exports = bindCallback;
 
-},{"../utility/identity":132}],93:[function(require,module,exports){
+},{"../utility/identity":133}],94:[function(require,module,exports){
 var isObject = require('../lang/isObject');
 
 /**
@@ -8449,7 +8456,7 @@ function cacheIndexOf(cache, value) {
 
 module.exports = cacheIndexOf;
 
-},{"../lang/isObject":124}],94:[function(require,module,exports){
+},{"../lang/isObject":125}],95:[function(require,module,exports){
 var isObject = require('../lang/isObject');
 
 /**
@@ -8471,7 +8478,7 @@ function cachePush(value) {
 
 module.exports = cachePush;
 
-},{"../lang/isObject":124}],95:[function(require,module,exports){
+},{"../lang/isObject":125}],96:[function(require,module,exports){
 var bindCallback = require('./bindCallback'),
     isIterateeCall = require('./isIterateeCall'),
     restParam = require('../function/restParam');
@@ -8514,7 +8521,7 @@ function createAssigner(assigner) {
 
 module.exports = createAssigner;
 
-},{"../function/restParam":64,"./bindCallback":92,"./isIterateeCall":109}],96:[function(require,module,exports){
+},{"../function/restParam":65,"./bindCallback":93,"./isIterateeCall":110}],97:[function(require,module,exports){
 var getLength = require('./getLength'),
     isLength = require('./isLength'),
     toObject = require('./toObject');
@@ -8547,7 +8554,7 @@ function createBaseEach(eachFunc, fromRight) {
 
 module.exports = createBaseEach;
 
-},{"./getLength":103,"./isLength":111,"./toObject":117}],97:[function(require,module,exports){
+},{"./getLength":104,"./isLength":112,"./toObject":118}],98:[function(require,module,exports){
 var toObject = require('./toObject');
 
 /**
@@ -8576,7 +8583,7 @@ function createBaseFor(fromRight) {
 
 module.exports = createBaseFor;
 
-},{"./toObject":117}],98:[function(require,module,exports){
+},{"./toObject":118}],99:[function(require,module,exports){
 (function (global){
 var SetCache = require('./SetCache'),
     getNative = require('./getNative');
@@ -8602,7 +8609,7 @@ module.exports = createCache;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./SetCache":65,"./getNative":105}],99:[function(require,module,exports){
+},{"./SetCache":66,"./getNative":106}],100:[function(require,module,exports){
 var bindCallback = require('./bindCallback'),
     isArray = require('../lang/isArray');
 
@@ -8624,7 +8631,7 @@ function createForEach(arrayFunc, eachFunc) {
 
 module.exports = createForEach;
 
-},{"../lang/isArray":120,"./bindCallback":92}],100:[function(require,module,exports){
+},{"../lang/isArray":121,"./bindCallback":93}],101:[function(require,module,exports){
 var arraySome = require('./arraySome');
 
 /**
@@ -8677,7 +8684,7 @@ function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stack
 
 module.exports = equalArrays;
 
-},{"./arraySome":69}],101:[function(require,module,exports){
+},{"./arraySome":70}],102:[function(require,module,exports){
 /** `Object#toString` result references. */
 var boolTag = '[object Boolean]',
     dateTag = '[object Date]',
@@ -8727,7 +8734,7 @@ function equalByTag(object, other, tag) {
 
 module.exports = equalByTag;
 
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var keys = require('../object/keys');
 
 /** Used for native method references. */
@@ -8796,7 +8803,7 @@ function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, sta
 
 module.exports = equalObjects;
 
-},{"../object/keys":128}],103:[function(require,module,exports){
+},{"../object/keys":129}],104:[function(require,module,exports){
 var baseProperty = require('./baseProperty');
 
 /**
@@ -8813,7 +8820,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./baseProperty":88}],104:[function(require,module,exports){
+},{"./baseProperty":89}],105:[function(require,module,exports){
 var isStrictComparable = require('./isStrictComparable'),
     pairs = require('../object/pairs');
 
@@ -8836,7 +8843,7 @@ function getMatchData(object) {
 
 module.exports = getMatchData;
 
-},{"../object/pairs":131,"./isStrictComparable":113}],105:[function(require,module,exports){
+},{"../object/pairs":132,"./isStrictComparable":114}],106:[function(require,module,exports){
 var isNative = require('../lang/isNative');
 
 /**
@@ -8854,7 +8861,7 @@ function getNative(object, key) {
 
 module.exports = getNative;
 
-},{"../lang/isNative":123}],106:[function(require,module,exports){
+},{"../lang/isNative":124}],107:[function(require,module,exports){
 /**
  * Gets the index at which the first occurrence of `NaN` is found in `array`.
  *
@@ -8879,7 +8886,7 @@ function indexOfNaN(array, fromIndex, fromRight) {
 
 module.exports = indexOfNaN;
 
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 var getLength = require('./getLength'),
     isLength = require('./isLength');
 
@@ -8896,7 +8903,7 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./getLength":103,"./isLength":111}],108:[function(require,module,exports){
+},{"./getLength":104,"./isLength":112}],109:[function(require,module,exports){
 /** Used to detect unsigned integer values. */
 var reIsUint = /^\d+$/;
 
@@ -8922,7 +8929,7 @@ function isIndex(value, length) {
 
 module.exports = isIndex;
 
-},{}],109:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 var isArrayLike = require('./isArrayLike'),
     isIndex = require('./isIndex'),
     isObject = require('../lang/isObject');
@@ -8952,7 +8959,7 @@ function isIterateeCall(value, index, object) {
 
 module.exports = isIterateeCall;
 
-},{"../lang/isObject":124,"./isArrayLike":107,"./isIndex":108}],110:[function(require,module,exports){
+},{"../lang/isObject":125,"./isArrayLike":108,"./isIndex":109}],111:[function(require,module,exports){
 var isArray = require('../lang/isArray'),
     toObject = require('./toObject');
 
@@ -8982,7 +8989,7 @@ function isKey(value, object) {
 
 module.exports = isKey;
 
-},{"../lang/isArray":120,"./toObject":117}],111:[function(require,module,exports){
+},{"../lang/isArray":121,"./toObject":118}],112:[function(require,module,exports){
 /**
  * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
@@ -9004,7 +9011,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 /**
  * Checks if `value` is object-like.
  *
@@ -9018,7 +9025,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 var isObject = require('../lang/isObject');
 
 /**
@@ -9035,7 +9042,7 @@ function isStrictComparable(value) {
 
 module.exports = isStrictComparable;
 
-},{"../lang/isObject":124}],114:[function(require,module,exports){
+},{"../lang/isObject":125}],115:[function(require,module,exports){
 var toObject = require('./toObject');
 
 /**
@@ -9065,7 +9072,7 @@ function pickByArray(object, props) {
 
 module.exports = pickByArray;
 
-},{"./toObject":117}],115:[function(require,module,exports){
+},{"./toObject":118}],116:[function(require,module,exports){
 var baseForIn = require('./baseForIn');
 
 /**
@@ -9089,7 +9096,7 @@ function pickByCallback(object, predicate) {
 
 module.exports = pickByCallback;
 
-},{"./baseForIn":78}],116:[function(require,module,exports){
+},{"./baseForIn":79}],117:[function(require,module,exports){
 var isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
     isIndex = require('./isIndex'),
@@ -9132,7 +9139,7 @@ function shimKeys(object) {
 
 module.exports = shimKeys;
 
-},{"../lang/isArguments":119,"../lang/isArray":120,"../object/keysIn":129,"./isIndex":108,"./isLength":111}],117:[function(require,module,exports){
+},{"../lang/isArguments":120,"../lang/isArray":121,"../object/keysIn":130,"./isIndex":109,"./isLength":112}],118:[function(require,module,exports){
 var isObject = require('../lang/isObject');
 
 /**
@@ -9148,7 +9155,7 @@ function toObject(value) {
 
 module.exports = toObject;
 
-},{"../lang/isObject":124}],118:[function(require,module,exports){
+},{"../lang/isObject":125}],119:[function(require,module,exports){
 var baseToString = require('./baseToString'),
     isArray = require('../lang/isArray');
 
@@ -9178,7 +9185,7 @@ function toPath(value) {
 
 module.exports = toPath;
 
-},{"../lang/isArray":120,"./baseToString":91}],119:[function(require,module,exports){
+},{"../lang/isArray":121,"./baseToString":92}],120:[function(require,module,exports){
 var isArrayLike = require('../internal/isArrayLike'),
     isObjectLike = require('../internal/isObjectLike');
 
@@ -9214,7 +9221,7 @@ function isArguments(value) {
 
 module.exports = isArguments;
 
-},{"../internal/isArrayLike":107,"../internal/isObjectLike":112}],120:[function(require,module,exports){
+},{"../internal/isArrayLike":108,"../internal/isObjectLike":113}],121:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isLength = require('../internal/isLength'),
     isObjectLike = require('../internal/isObjectLike');
@@ -9256,7 +9263,7 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internal/getNative":105,"../internal/isLength":111,"../internal/isObjectLike":112}],121:[function(require,module,exports){
+},{"../internal/getNative":106,"../internal/isLength":112,"../internal/isObjectLike":113}],122:[function(require,module,exports){
 var baseIsEqual = require('../internal/baseIsEqual'),
     bindCallback = require('../internal/bindCallback');
 
@@ -9312,7 +9319,7 @@ function isEqual(value, other, customizer, thisArg) {
 
 module.exports = isEqual;
 
-},{"../internal/baseIsEqual":82,"../internal/bindCallback":92}],122:[function(require,module,exports){
+},{"../internal/baseIsEqual":83,"../internal/bindCallback":93}],123:[function(require,module,exports){
 var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
@@ -9352,7 +9359,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{"./isObject":124}],123:[function(require,module,exports){
+},{"./isObject":125}],124:[function(require,module,exports){
 var isFunction = require('./isFunction'),
     isObjectLike = require('../internal/isObjectLike');
 
@@ -9402,7 +9409,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{"../internal/isObjectLike":112,"./isFunction":122}],124:[function(require,module,exports){
+},{"../internal/isObjectLike":113,"./isFunction":123}],125:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -9432,7 +9439,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],125:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 var isLength = require('../internal/isLength'),
     isObjectLike = require('../internal/isObjectLike');
 
@@ -9508,7 +9515,7 @@ function isTypedArray(value) {
 
 module.exports = isTypedArray;
 
-},{"../internal/isLength":111,"../internal/isObjectLike":112}],126:[function(require,module,exports){
+},{"../internal/isLength":112,"../internal/isObjectLike":113}],127:[function(require,module,exports){
 var assignWith = require('../internal/assignWith'),
     baseAssign = require('../internal/baseAssign'),
     createAssigner = require('../internal/createAssigner');
@@ -9553,10 +9560,10 @@ var assign = createAssigner(function(object, source, customizer) {
 
 module.exports = assign;
 
-},{"../internal/assignWith":70,"../internal/baseAssign":71,"../internal/createAssigner":95}],127:[function(require,module,exports){
+},{"../internal/assignWith":71,"../internal/baseAssign":72,"../internal/createAssigner":96}],128:[function(require,module,exports){
 module.exports = require('./assign');
 
-},{"./assign":126}],128:[function(require,module,exports){
+},{"./assign":127}],129:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isArrayLike = require('../internal/isArrayLike'),
     isObject = require('../lang/isObject'),
@@ -9603,7 +9610,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internal/getNative":105,"../internal/isArrayLike":107,"../internal/shimKeys":116,"../lang/isObject":124}],129:[function(require,module,exports){
+},{"../internal/getNative":106,"../internal/isArrayLike":108,"../internal/shimKeys":117,"../lang/isObject":125}],130:[function(require,module,exports){
 var isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
     isIndex = require('../internal/isIndex'),
@@ -9669,7 +9676,7 @@ function keysIn(object) {
 
 module.exports = keysIn;
 
-},{"../internal/isIndex":108,"../internal/isLength":111,"../lang/isArguments":119,"../lang/isArray":120,"../lang/isObject":124}],130:[function(require,module,exports){
+},{"../internal/isIndex":109,"../internal/isLength":112,"../lang/isArguments":120,"../lang/isArray":121,"../lang/isObject":125}],131:[function(require,module,exports){
 var arrayMap = require('../internal/arrayMap'),
     baseDifference = require('../internal/baseDifference'),
     baseFlatten = require('../internal/baseFlatten'),
@@ -9718,7 +9725,7 @@ var omit = restParam(function(object, props) {
 
 module.exports = omit;
 
-},{"../function/restParam":64,"../internal/arrayMap":67,"../internal/baseDifference":74,"../internal/baseFlatten":76,"../internal/bindCallback":92,"../internal/pickByArray":114,"../internal/pickByCallback":115,"./keysIn":129}],131:[function(require,module,exports){
+},{"../function/restParam":65,"../internal/arrayMap":68,"../internal/baseDifference":75,"../internal/baseFlatten":77,"../internal/bindCallback":93,"../internal/pickByArray":115,"../internal/pickByCallback":116,"./keysIn":130}],132:[function(require,module,exports){
 var keys = require('./keys'),
     toObject = require('../internal/toObject');
 
@@ -9753,7 +9760,7 @@ function pairs(object) {
 
 module.exports = pairs;
 
-},{"../internal/toObject":117,"./keys":128}],132:[function(require,module,exports){
+},{"../internal/toObject":118,"./keys":129}],133:[function(require,module,exports){
 /**
  * This method returns the first argument provided to it.
  *
@@ -9775,7 +9782,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 var baseProperty = require('../internal/baseProperty'),
     basePropertyDeep = require('../internal/basePropertyDeep'),
     isKey = require('../internal/isKey');
@@ -9808,7 +9815,7 @@ function property(path) {
 
 module.exports = property;
 
-},{"../internal/baseProperty":88,"../internal/basePropertyDeep":89,"../internal/isKey":110}],134:[function(require,module,exports){
+},{"../internal/baseProperty":89,"../internal/basePropertyDeep":90,"../internal/isKey":111}],135:[function(require,module,exports){
 (function (window, m) {
   if (typeof module !== 'undefined') module.exports = m()
   else window.Mediator = m()
@@ -9888,7 +9895,7 @@ module.exports = property;
   return Mediator
 })
 
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -9981,16 +9988,16 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],136:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module.exports = require('react/lib/ReactComponentWithPureRenderMixin');
-},{"react/lib/ReactComponentWithPureRenderMixin":175}],137:[function(require,module,exports){
+},{"react/lib/ReactComponentWithPureRenderMixin":176}],138:[function(require,module,exports){
 module.exports = require('react/lib/ReactTransitionGroup');
-},{"react/lib/ReactTransitionGroup":226}],138:[function(require,module,exports){
+},{"react/lib/ReactTransitionGroup":227}],139:[function(require,module,exports){
 'use strict';
 
 module.exports = require('react/lib/ReactDOM');
 
-},{"react/lib/ReactDOM":178}],139:[function(require,module,exports){
+},{"react/lib/ReactDOM":179}],140:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -10014,7 +10021,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"react":275}],140:[function(require,module,exports){
+},{"react":276}],141:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -10124,7 +10131,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"./check":139,"./x":142,"classnames":141,"react":275,"react-addons-pure-render-mixin":136}],141:[function(require,module,exports){
+},{"./check":140,"./x":143,"classnames":142,"react":276,"react-addons-pure-render-mixin":137}],142:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -10169,7 +10176,7 @@ if (typeof define !== 'undefined' && define.amd) {
 	});
 }
 
-},{}],142:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -10193,7 +10200,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"react":275}],143:[function(require,module,exports){
+},{"react":276}],144:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -10230,7 +10237,7 @@ var AutoFocusUtils = {
 };
 
 module.exports = AutoFocusUtils;
-},{"./ReactMount":208,"./findDOMNode":253,"fbjs/lib/focusNode":40}],144:[function(require,module,exports){
+},{"./ReactMount":209,"./findDOMNode":254,"fbjs/lib/focusNode":41}],145:[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -10636,7 +10643,7 @@ var BeforeInputEventPlugin = {
 };
 
 module.exports = BeforeInputEventPlugin;
-},{"./EventConstants":156,"./EventPropagators":160,"./FallbackCompositionState":161,"./SyntheticCompositionEvent":235,"./SyntheticInputEvent":239,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/keyOf":50}],145:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPropagators":161,"./FallbackCompositionState":162,"./SyntheticCompositionEvent":236,"./SyntheticInputEvent":240,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/keyOf":51}],146:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -10776,7 +10783,7 @@ var CSSProperty = {
 };
 
 module.exports = CSSProperty;
-},{}],146:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -10955,7 +10962,7 @@ ReactPerf.measureMethods(CSSPropertyOperations, 'CSSPropertyOperations', {
 module.exports = CSSPropertyOperations;
 }).call(this,require('_process'))
 
-},{"./CSSProperty":145,"./ReactPerf":214,"./dangerousStyleValue":250,"_process":135,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/camelizeStyleName":34,"fbjs/lib/hyphenateStyleName":45,"fbjs/lib/memoizeStringOnly":52,"fbjs/lib/warning":57}],147:[function(require,module,exports){
+},{"./CSSProperty":146,"./ReactPerf":215,"./dangerousStyleValue":251,"_process":136,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/camelizeStyleName":35,"fbjs/lib/hyphenateStyleName":46,"fbjs/lib/memoizeStringOnly":53,"fbjs/lib/warning":58}],148:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11052,7 +11059,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./PooledClass":165,"_process":135,"fbjs/lib/invariant":46}],148:[function(require,module,exports){
+},{"./Object.assign":165,"./PooledClass":166,"_process":136,"fbjs/lib/invariant":47}],149:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11374,7 +11381,7 @@ var ChangeEventPlugin = {
 };
 
 module.exports = ChangeEventPlugin;
-},{"./EventConstants":156,"./EventPluginHub":157,"./EventPropagators":160,"./ReactUpdates":228,"./SyntheticEvent":237,"./getEventTarget":259,"./isEventSupported":264,"./isTextInputElement":265,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/keyOf":50}],149:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPluginHub":158,"./EventPropagators":161,"./ReactUpdates":229,"./SyntheticEvent":238,"./getEventTarget":260,"./isEventSupported":265,"./isTextInputElement":266,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/keyOf":51}],150:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11398,7 +11405,7 @@ var ClientReactRootIndex = {
 };
 
 module.exports = ClientReactRootIndex;
-},{}],150:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11531,7 +11538,7 @@ ReactPerf.measureMethods(DOMChildrenOperations, 'DOMChildrenOperations', {
 module.exports = DOMChildrenOperations;
 }).call(this,require('_process'))
 
-},{"./Danger":153,"./ReactMultiChildUpdateTypes":210,"./ReactPerf":214,"./setInnerHTML":269,"./setTextContent":270,"_process":135,"fbjs/lib/invariant":46}],151:[function(require,module,exports){
+},{"./Danger":154,"./ReactMultiChildUpdateTypes":211,"./ReactPerf":215,"./setInnerHTML":270,"./setTextContent":271,"_process":136,"fbjs/lib/invariant":47}],152:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11769,7 +11776,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],152:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],153:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11998,7 +12005,7 @@ ReactPerf.measureMethods(DOMPropertyOperations, 'DOMPropertyOperations', {
 module.exports = DOMPropertyOperations;
 }).call(this,require('_process'))
 
-},{"./DOMProperty":151,"./ReactPerf":214,"./quoteAttributeValueForBrowser":267,"_process":135,"fbjs/lib/warning":57}],153:[function(require,module,exports){
+},{"./DOMProperty":152,"./ReactPerf":215,"./quoteAttributeValueForBrowser":268,"_process":136,"fbjs/lib/warning":58}],154:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12147,7 +12154,7 @@ var Danger = {
 module.exports = Danger;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/createNodesFromMarkup":37,"fbjs/lib/emptyFunction":38,"fbjs/lib/getMarkupWrap":42,"fbjs/lib/invariant":46}],154:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/createNodesFromMarkup":38,"fbjs/lib/emptyFunction":39,"fbjs/lib/getMarkupWrap":43,"fbjs/lib/invariant":47}],155:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12175,7 +12182,7 @@ var keyOf = require('fbjs/lib/keyOf');
 var DefaultEventPluginOrder = [keyOf({ ResponderEventPlugin: null }), keyOf({ SimpleEventPlugin: null }), keyOf({ TapEventPlugin: null }), keyOf({ EnterLeaveEventPlugin: null }), keyOf({ ChangeEventPlugin: null }), keyOf({ SelectEventPlugin: null }), keyOf({ BeforeInputEventPlugin: null })];
 
 module.exports = DefaultEventPluginOrder;
-},{"fbjs/lib/keyOf":50}],155:[function(require,module,exports){
+},{"fbjs/lib/keyOf":51}],156:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12300,7 +12307,7 @@ var EnterLeaveEventPlugin = {
 };
 
 module.exports = EnterLeaveEventPlugin;
-},{"./EventConstants":156,"./EventPropagators":160,"./ReactMount":208,"./SyntheticMouseEvent":241,"fbjs/lib/keyOf":50}],156:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPropagators":161,"./ReactMount":209,"./SyntheticMouseEvent":242,"fbjs/lib/keyOf":51}],157:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12393,7 +12400,7 @@ var EventConstants = {
 };
 
 module.exports = EventConstants;
-},{"fbjs/lib/keyMirror":49}],157:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":50}],158:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12676,7 +12683,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 }).call(this,require('_process'))
 
-},{"./EventPluginRegistry":158,"./EventPluginUtils":159,"./ReactErrorUtils":199,"./accumulateInto":247,"./forEachAccumulated":255,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],158:[function(require,module,exports){
+},{"./EventPluginRegistry":159,"./EventPluginUtils":160,"./ReactErrorUtils":200,"./accumulateInto":248,"./forEachAccumulated":256,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],159:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12900,7 +12907,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],159:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],160:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13106,7 +13113,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 }).call(this,require('_process'))
 
-},{"./EventConstants":156,"./ReactErrorUtils":199,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],160:[function(require,module,exports){
+},{"./EventConstants":157,"./ReactErrorUtils":200,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],161:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13245,7 +13252,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 }).call(this,require('_process'))
 
-},{"./EventConstants":156,"./EventPluginHub":157,"./accumulateInto":247,"./forEachAccumulated":255,"_process":135,"fbjs/lib/warning":57}],161:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPluginHub":158,"./accumulateInto":248,"./forEachAccumulated":256,"_process":136,"fbjs/lib/warning":58}],162:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13341,7 +13348,7 @@ assign(FallbackCompositionState.prototype, {
 PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
-},{"./Object.assign":164,"./PooledClass":165,"./getTextContentAccessor":262}],162:[function(require,module,exports){
+},{"./Object.assign":165,"./PooledClass":166,"./getTextContentAccessor":263}],163:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13572,7 +13579,7 @@ var HTMLDOMPropertyConfig = {
 };
 
 module.exports = HTMLDOMPropertyConfig;
-},{"./DOMProperty":151,"fbjs/lib/ExecutionEnvironment":32}],163:[function(require,module,exports){
+},{"./DOMProperty":152,"fbjs/lib/ExecutionEnvironment":33}],164:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13710,7 +13717,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 }).call(this,require('_process'))
 
-},{"./ReactPropTypeLocations":216,"./ReactPropTypes":217,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],164:[function(require,module,exports){
+},{"./ReactPropTypeLocations":217,"./ReactPropTypes":218,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],165:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -13758,7 +13765,7 @@ function assign(target, sources) {
 }
 
 module.exports = assign;
-},{}],165:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13881,7 +13888,7 @@ var PooledClass = {
 module.exports = PooledClass;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],166:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],167:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13922,7 +13929,7 @@ React.__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactDOM;
 React.__SECRET_DOM_SERVER_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactDOMServer;
 
 module.exports = React;
-},{"./Object.assign":164,"./ReactDOM":178,"./ReactDOMServer":188,"./ReactIsomorphic":206,"./deprecated":251}],167:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactDOM":179,"./ReactDOMServer":189,"./ReactIsomorphic":207,"./deprecated":252}],168:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13962,7 +13969,7 @@ var ReactBrowserComponentMixin = {
 module.exports = ReactBrowserComponentMixin;
 }).call(this,require('_process'))
 
-},{"./ReactInstanceMap":205,"./findDOMNode":253,"_process":135,"fbjs/lib/warning":57}],168:[function(require,module,exports){
+},{"./ReactInstanceMap":206,"./findDOMNode":254,"_process":136,"fbjs/lib/warning":58}],169:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14287,7 +14294,7 @@ ReactPerf.measureMethods(ReactBrowserEventEmitter, 'ReactBrowserEventEmitter', {
 });
 
 module.exports = ReactBrowserEventEmitter;
-},{"./EventConstants":156,"./EventPluginHub":157,"./EventPluginRegistry":158,"./Object.assign":164,"./ReactEventEmitterMixin":200,"./ReactPerf":214,"./ViewportMetrics":246,"./isEventSupported":264}],169:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPluginHub":158,"./EventPluginRegistry":159,"./Object.assign":165,"./ReactEventEmitterMixin":201,"./ReactPerf":215,"./ViewportMetrics":247,"./isEventSupported":265}],170:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -14413,7 +14420,7 @@ var ReactChildReconciler = {
 module.exports = ReactChildReconciler;
 }).call(this,require('_process'))
 
-},{"./ReactReconciler":219,"./instantiateReactComponent":263,"./shouldUpdateReactComponent":272,"./traverseAllChildren":273,"_process":135,"fbjs/lib/warning":57}],170:[function(require,module,exports){
+},{"./ReactReconciler":220,"./instantiateReactComponent":264,"./shouldUpdateReactComponent":273,"./traverseAllChildren":274,"_process":136,"fbjs/lib/warning":58}],171:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14596,7 +14603,7 @@ var ReactChildren = {
 };
 
 module.exports = ReactChildren;
-},{"./PooledClass":165,"./ReactElement":195,"./traverseAllChildren":273,"fbjs/lib/emptyFunction":38}],171:[function(require,module,exports){
+},{"./PooledClass":166,"./ReactElement":196,"./traverseAllChildren":274,"fbjs/lib/emptyFunction":39}],172:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15371,7 +15378,7 @@ var ReactClass = {
 module.exports = ReactClass;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactComponent":172,"./ReactElement":195,"./ReactNoopUpdateQueue":212,"./ReactPropTypeLocationNames":215,"./ReactPropTypeLocations":216,"_process":135,"fbjs/lib/emptyObject":39,"fbjs/lib/invariant":46,"fbjs/lib/keyMirror":49,"fbjs/lib/keyOf":50,"fbjs/lib/warning":57}],172:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactComponent":173,"./ReactElement":196,"./ReactNoopUpdateQueue":213,"./ReactPropTypeLocationNames":216,"./ReactPropTypeLocations":217,"_process":136,"fbjs/lib/emptyObject":40,"fbjs/lib/invariant":47,"fbjs/lib/keyMirror":50,"fbjs/lib/keyOf":51,"fbjs/lib/warning":58}],173:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15497,7 +15504,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = ReactComponent;
 }).call(this,require('_process'))
 
-},{"./ReactNoopUpdateQueue":212,"./canDefineProperty":249,"_process":135,"fbjs/lib/emptyObject":39,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],173:[function(require,module,exports){
+},{"./ReactNoopUpdateQueue":213,"./canDefineProperty":250,"_process":136,"fbjs/lib/emptyObject":40,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],174:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15539,7 +15546,7 @@ var ReactComponentBrowserEnvironment = {
 };
 
 module.exports = ReactComponentBrowserEnvironment;
-},{"./ReactDOMIDOperations":183,"./ReactMount":208}],174:[function(require,module,exports){
+},{"./ReactDOMIDOperations":184,"./ReactMount":209}],175:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15594,7 +15601,7 @@ var ReactComponentEnvironment = {
 module.exports = ReactComponentEnvironment;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],175:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],176:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15641,7 +15648,7 @@ var ReactComponentWithPureRenderMixin = {
 };
 
 module.exports = ReactComponentWithPureRenderMixin;
-},{"./shallowCompare":271}],176:[function(require,module,exports){
+},{"./shallowCompare":272}],177:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16339,7 +16346,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactComponentEnvironment":174,"./ReactCurrentOwner":177,"./ReactElement":195,"./ReactInstanceMap":205,"./ReactPerf":214,"./ReactPropTypeLocationNames":215,"./ReactPropTypeLocations":216,"./ReactReconciler":219,"./ReactUpdateQueue":227,"./shouldUpdateReactComponent":272,"_process":135,"fbjs/lib/emptyObject":39,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],177:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactComponentEnvironment":175,"./ReactCurrentOwner":178,"./ReactElement":196,"./ReactInstanceMap":206,"./ReactPerf":215,"./ReactPropTypeLocationNames":216,"./ReactPropTypeLocations":217,"./ReactReconciler":220,"./ReactUpdateQueue":228,"./shouldUpdateReactComponent":273,"_process":136,"fbjs/lib/emptyObject":40,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],178:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16370,7 +16377,7 @@ var ReactCurrentOwner = {
 };
 
 module.exports = ReactCurrentOwner;
-},{}],178:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16466,7 +16473,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = React;
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":177,"./ReactDOMTextComponent":189,"./ReactDefaultInjection":192,"./ReactInstanceHandles":204,"./ReactMount":208,"./ReactPerf":214,"./ReactReconciler":219,"./ReactUpdates":228,"./ReactVersion":229,"./findDOMNode":253,"./renderSubtreeIntoContainer":268,"_process":135,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/warning":57}],179:[function(require,module,exports){
+},{"./ReactCurrentOwner":178,"./ReactDOMTextComponent":190,"./ReactDefaultInjection":193,"./ReactInstanceHandles":205,"./ReactMount":209,"./ReactPerf":215,"./ReactReconciler":220,"./ReactUpdates":229,"./ReactVersion":230,"./findDOMNode":254,"./renderSubtreeIntoContainer":269,"_process":136,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/warning":58}],180:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16517,7 +16524,7 @@ var ReactDOMButton = {
 };
 
 module.exports = ReactDOMButton;
-},{}],180:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17483,7 +17490,7 @@ assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mix
 module.exports = ReactDOMComponent;
 }).call(this,require('_process'))
 
-},{"./AutoFocusUtils":143,"./CSSPropertyOperations":146,"./DOMProperty":151,"./DOMPropertyOperations":152,"./EventConstants":156,"./Object.assign":164,"./ReactBrowserEventEmitter":168,"./ReactComponentBrowserEnvironment":173,"./ReactDOMButton":179,"./ReactDOMInput":184,"./ReactDOMOption":185,"./ReactDOMSelect":186,"./ReactDOMTextarea":190,"./ReactMount":208,"./ReactMultiChild":209,"./ReactPerf":214,"./ReactUpdateQueue":227,"./canDefineProperty":249,"./escapeTextContentForBrowser":252,"./isEventSupported":264,"./setInnerHTML":269,"./setTextContent":270,"./validateDOMNesting":274,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/keyOf":50,"fbjs/lib/shallowEqual":55,"fbjs/lib/warning":57}],181:[function(require,module,exports){
+},{"./AutoFocusUtils":144,"./CSSPropertyOperations":147,"./DOMProperty":152,"./DOMPropertyOperations":153,"./EventConstants":157,"./Object.assign":165,"./ReactBrowserEventEmitter":169,"./ReactComponentBrowserEnvironment":174,"./ReactDOMButton":180,"./ReactDOMInput":185,"./ReactDOMOption":186,"./ReactDOMSelect":187,"./ReactDOMTextarea":191,"./ReactMount":209,"./ReactMultiChild":210,"./ReactPerf":215,"./ReactUpdateQueue":228,"./canDefineProperty":250,"./escapeTextContentForBrowser":253,"./isEventSupported":265,"./setInnerHTML":270,"./setTextContent":271,"./validateDOMNesting":275,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/keyOf":51,"fbjs/lib/shallowEqual":56,"fbjs/lib/warning":58}],182:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17664,7 +17671,7 @@ var ReactDOMFactories = mapObject({
 module.exports = ReactDOMFactories;
 }).call(this,require('_process'))
 
-},{"./ReactElement":195,"./ReactElementValidator":196,"_process":135,"fbjs/lib/mapObject":51}],182:[function(require,module,exports){
+},{"./ReactElement":196,"./ReactElementValidator":197,"_process":136,"fbjs/lib/mapObject":52}],183:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17683,7 +17690,7 @@ var ReactDOMFeatureFlags = {
 };
 
 module.exports = ReactDOMFeatureFlags;
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17781,7 +17788,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 module.exports = ReactDOMIDOperations;
 }).call(this,require('_process'))
 
-},{"./DOMChildrenOperations":150,"./DOMPropertyOperations":152,"./ReactMount":208,"./ReactPerf":214,"_process":135,"fbjs/lib/invariant":46}],184:[function(require,module,exports){
+},{"./DOMChildrenOperations":151,"./DOMPropertyOperations":153,"./ReactMount":209,"./ReactPerf":215,"_process":136,"fbjs/lib/invariant":47}],185:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17938,7 +17945,7 @@ function _handleChange(event) {
 module.exports = ReactDOMInput;
 }).call(this,require('_process'))
 
-},{"./LinkedValueUtils":163,"./Object.assign":164,"./ReactDOMIDOperations":183,"./ReactMount":208,"./ReactUpdates":228,"_process":135,"fbjs/lib/invariant":46}],185:[function(require,module,exports){
+},{"./LinkedValueUtils":164,"./Object.assign":165,"./ReactDOMIDOperations":184,"./ReactMount":209,"./ReactUpdates":229,"_process":136,"fbjs/lib/invariant":47}],186:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18031,7 +18038,7 @@ var ReactDOMOption = {
 module.exports = ReactDOMOption;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactChildren":170,"./ReactDOMSelect":186,"_process":135,"fbjs/lib/warning":57}],186:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactChildren":171,"./ReactDOMSelect":187,"_process":136,"fbjs/lib/warning":58}],187:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18223,7 +18230,7 @@ function _handleChange(event) {
 module.exports = ReactDOMSelect;
 }).call(this,require('_process'))
 
-},{"./LinkedValueUtils":163,"./Object.assign":164,"./ReactMount":208,"./ReactUpdates":228,"_process":135,"fbjs/lib/warning":57}],187:[function(require,module,exports){
+},{"./LinkedValueUtils":164,"./Object.assign":165,"./ReactMount":209,"./ReactUpdates":229,"_process":136,"fbjs/lib/warning":58}],188:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18436,7 +18443,7 @@ var ReactDOMSelection = {
 };
 
 module.exports = ReactDOMSelection;
-},{"./getNodeForCharacterOffset":261,"./getTextContentAccessor":262,"fbjs/lib/ExecutionEnvironment":32}],188:[function(require,module,exports){
+},{"./getNodeForCharacterOffset":262,"./getTextContentAccessor":263,"fbjs/lib/ExecutionEnvironment":33}],189:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18463,7 +18470,7 @@ var ReactDOMServer = {
 };
 
 module.exports = ReactDOMServer;
-},{"./ReactDefaultInjection":192,"./ReactServerRendering":223,"./ReactVersion":229}],189:[function(require,module,exports){
+},{"./ReactDefaultInjection":193,"./ReactServerRendering":224,"./ReactVersion":230}],190:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18594,7 +18601,7 @@ assign(ReactDOMTextComponent.prototype, {
 module.exports = ReactDOMTextComponent;
 }).call(this,require('_process'))
 
-},{"./DOMChildrenOperations":150,"./DOMPropertyOperations":152,"./Object.assign":164,"./ReactComponentBrowserEnvironment":173,"./ReactMount":208,"./escapeTextContentForBrowser":252,"./setTextContent":270,"./validateDOMNesting":274,"_process":135}],190:[function(require,module,exports){
+},{"./DOMChildrenOperations":151,"./DOMPropertyOperations":153,"./Object.assign":165,"./ReactComponentBrowserEnvironment":174,"./ReactMount":209,"./escapeTextContentForBrowser":253,"./setTextContent":271,"./validateDOMNesting":275,"_process":136}],191:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18711,7 +18718,7 @@ function _handleChange(event) {
 module.exports = ReactDOMTextarea;
 }).call(this,require('_process'))
 
-},{"./LinkedValueUtils":163,"./Object.assign":164,"./ReactDOMIDOperations":183,"./ReactUpdates":228,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],191:[function(require,module,exports){
+},{"./LinkedValueUtils":164,"./Object.assign":165,"./ReactDOMIDOperations":184,"./ReactUpdates":229,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],192:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18779,7 +18786,7 @@ var ReactDefaultBatchingStrategy = {
 };
 
 module.exports = ReactDefaultBatchingStrategy;
-},{"./Object.assign":164,"./ReactUpdates":228,"./Transaction":245,"fbjs/lib/emptyFunction":38}],192:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactUpdates":229,"./Transaction":246,"fbjs/lib/emptyFunction":39}],193:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18880,7 +18887,7 @@ module.exports = {
 };
 }).call(this,require('_process'))
 
-},{"./BeforeInputEventPlugin":144,"./ChangeEventPlugin":148,"./ClientReactRootIndex":149,"./DefaultEventPluginOrder":154,"./EnterLeaveEventPlugin":155,"./HTMLDOMPropertyConfig":162,"./ReactBrowserComponentMixin":167,"./ReactComponentBrowserEnvironment":173,"./ReactDOMComponent":180,"./ReactDOMTextComponent":189,"./ReactDefaultBatchingStrategy":191,"./ReactDefaultPerf":193,"./ReactEventListener":201,"./ReactInjection":202,"./ReactInstanceHandles":204,"./ReactMount":208,"./ReactReconcileTransaction":218,"./SVGDOMPropertyConfig":230,"./SelectEventPlugin":231,"./ServerReactRootIndex":232,"./SimpleEventPlugin":233,"_process":135,"fbjs/lib/ExecutionEnvironment":32}],193:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":145,"./ChangeEventPlugin":149,"./ClientReactRootIndex":150,"./DefaultEventPluginOrder":155,"./EnterLeaveEventPlugin":156,"./HTMLDOMPropertyConfig":163,"./ReactBrowserComponentMixin":168,"./ReactComponentBrowserEnvironment":174,"./ReactDOMComponent":181,"./ReactDOMTextComponent":190,"./ReactDefaultBatchingStrategy":192,"./ReactDefaultPerf":194,"./ReactEventListener":202,"./ReactInjection":203,"./ReactInstanceHandles":205,"./ReactMount":209,"./ReactReconcileTransaction":219,"./SVGDOMPropertyConfig":231,"./SelectEventPlugin":232,"./ServerReactRootIndex":233,"./SimpleEventPlugin":234,"_process":136,"fbjs/lib/ExecutionEnvironment":33}],194:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19118,7 +19125,7 @@ var ReactDefaultPerf = {
 };
 
 module.exports = ReactDefaultPerf;
-},{"./DOMProperty":151,"./ReactDefaultPerfAnalysis":194,"./ReactMount":208,"./ReactPerf":214,"fbjs/lib/performanceNow":54}],194:[function(require,module,exports){
+},{"./DOMProperty":152,"./ReactDefaultPerfAnalysis":195,"./ReactMount":209,"./ReactPerf":215,"fbjs/lib/performanceNow":55}],195:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19320,7 +19327,7 @@ var ReactDefaultPerfAnalysis = {
 };
 
 module.exports = ReactDefaultPerfAnalysis;
-},{"./Object.assign":164}],195:[function(require,module,exports){
+},{"./Object.assign":165}],196:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -19571,7 +19578,7 @@ ReactElement.isValidElement = function (object) {
 module.exports = ReactElement;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactCurrentOwner":177,"./canDefineProperty":249,"_process":135}],196:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactCurrentOwner":178,"./canDefineProperty":250,"_process":136}],197:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -19856,7 +19863,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":177,"./ReactElement":195,"./ReactPropTypeLocationNames":215,"./ReactPropTypeLocations":216,"./canDefineProperty":249,"./getIteratorFn":260,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],197:[function(require,module,exports){
+},{"./ReactCurrentOwner":178,"./ReactElement":196,"./ReactPropTypeLocationNames":216,"./ReactPropTypeLocations":217,"./canDefineProperty":250,"./getIteratorFn":261,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],198:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -19908,7 +19915,7 @@ assign(ReactEmptyComponent.prototype, {
 ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 
 module.exports = ReactEmptyComponent;
-},{"./Object.assign":164,"./ReactElement":195,"./ReactEmptyComponentRegistry":198,"./ReactReconciler":219}],198:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactElement":196,"./ReactEmptyComponentRegistry":199,"./ReactReconciler":220}],199:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -19957,7 +19964,7 @@ var ReactEmptyComponentRegistry = {
 };
 
 module.exports = ReactEmptyComponentRegistry;
-},{}],199:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20038,7 +20045,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = ReactErrorUtils;
 }).call(this,require('_process'))
 
-},{"_process":135}],200:[function(require,module,exports){
+},{"_process":136}],201:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20077,7 +20084,7 @@ var ReactEventEmitterMixin = {
 };
 
 module.exports = ReactEventEmitterMixin;
-},{"./EventPluginHub":157}],201:[function(require,module,exports){
+},{"./EventPluginHub":158}],202:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20289,7 +20296,7 @@ var ReactEventListener = {
 };
 
 module.exports = ReactEventListener;
-},{"./Object.assign":164,"./PooledClass":165,"./ReactInstanceHandles":204,"./ReactMount":208,"./ReactUpdates":228,"./getEventTarget":259,"fbjs/lib/EventListener":31,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/getUnboundedScrollPosition":43}],202:[function(require,module,exports){
+},{"./Object.assign":165,"./PooledClass":166,"./ReactInstanceHandles":205,"./ReactMount":209,"./ReactUpdates":229,"./getEventTarget":260,"fbjs/lib/EventListener":32,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/getUnboundedScrollPosition":44}],203:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20328,7 +20335,7 @@ var ReactInjection = {
 };
 
 module.exports = ReactInjection;
-},{"./DOMProperty":151,"./EventPluginHub":157,"./ReactBrowserEventEmitter":168,"./ReactClass":171,"./ReactComponentEnvironment":174,"./ReactEmptyComponent":197,"./ReactNativeComponent":211,"./ReactPerf":214,"./ReactRootIndex":221,"./ReactUpdates":228}],203:[function(require,module,exports){
+},{"./DOMProperty":152,"./EventPluginHub":158,"./ReactBrowserEventEmitter":169,"./ReactClass":172,"./ReactComponentEnvironment":175,"./ReactEmptyComponent":198,"./ReactNativeComponent":212,"./ReactPerf":215,"./ReactRootIndex":222,"./ReactUpdates":229}],204:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20453,7 +20460,7 @@ var ReactInputSelection = {
 };
 
 module.exports = ReactInputSelection;
-},{"./ReactDOMSelection":187,"fbjs/lib/containsNode":35,"fbjs/lib/focusNode":40,"fbjs/lib/getActiveElement":41}],204:[function(require,module,exports){
+},{"./ReactDOMSelection":188,"fbjs/lib/containsNode":36,"fbjs/lib/focusNode":41,"fbjs/lib/getActiveElement":42}],205:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20759,7 +20766,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 }).call(this,require('_process'))
 
-},{"./ReactRootIndex":221,"_process":135,"fbjs/lib/invariant":46}],205:[function(require,module,exports){
+},{"./ReactRootIndex":222,"_process":136,"fbjs/lib/invariant":47}],206:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20807,7 +20814,7 @@ var ReactInstanceMap = {
 };
 
 module.exports = ReactInstanceMap;
-},{}],206:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20885,7 +20892,7 @@ var React = {
 module.exports = React;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactChildren":170,"./ReactClass":171,"./ReactComponent":172,"./ReactDOMFactories":181,"./ReactElement":195,"./ReactElementValidator":196,"./ReactPropTypes":217,"./ReactVersion":229,"./onlyChild":266,"_process":135}],207:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactChildren":171,"./ReactClass":172,"./ReactComponent":173,"./ReactDOMFactories":182,"./ReactElement":196,"./ReactElementValidator":197,"./ReactPropTypes":218,"./ReactVersion":230,"./onlyChild":267,"_process":136}],208:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20931,7 +20938,7 @@ var ReactMarkupChecksum = {
 };
 
 module.exports = ReactMarkupChecksum;
-},{"./adler32":248}],208:[function(require,module,exports){
+},{"./adler32":249}],209:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21785,7 +21792,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 module.exports = ReactMount;
 }).call(this,require('_process'))
 
-},{"./DOMProperty":151,"./Object.assign":164,"./ReactBrowserEventEmitter":168,"./ReactCurrentOwner":177,"./ReactDOMFeatureFlags":182,"./ReactElement":195,"./ReactEmptyComponentRegistry":198,"./ReactInstanceHandles":204,"./ReactInstanceMap":205,"./ReactMarkupChecksum":207,"./ReactPerf":214,"./ReactReconciler":219,"./ReactUpdateQueue":227,"./ReactUpdates":228,"./instantiateReactComponent":263,"./setInnerHTML":269,"./shouldUpdateReactComponent":272,"./validateDOMNesting":274,"_process":135,"fbjs/lib/containsNode":35,"fbjs/lib/emptyObject":39,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],209:[function(require,module,exports){
+},{"./DOMProperty":152,"./Object.assign":165,"./ReactBrowserEventEmitter":169,"./ReactCurrentOwner":178,"./ReactDOMFeatureFlags":183,"./ReactElement":196,"./ReactEmptyComponentRegistry":199,"./ReactInstanceHandles":205,"./ReactInstanceMap":206,"./ReactMarkupChecksum":208,"./ReactPerf":215,"./ReactReconciler":220,"./ReactUpdateQueue":228,"./ReactUpdates":229,"./instantiateReactComponent":264,"./setInnerHTML":270,"./shouldUpdateReactComponent":273,"./validateDOMNesting":275,"_process":136,"fbjs/lib/containsNode":36,"fbjs/lib/emptyObject":40,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],210:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22285,7 +22292,7 @@ var ReactMultiChild = {
 module.exports = ReactMultiChild;
 }).call(this,require('_process'))
 
-},{"./ReactChildReconciler":169,"./ReactComponentEnvironment":174,"./ReactCurrentOwner":177,"./ReactMultiChildUpdateTypes":210,"./ReactReconciler":219,"./flattenChildren":254,"_process":135}],210:[function(require,module,exports){
+},{"./ReactChildReconciler":170,"./ReactComponentEnvironment":175,"./ReactCurrentOwner":178,"./ReactMultiChildUpdateTypes":211,"./ReactReconciler":220,"./flattenChildren":255,"_process":136}],211:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22318,7 +22325,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 });
 
 module.exports = ReactMultiChildUpdateTypes;
-},{"fbjs/lib/keyMirror":49}],211:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":50}],212:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22416,7 +22423,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"_process":135,"fbjs/lib/invariant":46}],212:[function(require,module,exports){
+},{"./Object.assign":165,"_process":136,"fbjs/lib/invariant":47}],213:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -22538,7 +22545,7 @@ var ReactNoopUpdateQueue = {
 module.exports = ReactNoopUpdateQueue;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/warning":57}],213:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/warning":58}],214:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22633,7 +22640,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],214:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],215:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22733,7 +22740,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 }).call(this,require('_process'))
 
-},{"_process":135}],215:[function(require,module,exports){
+},{"_process":136}],216:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22761,7 +22768,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = ReactPropTypeLocationNames;
 }).call(this,require('_process'))
 
-},{"_process":135}],216:[function(require,module,exports){
+},{"_process":136}],217:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22784,7 +22791,7 @@ var ReactPropTypeLocations = keyMirror({
 });
 
 module.exports = ReactPropTypeLocations;
-},{"fbjs/lib/keyMirror":49}],217:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":50}],218:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23141,7 +23148,7 @@ function getClassName(propValue) {
 }
 
 module.exports = ReactPropTypes;
-},{"./ReactElement":195,"./ReactPropTypeLocationNames":215,"./getIteratorFn":260,"fbjs/lib/emptyFunction":38}],218:[function(require,module,exports){
+},{"./ReactElement":196,"./ReactPropTypeLocationNames":216,"./getIteratorFn":261,"fbjs/lib/emptyFunction":39}],219:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23293,7 +23300,7 @@ assign(ReactReconcileTransaction.prototype, Transaction.Mixin, Mixin);
 PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
-},{"./CallbackQueue":147,"./Object.assign":164,"./PooledClass":165,"./ReactBrowserEventEmitter":168,"./ReactDOMFeatureFlags":182,"./ReactInputSelection":203,"./Transaction":245}],219:[function(require,module,exports){
+},{"./CallbackQueue":148,"./Object.assign":165,"./PooledClass":166,"./ReactBrowserEventEmitter":169,"./ReactDOMFeatureFlags":183,"./ReactInputSelection":204,"./Transaction":246}],220:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23401,7 +23408,7 @@ var ReactReconciler = {
 };
 
 module.exports = ReactReconciler;
-},{"./ReactRef":220}],220:[function(require,module,exports){
+},{"./ReactRef":221}],221:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23480,7 +23487,7 @@ ReactRef.detachRefs = function (instance, element) {
 };
 
 module.exports = ReactRef;
-},{"./ReactOwner":213}],221:[function(require,module,exports){
+},{"./ReactOwner":214}],222:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23510,7 +23517,7 @@ var ReactRootIndex = {
 };
 
 module.exports = ReactRootIndex;
-},{}],222:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -23534,7 +23541,7 @@ var ReactServerBatchingStrategy = {
 };
 
 module.exports = ReactServerBatchingStrategy;
-},{}],223:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23621,7 +23628,7 @@ module.exports = {
 };
 }).call(this,require('_process'))
 
-},{"./ReactDefaultBatchingStrategy":191,"./ReactElement":195,"./ReactInstanceHandles":204,"./ReactMarkupChecksum":207,"./ReactServerBatchingStrategy":222,"./ReactServerRenderingTransaction":224,"./ReactUpdates":228,"./instantiateReactComponent":263,"_process":135,"fbjs/lib/emptyObject":39,"fbjs/lib/invariant":46}],224:[function(require,module,exports){
+},{"./ReactDefaultBatchingStrategy":192,"./ReactElement":196,"./ReactInstanceHandles":205,"./ReactMarkupChecksum":208,"./ReactServerBatchingStrategy":223,"./ReactServerRenderingTransaction":225,"./ReactUpdates":229,"./instantiateReactComponent":264,"_process":136,"fbjs/lib/emptyObject":40,"fbjs/lib/invariant":47}],225:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -23709,7 +23716,7 @@ assign(ReactServerRenderingTransaction.prototype, Transaction.Mixin, Mixin);
 PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
-},{"./CallbackQueue":147,"./Object.assign":164,"./PooledClass":165,"./Transaction":245,"fbjs/lib/emptyFunction":38}],225:[function(require,module,exports){
+},{"./CallbackQueue":148,"./Object.assign":165,"./PooledClass":166,"./Transaction":246,"fbjs/lib/emptyFunction":39}],226:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23808,7 +23815,7 @@ var ReactTransitionChildMapping = {
 };
 
 module.exports = ReactTransitionChildMapping;
-},{"./flattenChildren":254}],226:[function(require,module,exports){
+},{"./flattenChildren":255}],227:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24014,7 +24021,7 @@ var ReactTransitionGroup = React.createClass({
 });
 
 module.exports = ReactTransitionGroup;
-},{"./Object.assign":164,"./React":166,"./ReactTransitionChildMapping":225,"fbjs/lib/emptyFunction":38}],227:[function(require,module,exports){
+},{"./Object.assign":165,"./React":167,"./ReactTransitionChildMapping":226,"fbjs/lib/emptyFunction":39}],228:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -24275,7 +24282,7 @@ var ReactUpdateQueue = {
 module.exports = ReactUpdateQueue;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactCurrentOwner":177,"./ReactElement":195,"./ReactInstanceMap":205,"./ReactUpdates":228,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],228:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactCurrentOwner":178,"./ReactElement":196,"./ReactInstanceMap":206,"./ReactUpdates":229,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],229:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24502,7 +24509,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 }).call(this,require('_process'))
 
-},{"./CallbackQueue":147,"./Object.assign":164,"./PooledClass":165,"./ReactPerf":214,"./ReactReconciler":219,"./Transaction":245,"_process":135,"fbjs/lib/invariant":46}],229:[function(require,module,exports){
+},{"./CallbackQueue":148,"./Object.assign":165,"./PooledClass":166,"./ReactPerf":215,"./ReactReconciler":220,"./Transaction":246,"_process":136,"fbjs/lib/invariant":47}],230:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24517,7 +24524,7 @@ module.exports = ReactUpdates;
 'use strict';
 
 module.exports = '0.14.7';
-},{}],230:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24645,7 +24652,7 @@ var SVGDOMPropertyConfig = {
 };
 
 module.exports = SVGDOMPropertyConfig;
-},{"./DOMProperty":151}],231:[function(require,module,exports){
+},{"./DOMProperty":152}],232:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24847,7 +24854,7 @@ var SelectEventPlugin = {
 };
 
 module.exports = SelectEventPlugin;
-},{"./EventConstants":156,"./EventPropagators":160,"./ReactInputSelection":203,"./SyntheticEvent":237,"./isTextInputElement":265,"fbjs/lib/ExecutionEnvironment":32,"fbjs/lib/getActiveElement":41,"fbjs/lib/keyOf":50,"fbjs/lib/shallowEqual":55}],232:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPropagators":161,"./ReactInputSelection":204,"./SyntheticEvent":238,"./isTextInputElement":266,"fbjs/lib/ExecutionEnvironment":33,"fbjs/lib/getActiveElement":42,"fbjs/lib/keyOf":51,"fbjs/lib/shallowEqual":56}],233:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24877,7 +24884,7 @@ var ServerReactRootIndex = {
 };
 
 module.exports = ServerReactRootIndex;
-},{}],233:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25468,7 +25475,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 }).call(this,require('_process'))
 
-},{"./EventConstants":156,"./EventPropagators":160,"./ReactMount":208,"./SyntheticClipboardEvent":234,"./SyntheticDragEvent":236,"./SyntheticEvent":237,"./SyntheticFocusEvent":238,"./SyntheticKeyboardEvent":240,"./SyntheticMouseEvent":241,"./SyntheticTouchEvent":242,"./SyntheticUIEvent":243,"./SyntheticWheelEvent":244,"./getEventCharCode":256,"_process":135,"fbjs/lib/EventListener":31,"fbjs/lib/emptyFunction":38,"fbjs/lib/invariant":46,"fbjs/lib/keyOf":50}],234:[function(require,module,exports){
+},{"./EventConstants":157,"./EventPropagators":161,"./ReactMount":209,"./SyntheticClipboardEvent":235,"./SyntheticDragEvent":237,"./SyntheticEvent":238,"./SyntheticFocusEvent":239,"./SyntheticKeyboardEvent":241,"./SyntheticMouseEvent":242,"./SyntheticTouchEvent":243,"./SyntheticUIEvent":244,"./SyntheticWheelEvent":245,"./getEventCharCode":257,"_process":136,"fbjs/lib/EventListener":32,"fbjs/lib/emptyFunction":39,"fbjs/lib/invariant":47,"fbjs/lib/keyOf":51}],235:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25508,7 +25515,7 @@ function SyntheticClipboardEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
-},{"./SyntheticEvent":237}],235:[function(require,module,exports){
+},{"./SyntheticEvent":238}],236:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25546,7 +25553,7 @@ function SyntheticCompositionEvent(dispatchConfig, dispatchMarker, nativeEvent, 
 SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface);
 
 module.exports = SyntheticCompositionEvent;
-},{"./SyntheticEvent":237}],236:[function(require,module,exports){
+},{"./SyntheticEvent":238}],237:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25584,7 +25591,7 @@ function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeE
 SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
-},{"./SyntheticMouseEvent":241}],237:[function(require,module,exports){
+},{"./SyntheticMouseEvent":242}],238:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25768,7 +25775,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.fourArgumentPooler);
 module.exports = SyntheticEvent;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./PooledClass":165,"_process":135,"fbjs/lib/emptyFunction":38,"fbjs/lib/warning":57}],238:[function(require,module,exports){
+},{"./Object.assign":165,"./PooledClass":166,"_process":136,"fbjs/lib/emptyFunction":39,"fbjs/lib/warning":58}],239:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25806,7 +25813,7 @@ function SyntheticFocusEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
-},{"./SyntheticUIEvent":243}],239:[function(require,module,exports){
+},{"./SyntheticUIEvent":244}],240:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25845,7 +25852,7 @@ function SyntheticInputEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 
 module.exports = SyntheticInputEvent;
-},{"./SyntheticEvent":237}],240:[function(require,module,exports){
+},{"./SyntheticEvent":238}],241:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25931,7 +25938,7 @@ function SyntheticKeyboardEvent(dispatchConfig, dispatchMarker, nativeEvent, nat
 SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
-},{"./SyntheticUIEvent":243,"./getEventCharCode":256,"./getEventKey":257,"./getEventModifierState":258}],241:[function(require,module,exports){
+},{"./SyntheticUIEvent":244,"./getEventCharCode":257,"./getEventKey":258,"./getEventModifierState":259}],242:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26005,7 +26012,7 @@ function SyntheticMouseEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
-},{"./SyntheticUIEvent":243,"./ViewportMetrics":246,"./getEventModifierState":258}],242:[function(require,module,exports){
+},{"./SyntheticUIEvent":244,"./ViewportMetrics":247,"./getEventModifierState":259}],243:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26052,7 +26059,7 @@ function SyntheticTouchEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
-},{"./SyntheticUIEvent":243,"./getEventModifierState":258}],243:[function(require,module,exports){
+},{"./SyntheticUIEvent":244,"./getEventModifierState":259}],244:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26113,7 +26120,7 @@ function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEve
 SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
-},{"./SyntheticEvent":237,"./getEventTarget":259}],244:[function(require,module,exports){
+},{"./SyntheticEvent":238,"./getEventTarget":260}],245:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26169,7 +26176,7 @@ function SyntheticWheelEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
-},{"./SyntheticMouseEvent":241}],245:[function(require,module,exports){
+},{"./SyntheticMouseEvent":242}],246:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26404,7 +26411,7 @@ var Transaction = {
 module.exports = Transaction;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],246:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],247:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26432,7 +26439,7 @@ var ViewportMetrics = {
 };
 
 module.exports = ViewportMetrics;
-},{}],247:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -26495,7 +26502,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 }).call(this,require('_process'))
 
-},{"_process":135,"fbjs/lib/invariant":46}],248:[function(require,module,exports){
+},{"_process":136,"fbjs/lib/invariant":47}],249:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26538,7 +26545,7 @@ function adler32(data) {
 }
 
 module.exports = adler32;
-},{}],249:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26566,7 +26573,7 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = canDefineProperty;
 }).call(this,require('_process'))
 
-},{"_process":135}],250:[function(require,module,exports){
+},{"_process":136}],251:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26622,7 +26629,7 @@ function dangerousStyleValue(name, value) {
 }
 
 module.exports = dangerousStyleValue;
-},{"./CSSProperty":145}],251:[function(require,module,exports){
+},{"./CSSProperty":146}],252:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26674,7 +26681,7 @@ function deprecated(fnName, newModule, newPackage, ctx, fn) {
 module.exports = deprecated;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"_process":135,"fbjs/lib/warning":57}],252:[function(require,module,exports){
+},{"./Object.assign":165,"_process":136,"fbjs/lib/warning":58}],253:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26713,7 +26720,7 @@ function escapeTextContentForBrowser(text) {
 }
 
 module.exports = escapeTextContentForBrowser;
-},{}],253:[function(require,module,exports){
+},{}],254:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26766,7 +26773,7 @@ function findDOMNode(componentOrElement) {
 module.exports = findDOMNode;
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":177,"./ReactInstanceMap":205,"./ReactMount":208,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],254:[function(require,module,exports){
+},{"./ReactCurrentOwner":178,"./ReactInstanceMap":206,"./ReactMount":209,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],255:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26818,7 +26825,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 }).call(this,require('_process'))
 
-},{"./traverseAllChildren":273,"_process":135,"fbjs/lib/warning":57}],255:[function(require,module,exports){
+},{"./traverseAllChildren":274,"_process":136,"fbjs/lib/warning":58}],256:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26848,7 +26855,7 @@ var forEachAccumulated = function (arr, cb, scope) {
 };
 
 module.exports = forEachAccumulated;
-},{}],256:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26899,7 +26906,7 @@ function getEventCharCode(nativeEvent) {
 }
 
 module.exports = getEventCharCode;
-},{}],257:[function(require,module,exports){
+},{}],258:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27003,7 +27010,7 @@ function getEventKey(nativeEvent) {
 }
 
 module.exports = getEventKey;
-},{"./getEventCharCode":256}],258:[function(require,module,exports){
+},{"./getEventCharCode":257}],259:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27048,7 +27055,7 @@ function getEventModifierState(nativeEvent) {
 }
 
 module.exports = getEventModifierState;
-},{}],259:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27078,7 +27085,7 @@ function getEventTarget(nativeEvent) {
 }
 
 module.exports = getEventTarget;
-},{}],260:[function(require,module,exports){
+},{}],261:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27119,7 +27126,7 @@ function getIteratorFn(maybeIterable) {
 }
 
 module.exports = getIteratorFn;
-},{}],261:[function(require,module,exports){
+},{}],262:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27193,7 +27200,7 @@ function getNodeForCharacterOffset(root, offset) {
 }
 
 module.exports = getNodeForCharacterOffset;
-},{}],262:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27227,7 +27234,7 @@ function getTextContentAccessor() {
 }
 
 module.exports = getTextContentAccessor;
-},{"fbjs/lib/ExecutionEnvironment":32}],263:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":33}],264:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27343,7 +27350,7 @@ function instantiateReactComponent(node) {
 module.exports = instantiateReactComponent;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"./ReactCompositeComponent":176,"./ReactEmptyComponent":197,"./ReactNativeComponent":211,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],264:[function(require,module,exports){
+},{"./Object.assign":165,"./ReactCompositeComponent":177,"./ReactEmptyComponent":198,"./ReactNativeComponent":212,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],265:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27404,7 +27411,7 @@ function isEventSupported(eventNameSuffix, capture) {
 }
 
 module.exports = isEventSupported;
-},{"fbjs/lib/ExecutionEnvironment":32}],265:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":33}],266:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27445,7 +27452,7 @@ function isTextInputElement(elem) {
 }
 
 module.exports = isTextInputElement;
-},{}],266:[function(require,module,exports){
+},{}],267:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27482,7 +27489,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 }).call(this,require('_process'))
 
-},{"./ReactElement":195,"_process":135,"fbjs/lib/invariant":46}],267:[function(require,module,exports){
+},{"./ReactElement":196,"_process":136,"fbjs/lib/invariant":47}],268:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27509,7 +27516,7 @@ function quoteAttributeValueForBrowser(value) {
 }
 
 module.exports = quoteAttributeValueForBrowser;
-},{"./escapeTextContentForBrowser":252}],268:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":253}],269:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27526,7 +27533,7 @@ module.exports = quoteAttributeValueForBrowser;
 var ReactMount = require('./ReactMount');
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
-},{"./ReactMount":208}],269:[function(require,module,exports){
+},{"./ReactMount":209}],270:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27617,7 +27624,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setInnerHTML;
-},{"fbjs/lib/ExecutionEnvironment":32}],270:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":33}],271:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27658,7 +27665,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setTextContent;
-},{"./escapeTextContentForBrowser":252,"./setInnerHTML":269,"fbjs/lib/ExecutionEnvironment":32}],271:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":253,"./setInnerHTML":270,"fbjs/lib/ExecutionEnvironment":33}],272:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27683,7 +27690,7 @@ function shallowCompare(instance, nextProps, nextState) {
 }
 
 module.exports = shallowCompare;
-},{"fbjs/lib/shallowEqual":55}],272:[function(require,module,exports){
+},{"fbjs/lib/shallowEqual":56}],273:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27727,7 +27734,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 }
 
 module.exports = shouldUpdateReactComponent;
-},{}],273:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27920,7 +27927,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":177,"./ReactElement":195,"./ReactInstanceHandles":204,"./getIteratorFn":260,"_process":135,"fbjs/lib/invariant":46,"fbjs/lib/warning":57}],274:[function(require,module,exports){
+},{"./ReactCurrentOwner":178,"./ReactElement":196,"./ReactInstanceHandles":205,"./getIteratorFn":261,"_process":136,"fbjs/lib/invariant":47,"fbjs/lib/warning":58}],275:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -28287,12 +28294,12 @@ if (process.env.NODE_ENV !== 'production') {
 module.exports = validateDOMNesting;
 }).call(this,require('_process'))
 
-},{"./Object.assign":164,"_process":135,"fbjs/lib/emptyFunction":38,"fbjs/lib/warning":57}],275:[function(require,module,exports){
+},{"./Object.assign":165,"_process":136,"fbjs/lib/emptyFunction":39,"fbjs/lib/warning":58}],276:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/React');
 
-},{"./lib/React":166}],276:[function(require,module,exports){
+},{"./lib/React":167}],277:[function(require,module,exports){
 /*! VelocityJS.org (1.2.3). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
 
 /*************************
@@ -32179,7 +32186,7 @@ return function (global, window, document, undefined) {
 /* The CSS spec mandates that the translateX/Y/Z transforms are %-relative to the element itself -- not its parent.
 Velocity, however, doesn't make this distinction. Thus, converting to or from the % unit with these subproperties
 will produce an inaccurate conversion value. The same issue exists with the cx/cy attributes of SVG circles and ellipses. */
-},{}],277:[function(require,module,exports){
+},{}],278:[function(require,module,exports){
 // Convenience main entrypoint if you are running with destructuring support:
 //
 //   import {VelocityComponent, VelocityTransitionGroup} from 'velocity-react';
@@ -32200,7 +32207,7 @@ module.exports = {
   velocityHelpers: require('./velocity-helpers'),
 };
 
-},{"./velocity-component":279,"./velocity-helpers":280,"./velocity-transition-group":281}],278:[function(require,module,exports){
+},{"./velocity-component":280,"./velocity-helpers":281,"./velocity-transition-group":282}],279:[function(require,module,exports){
 // Shim to avoid requiring Velocity in Node environments, since it
 // requires window. Note that this just no-ops the components so
 // that they'll render, rather than doing something clever like
@@ -32219,7 +32226,7 @@ if (typeof window !== 'undefined') {
   module.exports = Velocity;
 }
 
-},{"velocity-animate":276}],279:[function(require,module,exports){
+},{"velocity-animate":277}],280:[function(require,module,exports){
 /*
 Copyright (c) 2015 Twitter, Inc. and other contributors
 
@@ -32375,7 +32382,7 @@ var VelocityComponent = React.createClass({
 
 module.exports = VelocityComponent;
 
-},{"./lib/velocity-animate-shim":278,"lodash/lang/isEqual":121,"lodash/object/keys":128,"lodash/object/omit":130,"react":275,"react-dom":138}],280:[function(require,module,exports){
+},{"./lib/velocity-animate-shim":279,"lodash/lang/isEqual":122,"lodash/object/keys":129,"lodash/object/omit":131,"react":276,"react-dom":139}],281:[function(require,module,exports){
 // Copyright (c) 2015 Twitter, Inc. and other contributors
 
 var _ = {
@@ -32438,11 +32445,17 @@ function registerEffect(suffix, animation) {
     suffix = '';    
   }
 
+  var key = 'VelocityHelper.animation.' + (effectCounter++) + suffix;
+
+  // No-op on the server for now.
+  if (Velocity.velocityReactServerShim) {
+    return key
+  }
+
   if (Velocity.RegisterEffect === undefined) {
     throw "Velocity.RegisterEffect not found. You need to require('velocity-animate/velocity.ui') at a top level for UI Pack.";
   }
 
-  var key = 'VelocityHelper.animation.' + (effectCounter++) + suffix;
   Velocity.RegisterEffect(key, animation);
   return key;
 }
@@ -32451,7 +32464,7 @@ module.exports = {
   registerEffect: registerEffect,
 };
 
-},{"./lib/velocity-animate-shim":278,"lodash/lang/isObject":124}],281:[function(require,module,exports){
+},{"./lib/velocity-animate-shim":279,"lodash/lang/isObject":125}],282:[function(require,module,exports){
 /*
 Copyright (c) 2015 Twitter, Inc. and other contributors
 
@@ -32463,6 +32476,7 @@ Properties
   leave: Animation to run on a child component leaving
   runOnMount: if true, runs the "enter" animation on the elements that exist as children when this
     component is mounted.
+  enterHideStyle/enterShowStyle: see below.
 
 Any additional properties (e.g. "className", "component") will be passed to the internal
 TransitionGroup.
@@ -32479,6 +32493,13 @@ routines, which may differ from React's.
 Any hash entries beyond "animation" and "style" are passed in an options hash to Velocity. Use this
 for options like "stagger", "reverse", &tc.
 
+By default, this component will immediately hide all entering children with display: 'none', and
+unhide them one tick later with display: ''. This is done so that we can coalesce multiple enters
+into a single animation, and we want to avoid any popping of elements in while they're collected. If
+you prefer a different way of hiding these elements so that e.g. geometry can be immediately
+calculated, use the enterHideStyle and enterShowStyle props to provide alternate style hashes for
+hiding and revealing entering elements.
+
 Statics
   disabledForTest: Set this to true globally to turn off all custom animation logic. Instead, this
     component will behave like a vanilla TransitionGroup.
@@ -32489,6 +32510,8 @@ Inspired by https://gist.github.com/tkafka/0d94c6ec94297bb67091
 var _ = {
   each: require('lodash/collection/each'),
   extend: require('lodash/object/extend'),
+  forEach: require('lodash/collection/forEach'),
+  isEqual: require('lodash/lang/isEqual'),
   keys: require('lodash/object/keys'),
   omit: require('lodash/object/omit'),
   pluck: require('lodash/collection/pluck'),
@@ -32498,6 +32521,15 @@ var ReactDOM = require('react-dom');
 var ReactTransitionGroup = require('react-addons-transition-group');
 var Velocity = require('./lib/velocity-animate-shim');
 
+// Shim requestAnimationFrame for browsers that don't support it, in particular IE 9.
+var shimRequestAnimationFrame = 
+  (typeof window !== 'undefined') && (
+    window.requestAnimationFrame || 
+    window.webkitRequestAnimationFrame || 
+    window.mozRequestAnimationFrame || 
+    function(callback) { window.setTimeout(callback, 0) }
+  );
+  
 // Internal wrapper for the transitioned elements. Delegates all child lifecycle events to the
 // parent VelocityTransitionGroup so that it can co-ordinate animating all of the elements at once.
 var VelocityTransitionGroupChild = React.createClass({
@@ -32539,6 +32571,8 @@ var VelocityTransitionGroup = React.createClass({
     enter: React.PropTypes.any,
     leave: React.PropTypes.any,
     children: React.PropTypes.any,
+    enterHideStyle: React.PropTypes.object,
+    enterShowStyle: React.PropTypes.object,
   },
 
   getDefaultProps: function() {
@@ -32546,6 +32580,12 @@ var VelocityTransitionGroup = React.createClass({
       runOnMount: false,
       enter: null,
       leave: null,
+      enterHideStyle: {
+        display: 'none',
+      },
+      enterShowStyle: {
+        display: '',
+      },
     };
   },
 
@@ -32600,11 +32640,15 @@ var VelocityTransitionGroup = React.createClass({
     // By finishing a "leave" on the element, we put it in the right state to be animated in. Useful
     // if "leave" includes a rotation or something that we'd like to have as our starting point, for
     // symmetry.
-    this._finishAnimation(node, this.props.leave);
+    // We use overrideOpts to prevent any "complete" callback from triggering in this case, since
+    // it doesn't make a ton of sense.
+    this._finishAnimation(node, this.props.leave, {complete: undefined});
 
-    // We're not going to start the animation for a tick, so set the node's display to none so that
-    // it doesn't flash in.
-    Velocity.CSS.setPropertyValue(node, 'display', 'none');
+    // We're not going to start the animation for a tick, so set the node's display to none (or any
+    // custom "hide" style provided) so that it doesn't flash in.
+    _.forEach(this.props.enterHideStyle, function (val, key) {
+      Velocity.CSS.setPropertyValue(node, key, val);
+    });
 
     this._entering.push({
       node: node,
@@ -32652,7 +32696,7 @@ var VelocityTransitionGroup = React.createClass({
 
     // Need rAF to make sure we're in the same event queue as Velocity from here out. Important
     // for avoiding getting wrong interleaving with Velocity callbacks.
-    window.requestAnimationFrame(this._runAnimations);
+    shimRequestAnimationFrame(this._runAnimations);
   },
 
   _runAnimations: function () {
@@ -32704,10 +32748,15 @@ var VelocityTransitionGroup = React.createClass({
     // display: none to prevent them from flashing in before the animation starts. We don't do this
     // for the fade/slide animations or any animation that ends in "In," since Velocity will handle
     // it for us.
-    if (entering && !(/^(fade|slide)/.test(animation) || /In$/.test(animation))) {
-      style = _.extend({
-        display: ''
-      }, style);
+    //
+    // If a custom "enterShowStyle" prop is passed, (i.e. not one that just reverses display: none)
+    // we always run it, regardless of the animation, since it's probably doing something around
+    // opacity or positioning that Velocity will not necessarily reset.
+    if (entering) {
+      if (!_.isEqual(this.props.enterShowStyle, {display: ''})
+        || !(/^(fade|slide)/.test(animation) || /In$/.test(animation))) {
+        style = _.extend({}, this.props.enterShowStyle, style);
+      }
     }
 
     // Because Safari can synchronously repaint when CSS "display" is reset, we set styles for all
@@ -32721,7 +32770,7 @@ var VelocityTransitionGroup = React.createClass({
     }
 
     var self = this;
-    var completeFn = function () {
+    var doneFn = function () {
       if (!self.isMounted()) {
         return;
       }
@@ -32735,27 +32784,39 @@ var VelocityTransitionGroup = React.createClass({
     // animations) so that we can then animate out. Velocity typically makes these transitions
     // very smooth, correctly animating from whatever state the element is currently in.
     if (entering) {
-      completeFn();
-      completeFn = null;
+      doneFn();
+      doneFn = null;
     } else {
       Velocity(nodes, 'stop');
+    }
+
+    var combinedCompleteFn;
+    if (doneFn && opts.complete) {
+      var optsCompleteFn = opts.complete;
+      combinedCompleteFn = function () {
+        doneFn();
+        optsCompleteFn();
+      };
+    } else {
+      // One or the other or neither.
+      combinedCompleteFn = doneFn || opts.complete;
     }
 
     // Bit of a hack. Without this rAF, sometimes an enter animation doesn't start running, or is
     // stopped before getting anywhere. This should get us on the other side of both completeFn and
     // any _finishAnimation that's happening.
-    window.requestAnimationFrame(function () {
+    shimRequestAnimationFrame(function () {
       Velocity(nodes, animation, _.extend({}, opts, {
-        complete: completeFn
+        complete: combinedCompleteFn,
       }));
     });
   },
 
-  _finishAnimation: function (node, animationProp) {
+  _finishAnimation: function (node, animationProp, overrideOpts) {
     var parsedAnimation = this._parseAnimationProp(animationProp);
     var animation = parsedAnimation.animation;
     var style = parsedAnimation.style;
-    var opts = parsedAnimation.opts;
+    var opts = _.extend({}, parsedAnimation.opts, overrideOpts);
 
     if (style != null) {
       _.each(style, function (value, key) {
@@ -32783,7 +32844,7 @@ var VelocityTransitionGroup = React.createClass({
 
 module.exports = VelocityTransitionGroup;
 
-},{"./lib/velocity-animate-shim":278,"lodash/collection/each":60,"lodash/collection/pluck":63,"lodash/object/extend":127,"lodash/object/keys":128,"lodash/object/omit":130,"react":275,"react-addons-transition-group":137,"react-dom":138}],282:[function(require,module,exports){
+},{"./lib/velocity-animate-shim":279,"lodash/collection/each":61,"lodash/collection/forEach":62,"lodash/collection/pluck":64,"lodash/lang/isEqual":122,"lodash/object/extend":128,"lodash/object/keys":129,"lodash/object/omit":131,"react":276,"react-addons-transition-group":138,"react-dom":139}],283:[function(require,module,exports){
 (function(self) {
   'use strict';
 

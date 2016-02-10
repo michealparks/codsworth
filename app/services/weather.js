@@ -23,7 +23,7 @@ export default function getWeather (forceUpdate = false) {
       const lastUpdate = weatherData ? Date.now() - weatherData.time : 0
 
       if (!userData) {
-        return Promise.reject('No user data')
+        return Promise.reject('no user data')
       }
 
       if (!forceUpdate && weatherData && lastUpdate < Date.HOUR / 2) {

@@ -9,19 +9,21 @@ export default class WeatherWidget extends React.Component {
   constructor (props) {
     super(props)
 
-    localforage.get('Weather').then(data => this.setState({
-      units: data.units,
-      unitString: data.units === 'imperial' ? '\u00B0 F' : '\u00B0 C'
-    }))
-
-    localforage.on('Weather.data', data => this.setState(data))
-    getWeather()
-      .then(data => data && this.setState(data))
-      .catch(error => this.setState({ error }))
+    localforage.on('Weather', data =>
+      this.setState(data)
+    )
+    localforage.on('Weather.data', data =>
+      this.setState(Object.assign(data, { error: '' })))
+    Promise.all([getWeather(), localforage.get('Weather')])
+      .then(data =>
+        this.setState(Object.assign(data[0], data[1], { error: '' }))
+      )
+      .catch(error =>
+        this.setState({ error: error[0] })
+      )
 
     this.state = {
       units: '',
-      unitString: '',
       temp: '',
       code: '',
       forecast: [],
@@ -37,8 +39,15 @@ export default class WeatherWidget extends React.Component {
   }
 
   getTemp (temp) {
+    if (this.state.temp === '') return ''
     if (this.state.units === 'metric') return temp
     return Math.round(temp * 9 / 5 + 32)
+  }
+
+  renderError () {
+    return this.state.error
+      ? <h2>{ this.state.error }</h2>
+      : ''
   }
 
   renderForecast () {
@@ -63,12 +72,6 @@ export default class WeatherWidget extends React.Component {
     )
   }
 
-  renderError () {
-    return this.state.error
-      ? <h2>{ this.state.error }</h2>
-      : ''
-  }
-
   render () {
     return (
       <div className='widget widget-weather'>
@@ -76,10 +79,12 @@ export default class WeatherWidget extends React.Component {
           { this.renderError() }
           <span className='widget-weather__temp'>
             { this.getTemp(this.state.temp) }
-            <span className='widget-weather__units'>{ this.state.unitString }</span>
+            <span className='widget-weather__units'>
+              { this.state.units === 'imperial' ? '\u00B0 F' : '\u00B0 C' }
+            </span>
           </span>
           <span className='widget-weather__icon'>
-            { icons[this.state.code.icon + (new Date().getHours() > 17 ? '-night' : '')] }
+            { icons[this.state.code.icon + (new Date().getHours() > 17 || new Date().getHours() < 6 ? '-night' : '')] }
           </span>
           <span className='widget-weather__description'>{ this.state.code.description }</span>
         </div>

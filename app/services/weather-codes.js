@@ -76,14 +76,16 @@ function icon (description) {
 
     case 'Freezing drizzle':
     case 'Drizzle':
+    case 'Dust':
+    case 'Scattered showers':
+      return 'rainy'
+
     case 'Freezing rain':
     case 'Showers':
     case 'Hail':
     case 'Sleet':
-    case 'Dust':
     case 'Mixed rain and hail':
-    case 'Scattered showers':
-      return 'rainy'
+      return 'rainy-2'
 
     case 'Partly cloudy (night)':
     case 'Partly cloudy (day)':

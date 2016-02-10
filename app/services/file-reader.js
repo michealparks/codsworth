@@ -1,12 +1,6 @@
 const reader = new window.FileReader()
 
-export default function readAsDataURL (item) {
-  return new Promise((resolve, reject) => {
-    addEvents(resolve, reject)
-    return reader.readAsDataURL(item)
-  })
-}
-
+export const readAsDataURL = readAs.bind('DataURL')
 export const readAsArrayBuffer = readAs.bind('ArrayBuffer')
 export const readAsText = readAs.bind('Text')
 
