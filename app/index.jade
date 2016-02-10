@@ -7,10 +7,28 @@ html(lang='en')
     meta(name='referrer' content='always')
     meta(http-equiv='X-UA-Compatible' content='IE=edge,chrome=1')
     meta(name='viewport' content='width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no')
-    meta(name='apple-mobile-web-app-capable' content='yes')
     meta(name='mobile-web-app-capable' content='yes')
+    meta(name='application-name' content='Codsworth')
 
     meta(name='google-signin-client_id' content='959997348690-d01gitd8r6ou9he3e85aug2358nrof5v.apps.googleusercontent.com')
+
+    meta(name='apple-mobile-web-app-capable' content='yes')
+    meta(name='apple-mobile-web-app-title' content='Codsworth')
+    meta(name='apple-touch-fullscreen' content='yes')
+    meta(name='apple-mobile-web-app-status-bar-style' content='black-translucent')
+    meta(name='format-detection' content='telephone=no')
+
+    //- link(href='/apple-touch-icon.png' rel='apple-touch-icon' type='image/png')
+    //- link(href='touch-icon-ipad.png' rel='apple-touch-icon' sizes='72x72')
+    //- link(href='touch-icon-iphone4.png' rel='apple-touch-icon' sizes='114x114')
+    //- link(href='/startup.png' rel='apple-touch-startup-image')
+
+    //- link(href='http://github.com/images/touch-icon-iphone4.png' sizes='114x114' rel='apple-touch-icon-precomposed')
+    //- link(href='http://github.com/images/touch-icon-ipad.png' sizes='72x72' rel='apple-touch-icon-precomposed')
+    //- link(href='http://github.com/images/apple-touch-icon-57x57.png' sizes='57x57' rel='apple-touch-icon-precomposed')
+    //- //- Safari 9 Pinned tabs in El Capitan
+
+    //- link(rel="mask-icon" href="website_icon.svg" color="red")
 
     //- link(rel='apple-touch-icon' href='touch-icon-iphone.png')
     //- link(rel='apple-touch-icon' sizes='76x76' href='touch-icon-ipad.png')
@@ -19,9 +37,6 @@ html(lang='en')
 
     //- meta(name="msapplication-TileImage" content="tile-background.png")
     //- meta(name="msapplication-TileColor" content="#FF0000")
-
-    meta(name='apple-mobile-web-app-title' content='Codsworth')
-    meta(name='application-name' content='Codsworth')
 
     style.
       @import url('build.css');
@@ -34,4 +49,3 @@ html(lang='en')
   body
     #app-root
     div.g-signin2(data-onsuccess='onSignIn')
-    audio(src='loop.mp3' loop='true' autoplay='true' muted='true' volume='0' preload='auto')
