@@ -2,20 +2,27 @@
 const { get, set } = require('../util/storage')
 const { days } = require('../util/time')
 const bg = [ document.getElementById('bg-0'), document.getElementById('bg-1') ]
-const bgCL = [ bg[0].classList, bg[1].classList ]
+const bgCL = bg[1].classList
 const text = document.getElementById('text')
 const template = document.createElement('template')
 const reader = new FileReader()
 reader.onload = onRead
 
 let req, textHTML
+let i = 0
 
 const imageData = get('image')
 
 if (imageData && (Date.now() - imageData.time < days(1))) {
   renderImage(imageData.url, imageData.text)
 } else {
-  makeRequest(
+  makeImageRequest()
+}
+
+function makeImageRequest () {
+  setTimeout(makeImageRequest, days(1))
+
+  return makeRequest(
     'json',
     'https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=Main_Page&format=json&origin=*',
     onMainPageErr,
@@ -82,7 +89,9 @@ function onImageErr () {
 }
 
 function renderImage (url, html) {
-  bg[0].style.backgroundImage = `url("${url}")`
+  i = (i + 1) % 2
+  bg[i].style.backgroundImage = `url("${url}")`
+  bgCL.toggle('bg-image--active', i === 1)
   text.innerHTML = html
 }
 

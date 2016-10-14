@@ -16,7 +16,6 @@ function storageAvailable (type) {
 }
 
 function get (key) {
-  console.log(noStore)
   return noStore ? null : parse(g(key))
 }
 

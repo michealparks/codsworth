@@ -1,7 +1,9 @@
-const inline = require('inline-source')
 const fs = require('fs')
 const { resolve } = require('path')
+const inline = require('inline-source')
+const ghpages = require('gh-pages')
 const source = fs.createReadStream('app/index.html')
+
 source.pipe(fs.createWriteStream('public/index.html'))
 source.on('error', console.error.bind(console))
 source.on('end', () => process.env.NODE_ENV === 'development'
@@ -17,3 +19,9 @@ source.on('end', () => process.env.NODE_ENV === 'development'
     )
   )
 )
+
+if (process.env.NODE_ENV === 'production') {
+  ghpages.publish(resolve('public'), err => err
+    ? console.error(err)
+    : console.log('GH-pages made.'))
+}
