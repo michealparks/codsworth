@@ -1,76 +1,78 @@
-global-reset()
-html5-reset()
-
-@import url('../node_modules/react-toggle/style.css')
-
-.react-toggle-thumb
-  box-shadow: none !important
-  
-.react-toggle-track-check
-.react-toggle-track-x
-  display: none !important
-
-.react-toggle .react-toggle-track
-  background-color: #34495e !important
-  
-.react-toggle:hover .react-toggle-track
-  background-color: #2c3e50 !important
-  
-.react-toggle--checked .react-toggle-track
-  background-color: #27ae60 !important
-  
-.react-toggle--checked:hover .react-toggle-track
-  background-color: #27ae60 !important
-
-*:not(input)
-  cursor: default
-  user-select: none
-  
 html
   font-size: 12px
+  font-weight: 200
 
-body
+body, .bg-image
   position: absolute
+  top: 0
+  left: 0
   width: 100%
   height: 100%
-  margin: 0
-  overflow: hidden
   
 body
-input
-  font-family: Open Sans
+  display: flex
+  justify-content: center
+  align-items: center
+  margin: 0
+  overflow: hidden
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+  background-color: black
+  color: #fff
   
-input 
-  outline: 0
-  border: 0
-  background-color: alpha(white, 0.7)
-  color: #333
-  
-  &::-webkit-input-placeholder
-    color: #555
-    
-  &:-moz-placeholder
-    color: #555
-    
-  &::-moz-placeholder
-    color: #555
-    
-  &:-ms-input-placeholder
-    color: #555
-  
-button
-  background: 0
-  border: 0
-  outline: none
-  
-#app-root
-.app
+.bg-image
+  background-size: cover
+  background-position: center
+  opacity: 0.5
+
+.centerpiece
   position: relative
-  width: inherit
-  height: inherit
+  cursor: default
+  width: 300px
+  text-align: center
   
-.state-hidden
-  display: none
+  *
+    user-select: none
+
+.time
+  padding: 0
+  font-size: 80px
   
-.g-signin2
-  fixed: top 10px right 10px
+.date
+  font-size: 20px
+  border-bottom: 1px solid #ccc
+  padding: 0 0 20px
+
+.text
+  position: absolute
+  bottom: 10px
+  width: 400px
+  left: calc(50% - 200px)
+  
+  *
+    color: rgba(255,255,255,0.85) !important
+    font-weight: 200
+    
+  b
+    font-style: italic
+    
+.weather
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 15px 0
+  
+.weather__icon,
+.weather__icon svg
+  height: 40px
+  width: 40px
+  
+.weather__icon
+  margin: 0 16px
+  
+.weather__temp
+  display: flex
+  font-size: 40px
+  
+.weather__unit
+  height: 32px
+  
