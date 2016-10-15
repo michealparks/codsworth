@@ -26,7 +26,7 @@ body
   
 #bg-1
   opacity: 0
-  transition: 600ms
+  transition: 300ms
   
 .bg-image--active
   opacity: 0.5 !important
@@ -35,6 +35,7 @@ body
   position: relative
   cursor: default
   width: 300px
+  max-width: calc(100% - 20px)
   text-align: center
   perspective: 300px
   
@@ -52,13 +53,27 @@ body
 
 .text
   position: absolute
+  box-sizing: border-box
   bottom: 10px
   width: 400px
   left: calc(50% - 200px)
+  color: rgba(255,255,255,0.9) !important
+  
+  @media(max-width: 460px)
+    width: 100%
+    left: 0
+    bottom: 0
+    padding: 20px
   
   *
-    color: rgba(255,255,255,0.85) !important
+    color: rgba(255,255,255,0.9) !important
     font-weight: 200
+    
+  a:first-child
+    cursor: pointer !important
+    
+  a:not(:first-child)
+    text-decoration: none
     
   b
     font-style: italic

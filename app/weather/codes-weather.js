@@ -107,7 +107,7 @@ function icon (description) {
 
     case 'Clear (night)':
     case 'Fair (night)':
-      return 'clear'
+      return 'clear-night'
 
     case 'Sunny':
     case 'Fair (day)':

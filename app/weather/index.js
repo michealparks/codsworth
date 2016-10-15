@@ -11,9 +11,10 @@ fetchWeather()
 function onWeatherFetch (err, weather) {
   if (err) return setTimeout(fetchWeather, minutes(2))
 
+  console.log(weather.code.icon, weather)
   temp.textContent = weather.temp
   unit.textContent = '\u00B0 F'
-  icon.innerHTML = icons[weather.code.icon]
+  icon.innerHTML = icons[weather.code.icon] || ''
 
   return setTimeout(fetchWeather, minutes(30))
 }

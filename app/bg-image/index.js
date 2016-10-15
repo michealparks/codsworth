@@ -48,7 +48,7 @@ function onMainPageLoad () {
 
   const section = template.content.querySelector('#mp-lower')
   const imageURL = section.querySelector('img').getAttribute('src').split('/')
-  const size = imageURL.pop().replace(/^[0-9]{3,4}px/, `2000px`)
+  const size = imageURL.pop().replace(/^[0-9]{3,4}px/, `2400px`)
   const url = `https:${imageURL.join('/')}/${size}`
   const description = section.querySelector('p')
 
