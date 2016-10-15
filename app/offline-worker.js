@@ -3,24 +3,20 @@
 const { version } = require('../package.json')
 
 self.addEventListener('install', event => {
-  console.log('install')
   // Perform install step:  loading each required file into cache
   return event.waitUntil(caches.open(version)
     // Add all offline dependencies to the cache
     .then(cache => {
-      console.log('cache', cache)
-      return cache.addAll(['/index.html'])
+      return cache.addAll(['/codsworth/index.html'])
     })
     // At this point everything has been cached
     .then(() => {
-      console.log(self)
       return self.skipWaiting()
     }))
 })
 
 if (process.env.NODE_ENV === 'production') {
   self.addEventListener('fetch', (event) => {
-    console.log('fetch', event)
     return event.respondWith(caches.match(event.request)
       // 1. Cache hit - return the response from the cached version
       // 2. Not in cache - return the result from the live server

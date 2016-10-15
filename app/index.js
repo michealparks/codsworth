@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', event =>
     // Listen for changes in the state of our ServiceWorker
     navigator.serviceWorker.controller.addEventListener('statechange', function () {
-      console.log(this.state)
+      // nothing
     })
   )
 
