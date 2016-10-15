@@ -4,10 +4,12 @@
 
 Codsworth is an extremely lightweight ambient wallpaper app. 
 
-It's perfect for an unused screen or a browser home or new tab page. 
+It works well on an unused screen or as a browser homepage. 
 
-It shows you the date, the time, the weather, and the picture of the day from wikipedia with a little blurb about it.
+It displays the date, time, weather, and wikipedia's picture of the day with a little blurb about it.
 
 It'll periodically update itself.
 
-That's all.
+It works offline.
+
+That's all!

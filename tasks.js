@@ -20,8 +20,8 @@ source.on('end', () => process.env.NODE_ENV === 'development'
   )
 )
 
-if (process.env.NODE_ENV === 'production') {
-  ghpages.publish(resolve('public'), err => err
-    ? console.error(err)
-    : console.log('GH-pages made.'))
-}
+// if (process.env.NODE_ENV === 'production' && process.env.DEPLOY) {
+//   ghpages.publish(resolve('public'), err => err
+//     ? console.error(err)
+//     : console.log('GH-pages made.'))
+// }

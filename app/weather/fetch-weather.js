@@ -10,18 +10,19 @@ let didInit = false
 let weather = get('weather')
 let location = get('geolocation')
 
-if (location && location.revoked) location = null
-if (location && (Date.now() - location.time) >= minutes(30)) location = null
-
-if (!location && 'geolocation' in navigator) {
-  navigator.geolocation.getCurrentPosition(onGetPosition, onGetPositionErr)
-}
+getGeolocation()
 
 if (location) init()
 
 function init () {
   didInit = true
   return next ? fetchWeather(next) : null
+}
+
+function getGeolocation () {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(onGetPosition, onGetPositionErr)
+  }
 }
 
 function onGetPosition ({ coords }) {
@@ -38,7 +39,6 @@ function onGetPosition ({ coords }) {
 function onGetPositionErr (error) {
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      return set('geolocation', { revoked: true })
     case error.POSITION_UNAVAILABLE:
     case error.TIMEOUT:
     case error.UNKNOWN_ERROR:
@@ -94,5 +94,5 @@ function onWeatherError () {
   console.warn(req, req.response)
 }
 
-module.exports = fetchWeather
+module.exports = { fetchWeather, getGeolocation }
 

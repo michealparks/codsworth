@@ -1,46 +1,52 @@
+const { get, set } = require('../util/storage')
+const { expandDay, numMonth, expandMonth } = require('./conversions')
 const time = document.getElementById('time')
 const date = document.getElementById('date')
 
-let d
+let timeFormat = get('settings:time-format') || '24hr'
+let dateFormat = get('settings:date-format') || 'words'
+let t, d, s, suffix
 
 tick()
 
-setTimeout(tick, 1000 - (Date.now() % 1000))
-
-function tick () {
+function tick (once) {
   d = new Date().toString().split(' ')
 
-  time.textContent = d[4].split(':').slice(0, -1).join('.')
-  date.textContent = `${expandDay(d[0])}, ${expandMonth(d[1])} ${d[2]}, ${d[3]}`
+  if (timeFormat === '24hr') {
+    time.textContent = d[4].split(':').slice(0, -1).join('.')
+  } else {
+    t = d[4].split(':')
+    s = (+t[0] < 12 ? 'AM' : 'PM')
+    t[0] = +t[0] % 12 || 12
+    time.textContent = t.slice(0, -1).join('.')
 
-  return setTimeout(tick, 1000)
+    if (s !== suffix) {
+      time.classList.toggle('am', s === 'AM')
+      time.classList.toggle('pm', s === 'PM')
+    }
+  }
+
+  if (dateFormat === 'numbers') {
+    date.textContent = `${d[2]} / ${numMonth(d[1])} / ${d[3].slice(2)}`
+  } else {
+    date.textContent = `${expandDay(d[0])}, ${expandMonth(d[1])} ${d[2]}, ${d[3]}`
+  }
+
+  return once ? null : setTimeout(tick, 1000)
 }
 
-function expandDay (d) {
-  return {
-    'Mon': 'Monday',
-    'Tue': 'Tuesday',
-    'Wed': 'Wednesday',
-    'Thu': 'Thursday',
-    'Fri': 'Friday',
-    'Sat': 'Saturday',
-    'Sun': 'Sunday'
-  }[d]
+time.onclick = () => {
+  timeFormat = (timeFormat === '24hr') ? '12hr' : '24hr'
+
+  if (timeFormat === '24hr') time.classList.remove('am', 'pm')
+
+  tick(true)
+  return set('settings:time-format', timeFormat)
 }
 
-function expandMonth (m) {
-  return {
-    'Jan': 'January',
-    'Feb': 'February',
-    'Mar': 'March',
-    'Apr': 'April',
-    'May': 'May',
-    'Jun': 'June',
-    'Jul': 'July',
-    'Aug': 'August',
-    'Sep': 'September',
-    'Oct': 'October',
-    'Nov': 'November',
-    'Dec': 'December'
-  }[m]
+date.onclick = () => {
+  dateFormat = (dateFormat === 'words') ? 'numbers' : 'words'
+
+  tick(true)
+  return set('settings:date-format', dateFormat)
 }
