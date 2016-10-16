@@ -4,6 +4,10 @@
 
 Codsworth is an extremely lightweight ambient wallpaper app.
 
+<p align="center">
+  <img src="https:/michealparks.github.io/codsworth/screenshot.jpg" alt="screenshot" align="center">
+</p>
+
 It works well on an unused screen or as a browser homepage. 
 
 It displays the date, time, weather, and Wikipedia's picture of the day with a little blurb about it.
