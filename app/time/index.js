@@ -23,6 +23,7 @@ function tick (once) {
     if (s !== suffix) {
       time.classList.toggle('am', s === 'AM')
       time.classList.toggle('pm', s === 'PM')
+      suffix = s
     }
   }
 
@@ -37,6 +38,7 @@ function tick (once) {
 
 time.onclick = () => {
   timeFormat = (timeFormat === '24hr') ? '12hr' : '24hr'
+  suffix = null
 
   if (timeFormat === '24hr') time.classList.remove('am', 'pm')
 

@@ -1,4 +1,4 @@
-/* global URL, XMLHttpRequest, FileReader */
+/* global XMLHttpRequest, FileReader */
 const { get, set } = require('../util/storage')
 const { days } = require('../util/time')
 const bg = [ document.getElementById('bg-0'), document.getElementById('bg-1') ]
@@ -13,9 +13,11 @@ let i = 0
 
 const imageData = get('image')
 
-if (imageData && (Date.now() - imageData.time < days(1))) {
+if (imageData) {
   renderImage(imageData.url, imageData.text)
-} else {
+}
+
+if (!imageData || (Date.now() - imageData.time) >= days(1)) {
   makeImageRequest()
 }
 
@@ -94,4 +96,3 @@ function renderImage (url, html) {
   bgCL.toggle('bg-image--active', i === 1)
   text.innerHTML = html
 }
-

@@ -8,7 +8,7 @@ body, .bg-image
   left: 0
   width: 100%
   height: 100%
-  
+
 body
   display: flex
   justify-content: center
@@ -18,45 +18,44 @@ body
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
   background-color: black
   color: #fff
-  
+
 .bg-image
   background-size: cover
   background-position: center
   opacity: 0.4
-  
+
 #bg-1
   opacity: 0
   transition: 300ms
-  
+
 .bg-image--active
   opacity: 0.4 !important
 
 .centerpiece
+  -webkit-user-select: none
+  user-select: none
   position: relative
   cursor: default
   width: 300px
   max-width: calc(100% - 20px)
   text-align: center
   perspective: 300px
-  
-  *
-    user-select: none
 
 .time
   padding: 0
   font-size: 80px
-  
+
   &.am:after, &.pm:after
     margin-left: 5px
     font-size: 16px
     vertical-align: baseline
-  
+
   &.am:after
     content: "AM"
-  
+
   &.pm:after
     content: "PM"
-  
+
 .date
   font-size: 20px
   border-bottom: 1px solid #ccc
@@ -69,55 +68,55 @@ body
   width: 400px
   left: calc(50% - 200px)
   color: rgba(255,255,255,0.9) !important
-  
+
   @media(max-width: 460px)
     width: 100%
     left: 0
     bottom: 0
     padding: 20px
-  
+
   *
     color: rgba(255,255,255,0.9) !important
     font-weight: 200
-    
+
   a:first-child
     cursor: pointer !important
-    
+
   a:not(:first-child)
     text-decoration: none
-    
+
   b
     font-style: italic
-    
+
 .weather
   display: flex
   align-items: center
   justify-content: center
   padding: 15px 0
-  
+
 .weather__icon,
 .weather__icon svg
   height: 40px
   width: 40px
-  
+
 .weather__icon
   margin: 0 16px
-  
+
 .weather__temp
   display: flex
   font-size: 40px
-  
+
 .weather__unit
   height: 32px
   padding: 0 4px
   font-size: 14px
-  
+
 .icon
   display: inline-block
   stroke-width: 0
   stroke: #fff
   fill: #fff
-  
+
 .icon-cog
   cursor: pointer
   position: absolute
@@ -127,7 +126,7 @@ body
   height: 16px
   padding: 20px
   transition: transform 400ms cubic-bezier(0.215, 0.610, 0.355, 1.000)
-  
+
 .settings
   position: absolute
   display: flex
@@ -143,19 +142,19 @@ body
   background-color: rgba(0, 0, 0, 0.3)
   transition: transform 400ms cubic-bezier(0.215, 0.610, 0.355, 1.000)
   transform: translate3d(240px, 140px, 20px)
-  
+
   p
     width: 100%
-    
+
   input, select
     float: right
-  
+
 .settings--open
   transform: translate3d(0, 0, 0)
-  
+
   .icon-cog
     transform: translate3d(15px, 15px, 0)
-  
+
 .animate-in
   animation-name: animate-in
   animation-duration: 600ms
@@ -165,16 +164,16 @@ body
   opacity: 0
   transform-origin: 50% 0
   transform: translate3d(0, 0, 0)
-  
+
 .date
   animation-delay: 150ms
-  
+
 .weather
   animation-delay: 300ms
-  
+
 .text
   animation-delay: 450ms
-  
+
 @keyframes animate-in
   from
     opacity: 0
@@ -182,4 +181,3 @@ body
   to
     opacity: 1
     transform: translate3d(0, 0, 0)
-  
