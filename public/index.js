@@ -130,22 +130,26 @@
 
 	'use strict';
 
-	/* global XMLHttpRequest, FileReader */
+	/* global URL, XMLHttpRequest */
 	var _require = __webpack_require__(1);
 
 	var get = _require.get;
 	var set = _require.set;
 
-	var _require2 = __webpack_require__(2);
+	var _require2 = __webpack_require__(11);
 
-	var days = _require2.days;
+	var getImageBlob = _require2.getImageBlob;
+	var setImageBlob = _require2.setImageBlob;
+
+	var _require3 = __webpack_require__(2);
+
+	var days = _require3.days;
 
 	var bg = [document.getElementById('bg-0'), document.getElementById('bg-1')];
 	var bgCL = bg[1].classList;
 	var text = document.getElementById('text');
 	var template = document.createElement('template');
-	var reader = new FileReader();
-	reader.onload = onRead;
+	var Img = new window.Image();
 
 	var req = void 0,
 	    textHTML = void 0;
@@ -153,13 +157,15 @@
 
 	var imageData = get('image');
 
-	if (imageData) {
-	  renderImage(imageData.url, imageData.text);
-	}
+	getImageBlob(function (blob) {
+	  if (!imageData || Date.now() - imageData.time >= days(1)) {
+	    makeImageRequest();
+	  }
 
-	if (!imageData || Date.now() - imageData.time >= days(1)) {
-	  makeImageRequest();
-	}
+	  if (!blob || !imageData) return;
+
+	  renderImage(URL.createObjectURL(blob), imageData.text);
+	});
 
 	function makeImageRequest() {
 	  setTimeout(makeImageRequest, days(1));
@@ -176,7 +182,9 @@
 	  req.send();
 	}
 
-	function onMainPageErr() {}
+	function onMainPageErr() {
+	  // add 503 handling
+	}
 
 	function onMainPageLoad() {
 	  template.innerHTML = req.response.parse.text['*'];
@@ -198,16 +206,13 @@
 	}
 
 	function onImageLoad() {
-	  reader.readAsDataURL(req.response);
-	}
+	  var imgURL = URL.createObjectURL(req.response);
 
-	function onRead(e) {
-	  var url = e.target.result;
+	  renderImage(imgURL, textHTML);
 
-	  renderImage(url, textHTML);
+	  setImageBlob(req.response);
 
 	  return set('image', {
-	    url: url,
 	    text: textHTML,
 	    time: Date.now()
 	  });
@@ -218,8 +223,12 @@
 	function renderImage(url, html) {
 	  i = (i + 1) % 2;
 	  bg[i].style.backgroundImage = 'url("' + url + '")';
-	  bgCL.toggle('bg-image--active', i === 1);
 	  text.innerHTML = html;
+
+	  Img.onload = function () {
+	    return bgCL.toggle('bg-image--active', i === 1);
+	  };
+	  Img.src = url;
 	}
 
 /***/ },
@@ -607,6 +616,53 @@
 
 	  set('settings:weather-units', userUnits);
 	};
+
+/***/ },
+/* 10 */,
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var db = void 0,
+	    didInit = void 0,
+	    _next = void 0;
+
+	var req = window.indexedDB.open('codsworth', 1);
+
+	req.onsuccess = function (event) {
+	  db = req.result;
+
+	  db.onerror = function (event) {
+	    // TODO
+	  };
+
+	  didInit = true;
+
+	  if (_next) getImageBlob(_next);
+	};
+
+	req.onupgradeneeded = function (event) {
+	  var objectStore = event.target.result.createObjectStore('images');
+	  objectStore.createIndex('image', 'image', { unique: false });
+	  event.target.transaction.oncomplete = function (event) {};
+	};
+
+	function setImageBlob(blob) {
+	  db.transaction(['images'], 'readwrite').objectStore('images').put(blob, 'image');
+	}
+
+	function getImageBlob(next) {
+	  if (!didInit) {
+	    _next = next;return;
+	  }
+
+	  db.transaction(['images'], 'readwrite').objectStore('images').get('image').onsuccess = function (event) {
+	    return next(event.target.result);
+	  };
+	}
+
+	module.exports = { setImageBlob: setImageBlob, getImageBlob: getImageBlob };
 
 /***/ }
 /******/ ]);

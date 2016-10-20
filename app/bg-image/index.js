@@ -1,25 +1,27 @@
-/* global XMLHttpRequest, FileReader */
+/* global URL, XMLHttpRequest */
 const { get, set } = require('../util/storage')
+const { getImageBlob, setImageBlob } = require('./store')
 const { days } = require('../util/time')
 const bg = [ document.getElementById('bg-0'), document.getElementById('bg-1') ]
 const bgCL = bg[1].classList
 const text = document.getElementById('text')
 const template = document.createElement('template')
-const reader = new FileReader()
-reader.onload = onRead
+const Img = new window.Image()
 
 let req, textHTML
 let i = 0
 
 const imageData = get('image')
 
-if (imageData) {
-  renderImage(imageData.url, imageData.text)
-}
+getImageBlob(blob => {
+  if (!imageData || (Date.now() - imageData.time) >= days(1)) {
+    makeImageRequest()
+  }
 
-if (!imageData || (Date.now() - imageData.time) >= days(1)) {
-  makeImageRequest()
-}
+  if (!blob || !imageData) return
+
+  renderImage(URL.createObjectURL(blob), imageData.text)
+})
 
 function makeImageRequest () {
   setTimeout(makeImageRequest, days(1))
@@ -42,7 +44,7 @@ function makeRequest (type, url, onerror, onload) {
 }
 
 function onMainPageErr () {
-
+  // add 503 handling
 }
 
 function onMainPageLoad () {
@@ -71,16 +73,13 @@ function onMainPageLoad () {
 }
 
 function onImageLoad () {
-  reader.readAsDataURL(req.response)
-}
+  const imgURL = URL.createObjectURL(req.response)
 
-function onRead (e) {
-  const url = e.target.result
+  renderImage(imgURL, textHTML)
 
-  renderImage(url, textHTML)
+  setImageBlob(req.response)
 
   return set('image', {
-    url,
     text: textHTML,
     time: Date.now()
   })
@@ -93,6 +92,8 @@ function onImageErr () {
 function renderImage (url, html) {
   i = (i + 1) % 2
   bg[i].style.backgroundImage = `url("${url}")`
-  bgCL.toggle('bg-image--active', i === 1)
   text.innerHTML = html
+
+  Img.onload = () => bgCL.toggle('bg-image--active', i === 1)
+  Img.src = url
 }

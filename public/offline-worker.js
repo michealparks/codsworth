@@ -99,10 +99,10 @@
 
 	module.exports = {
 		"name": "codsworth",
-		"version": "0.1.2",
+		"version": "0.1.3",
 		"repository": "michealparks/codsworth",
 		"description": "A slim wallpaper app.",
-		"license": "",
+		"license": "MIT",
 		"scripts": {
 			"tasks:dev": "cross-env NODE_ENV=development node tasks",
 			"tasks:prod": "cross-env NODE_ENV=production node tasks",
