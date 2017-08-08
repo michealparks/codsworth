@@ -1,4 +1,6 @@
-let arr = [
+module.exports = weatherCode
+
+let codes = [
   'Tornado',
   'Tropical storm',
   'Hurricane',
@@ -118,9 +120,7 @@ function icon (description) {
 
 function weatherCode (code) {
   return {
-    description: arr[code],
-    icon: icon(arr[code])
+    description: codes[code],
+    icon: icon(codes[code])
   }
 }
-
-module.exports = weatherCode

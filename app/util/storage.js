@@ -1,26 +1,25 @@
-/* global localStorage */
-const noStore = !storageAvailable('localStorage')
+module.exports = storage
+
 const stringify = JSON.stringify.bind(JSON)
 const parse = JSON.parse.bind(JSON)
-const g = localStorage.getItem.bind(localStorage)
-const s = localStorage.setItem.bind(localStorage)
+const get = localStorage.getItem.bind(localStorage)
+const set = localStorage.setItem.bind(localStorage)
 
-function storageAvailable (type) {
+const noStore = !(() => {
   try {
-    const storage = window[type]
     const x = '__storage_test__'
-    storage.setItem(x, x)
-    storage.removeItem(x)
+    localStorage.setItem(x, x)
+    localStorage.removeItem(x)
     return true
-  } catch (e) { return false }
-}
+  } catch (e) {
+    return false
+  }
+})()
 
-function get (key) {
-  return noStore ? null : parse(g(key))
-}
+function storage (key, val) {
+  if (noStore) return undefined
 
-function set (key, val) {
-  return noStore ? null : s(key, stringify(val))
+  return val !== undefined
+    ? set(key, stringify(val))
+    : parse(get(key))
 }
-
-module.exports = { get, set }

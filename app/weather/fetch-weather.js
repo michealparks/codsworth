@@ -1,14 +1,14 @@
-/* global XMLHttpRequest */
+module.exports = {fetchWeather, getGeolocation}
 
 const weatherCode = require('./codes-weather')
-const { minutes } = require('../util/time')
-const { get, set } = require('../util/storage')
+const {minutes} = require('../util/time')
+const storage = require('../util/storage')
 const baseURL = 'https://query.yahooapis.com/v1/public/yql?format=json&q='
 
 let req, next
 let didInit = false
-let weather = get('weather')
-let location = get('geolocation')
+let weather = storage('weather')
+let location = storage('geolocation')
 
 getGeolocation()
 
@@ -26,7 +26,7 @@ function getGeolocation () {
 }
 
 function onGetPosition ({ coords }) {
-  set('geolocation', {
+  storage('geolocation', {
     time: Date.now(),
     latitude: coords.latitude,
     longitude: coords.longitude
@@ -66,33 +66,30 @@ function fetchWeather (callback) {
 }
 
 function getLatLngQueryUrl (lat, lng) {
-  return `${baseURL}select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text="(${lat},${lng})")`
+  return baseURL + 'select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text="(' + lat + ',' + lng + ')")'
 }
 
 function getCityQueryUrl (q) {
-  return `${baseURL}select * from weather.forecast where u='c' AND woeid in (select woeid from geo.places(1) WHERE text="${q}")`
+  return baseURL + 'select * from weather.forecast where u="c" AND woeid in (select woeid from geo.places(1) WHERE text="' + q + '")'
 }
 
 function onWeatherFetch () {
-  const { item, description } = req.response.query.results.channel
+  const channel = req.response.query.results.channel
 
-  if (description === 'Yahoo! Weather Error') {
-    return next(item.description)
+  if (channel.description === 'Yahoo! Weather Error') {
+    return next(channel.item.description)
   }
 
   weather = {
-    temp: item.condition.temp,
-    code: weatherCode(item.condition.code),
+    temp: channel.item.condition.temp,
+    code: weatherCode(channel.item.condition.code),
     time: Date.now()
   }
 
-  set('weather', weather)
+  storage('weather', weather)
   return next(null, weather)
 }
 
 function onWeatherError () {
   console.warn(req, req.response)
 }
-
-module.exports = { fetchWeather, getGeolocation }
-

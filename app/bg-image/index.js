@@ -1,20 +1,20 @@
 /* global URL, XMLHttpRequest */
-const { get, set } = require('../util/storage')
-const { getImageBlob, setImageBlob } = require('./store')
-const { days } = require('../util/time')
-const bg = [ document.getElementById('bg-0'), document.getElementById('bg-1') ]
+const storage = require('../util/storage')
+const db = require('./store')
+const {days} = require('../util/time')
+const bg = [document.getElementById('bg-0'), document.getElementById('bg-1')]
 const bgCL = bg[1].classList
 const text = document.getElementById('text')
-const template = document.createElement('template')
 const Img = new window.Image()
+const wikiURL = 'https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=Main_Page&format=json&origin=*'
+const imageData = storage('image')
+const parser = new DOMParser()
 
-let req, textHTML
+let textHTML
 let i = 0
 
-const imageData = get('image')
-
-getImageBlob(blob => {
-  if (!imageData || (Date.now() - imageData.time) >= days(1)) {
+db.getImageBlob((err, blob) => {
+  if (err || !imageData || (Date.now() - imageData.time) >= days(1)) {
     makeImageRequest()
   }
 
@@ -26,21 +26,17 @@ getImageBlob(blob => {
 function makeImageRequest () {
   setTimeout(makeImageRequest, days(1))
 
-  return makeRequest(
-    'json',
-    'https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=Main_Page&format=json&origin=*',
-    onMainPageErr,
-    onMainPageLoad
-  )
+  makeRequest('json', wikiURL, onMainPageErr, onMainPageLoad)
 }
 
 function makeRequest (type, url, onerror, onload) {
-  req = new XMLHttpRequest()
-  req.open('GET', url, true)
-  req.responseType = type
-  req.onerror = onerror
-  req.onload = onload
-  req.send()
+  const xhr = new XMLHttpRequest()
+  xhr.open('GET', url)
+  xhr.responseType = type
+  xhr.onerror = onerror
+  xhr.ontimeout = onerror
+  xhr.onload = onload
+  xhr.send()
 }
 
 function onMainPageErr () {
@@ -48,38 +44,34 @@ function onMainPageErr () {
 }
 
 function onMainPageLoad () {
-  template.innerHTML = req.response.parse.text['*']
-
-  const section = template.content.querySelector('#mp-lower')
+  const doc = parser.parseFromString(this.response.parse.text['*'], 'text/html')
+  const section = doc.querySelector('#mp-lower')
   const imageURL = section.querySelector('img').getAttribute('src').split('/')
-  const size = imageURL.pop().replace(/^[0-9]{3,4}px/, `2400px`)
-  const url = `https:${imageURL.join('/')}/${size}`
+  const size = imageURL.pop().replace(/^[0-9]{3,4}px/, '2400px')
+  const url = 'https:' + imageURL.join('/') + '/' + size
+
+  makeRequest('blob', url, onImageErr, onImageLoad)
+
   const description = section.querySelector('p')
+  const links = description.querySelectorAll('a')
 
-  Array.prototype.slice.call(description.querySelectorAll('a'))
-    .forEach(el => {
-      el.setAttribute('href', `https://wikipedia.org${el.getAttribute('href')}`)
-      el.setAttribute('target', '_blank')
-    })
-
-  makeRequest(
-    'blob',
-    url,
-    onImageErr,
-    onImageLoad
-  )
+  for (let el, i = 0, l = links.length; i < l; ++i) {
+    el = links[i]
+    el.setAttribute('href', 'https://wikipedia.org' + el.getAttribute('href'))
+    el.setAttribute('target', '_blank')
+  }
 
   textHTML = description.innerHTML
 }
 
 function onImageLoad () {
-  const imgURL = URL.createObjectURL(req.response)
+  const imgURL = URL.createObjectURL(this.response)
 
   renderImage(imgURL, textHTML)
 
-  setImageBlob(req.response)
+  db.setImageBlob(this.response)
 
-  return set('image', {
+  storage('image', {
     text: textHTML,
     time: Date.now()
   })

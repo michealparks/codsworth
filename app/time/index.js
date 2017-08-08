@@ -1,10 +1,10 @@
-const { get, set } = require('../util/storage')
+const storage = require('../util/storage')
 const { expandDay, numMonth, expandMonth } = require('./conversions')
 const time = document.getElementById('time')
 const date = document.getElementById('date')
 
-let timeFormat = get('settings:time-format') || '24hr'
-let dateFormat = get('settings:date-format') || 'words'
+let timeFormat = storage('settings:time-format') || '24hr'
+let dateFormat = storage('settings:date-format') || 'words'
 let t, d, s, suffix
 
 tick()
@@ -43,12 +43,12 @@ time.onclick = () => {
   if (timeFormat === '24hr') time.classList.remove('am', 'pm')
 
   tick(true)
-  return set('settings:time-format', timeFormat)
+  storage('settings:time-format', timeFormat)
 }
 
 date.onclick = () => {
   dateFormat = (dateFormat === 'words') ? 'numbers' : 'words'
 
   tick(true)
-  return set('settings:date-format', dateFormat)
+  storage('settings:date-format', dateFormat)
 }

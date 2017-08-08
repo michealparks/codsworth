@@ -1,23 +1,31 @@
-let db, didInit, _next
+module.exports = {setImageBlob, getImageBlob}
 
-const req = window.indexedDB.open('codsworth', 1)
+let db, didInit, didFail, callback
 
-req.onsuccess = function (event) {
-  db = req.result
+if (window.indexedDB !== undefined) {
+  const req = window.indexedDB.open('codsworth', 1)
 
-  db.onerror = function (event) {
-    // TODO
+  req.onsuccess = (event) => {
+    db = req.result
+
+    db.onerror = (event) => {
+      // TODO
+    }
+
+    didInit = true
+
+    if (callback) getImageBlob(callback)
   }
 
-  didInit = true
+  req.onupgradeneeded = (event) => {
+    const objectStore = event.target.result.createObjectStore('images')
 
-  if (_next) getImageBlob(_next)
-}
+    objectStore.createIndex('image', 'image', { unique: false })
 
-req.onupgradeneeded = function (event) {
-  const objectStore = event.target.result.createObjectStore('images')
-  objectStore.createIndex('image', 'image', { unique: false })
-  event.target.transaction.oncomplete = (event) => {}
+    event.target.transaction.oncomplete = (event) => {}
+  }
+} else {
+  didFail = true
 }
 
 function setImageBlob (blob) {
@@ -27,12 +35,17 @@ function setImageBlob (blob) {
 }
 
 function getImageBlob (next) {
-  if (!didInit) { _next = next; return }
+  if (didFail) {
+    return next(true)
+  }
+
+  if (!didInit) {
+    callback = next
+    return
+  }
 
   db.transaction(['images'], 'readwrite')
     .objectStore('images')
     .get('image')
-    .onsuccess = (event) => next(event.target.result)
+    .onsuccess = (event) => next(null, event.target.result)
 }
-
-module.exports = { setImageBlob, getImageBlob }
