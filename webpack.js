@@ -24,6 +24,7 @@ const uglify = new UglifyJsPlugin({
 
 const constants = {
   'process.env.NODE_ENV': JSON.stringify(__dev__ ? 'development' : 'production'),
+  '__version__': JSON.stringify(require('./package.json').version),
   '__VERSION__': JSON.stringify(require('./package.json').version),
   '__dev__': __dev__
 }
