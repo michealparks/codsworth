@@ -18,7 +18,7 @@ if (!__dev__) {
       // 2. Not in cache - return the result from the live server
       // `fetch` is essentially a "fallback"
       .then((res) => {
-        return res || window.fetch(event.request)
+        return res || fetch(event.request)
       })
     )
   })
