@@ -1,8 +1,7 @@
-module.exports = {fetchWeather, getGeolocation}
+import {weatherCode} from './codes-weather'
+import {minutes} from '../util/time'
+import {storage} from '../util/storage'
 
-const weatherCode = require('./codes-weather')
-const {minutes} = require('../util/time')
-const storage = require('../util/storage')
 const baseURL = 'https://query.yahooapis.com/v1/public/yql?format=json&q='
 
 let req, next
@@ -10,22 +9,18 @@ let didInit = false
 let weather = storage('weather')
 let location = storage('geolocation')
 
-getGeolocation()
-
-if (location) init()
-
-function init () {
+const init = () => {
   didInit = true
   return next ? fetchWeather(next) : null
 }
 
-function getGeolocation () {
+const getGeolocation = () => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(onGetPosition, onGetPositionErr)
   }
 }
 
-function onGetPosition ({ coords }) {
+const onGetPosition = ({ coords }) => {
   storage('geolocation', {
     time: Date.now(),
     latitude: coords.latitude,
@@ -36,17 +31,16 @@ function onGetPosition ({ coords }) {
   return init()
 }
 
-function onGetPositionErr (error) {
+const onGetPositionErr = (error) => {
   switch (error.code) {
     case error.PERMISSION_DENIED:
     case error.POSITION_UNAVAILABLE:
     case error.TIMEOUT:
-    case error.UNKNOWN_ERROR:
-      return
+    case error.UNKNOWN_ERROR: return
   }
 }
 
-function fetchWeather (callback) {
+export const fetchWeather = (callback) => {
   next = callback
 
   if (!didInit) return
@@ -65,15 +59,15 @@ function fetchWeather (callback) {
   return req.send()
 }
 
-function getLatLngQueryUrl (lat, lng) {
+const getLatLngQueryUrl = (lat, lng) => {
   return baseURL + 'select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text="(' + lat + ',' + lng + ')")'
 }
 
-function getCityQueryUrl (q) {
+const getCityQueryUrl = (q) => {
   return baseURL + 'select * from weather.forecast where u="c" AND woeid in (select woeid from geo.places(1) WHERE text="' + q + '")'
 }
 
-function onWeatherFetch () {
+const onWeatherFetch = () => {
   const channel = req.response.query.results.channel
 
   if (channel.description === 'Yahoo! Weather Error') {
@@ -90,6 +84,10 @@ function onWeatherFetch () {
   return next(null, weather)
 }
 
-function onWeatherError () {
+const onWeatherError = () => {
   console.warn(req, req.response)
 }
+
+getGeolocation()
+
+if (location) init()

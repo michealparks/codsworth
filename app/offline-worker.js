@@ -1,6 +1,6 @@
 /* global fetch, self, caches */
 
-if (process.env.NODE_ENV === 'production') {
+if (!__dev__) {
   self.addEventListener('install', function (event) {
     // Perform install step:  loading each required file into cache
     return event.waitUntil(caches.open(__version__)

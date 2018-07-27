@@ -1,6 +1,4 @@
-module.exports = {
-  seconds: (n) => n * 1000,
-  minutes: (n) => n * 1000 * 60,
-  hours: (n) => n * 1000 * 60 * 60,
-  days: (n) => n * 1000 * 60 * 60 * 24
-}
+export const seconds = (n) => n * 1000
+export const minutes = (n) => n * 1000 * 60
+export const hours = (n) => n * 1000 * 60 * 60
+export const days = (n) => n * 1000 * 60 * 60 * 24

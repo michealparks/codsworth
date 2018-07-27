@@ -1,6 +1,4 @@
-module.exports = {expandDay, numMonth, expandMonth}
-
-function expandDay (d) {
+export const expandDay = (d) => {
   switch (d) {
     case 'Mon': return 'Monday'
     case 'Tue': return 'Tuesday'
@@ -12,7 +10,7 @@ function expandDay (d) {
   }
 }
 
-function numMonth (m) {
+export const numMonth = (m) => {
   switch (m) {
     case 'Jan': return 1
     case 'Feb': return 2
@@ -29,7 +27,7 @@ function numMonth (m) {
   }
 }
 
-function expandMonth (m) {
+export const expandMonth = (m) => {
   switch (m) {
     case 'Jan': return 'January'
     case 'Feb': return 'February'

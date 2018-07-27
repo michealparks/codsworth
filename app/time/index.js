@@ -1,15 +1,13 @@
-const storage = require('../util/storage')
-const { expandDay, numMonth, expandMonth } = require('./conversions')
+import {storage} from '../util/storage'
+import {expandDay, numMonth, expandMonth} from './conversions'
+
 const time = document.getElementById('time')
 const date = document.getElementById('date')
-
 let timeFormat = storage('settings:time-format') || '24hr'
 let dateFormat = storage('settings:date-format') || 'words'
 let t, d, s, suffix
 
-tick()
-
-function tick (once) {
+const tick = (once) => {
   d = new Date().toString().split(' ')
 
   if (timeFormat === '24hr') {
@@ -52,3 +50,5 @@ date.onclick = () => {
   tick(true)
   storage('settings:date-format', dateFormat)
 }
+
+tick()

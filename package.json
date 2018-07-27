@@ -5,39 +5,38 @@
   "description": "A slim wallpaper app.",
   "license": "MIT",
   "scripts": {
-    "tasks:dev": "cross-env NODE_ENV=development node tasks",
-    "tasks:prod": "cross-env NODE_ENV=production node tasks",
-    "webpack:dev": "cross-env NODE_ENV=development webpack --watch --progress --colors",
-    "webpack:prod": "cross-env NODE_ENV=production webpack",
+    "webpack:dev": "cross-env NODE_ENV=development node webpack",
+    "webpack:prod": "cross-env NODE_ENV=production node webpack",
     "styl:dev": "stylus --watch app/index.styl --out public/index.css",
     "styl:prod": "stylus --compress < app/index.styl > public/index.css",
-    "dev": "concurrently \"npm run tasks:dev\" \"node server\" \"npm run styl:dev\" \"npm run webpack:dev\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"node server\" \"npm run styl:dev\"",
     "prod": "npm run build && NODE_ENV=production node server",
-    "build": "npm run webpack:prod && npm run styl:prod && npm run tasks:prod",
+    "build": "cross-env NODE_ENV=production node webpack && npm run styl:prod",
     "deploy:major": "npm version major && npm run build && gh-pages -d public",
     "deploy:minor": "npm version minor && npm run build && gh-pages -d public",
     "deploy:patch": "npm version patch && npm run build && gh-pages -d public"
   },
   "dependencies": {},
   "devDependencies": {
-    "babel-loader": "^7.0.0",
+    "babel-loader": "^7.1.5",
     "babel-plugin-transform-strict-mode": "^6.24.1",
-    "babili-webpack-plugin": "0.1.1",
-    "concurrently": "^3.4.0",
-    "cross-env": "^5.0.0",
-    "express": "^4.15.3",
-    "gh-pages": "^1.0.0",
-    "inline-source": "^5.2.2",
-    "morgan": "^1.8.2",
+    "concurrently": "^3.6.1",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.3",
+    "gh-pages": "^1.2.0",
+    "inline-source": "^6.1.5",
+    "morgan": "^1.9.0",
     "stylus": "^0.54.5",
-    "webpack": "^2.6.1"
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "webpack": "^4.16.2"
   },
   "standard": {
     "globals": [
       "localStorage",
       "XMLHttpRequest",
       "DOMParser",
-      "__version__"
+      "__version__",
+      "__dev__"
     ]
-  } 
+  }
 }

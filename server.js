@@ -1,8 +1,11 @@
 'use strict'
 
+require('./webpack')
+
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
+
 
 app.use(morgan('combined'))
 app.use('/', express.static(require('path').join(__dirname, 'public')))

@@ -1,5 +1,3 @@
-module.exports = {setImageBlob, getImageBlob}
-
 let db, didInit, didFail, callback
 
 if (window.indexedDB !== undefined) {
@@ -28,13 +26,13 @@ if (window.indexedDB !== undefined) {
   didFail = true
 }
 
-function setImageBlob (blob) {
+export const setImageBlob = (blob) => {
   db.transaction(['images'], 'readwrite')
     .objectStore('images')
     .put(blob, 'image')
 }
 
-function getImageBlob (next) {
+export const getImageBlob = (next) => {
   if (didFail) {
     return next(true)
   }

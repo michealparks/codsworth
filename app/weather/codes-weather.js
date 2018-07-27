@@ -1,6 +1,4 @@
-module.exports = weatherCode
-
-let codes = [
+const codes = [
   'Tornado',
   'Tropical storm',
   'Hurricane',
@@ -51,7 +49,7 @@ let codes = [
   'Isolated thundershowers'
 ]
 
-function icon (description) {
+const icon = (description) => {
   switch (description) {
     case 'Tornado':
     case 'Tropical storm':
@@ -118,7 +116,7 @@ function icon (description) {
   }
 }
 
-function weatherCode (code) {
+export const weatherCode = (code) => {
   return {
     description: codes[code],
     icon: icon(codes[code])

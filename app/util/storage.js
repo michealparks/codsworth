@@ -1,5 +1,3 @@
-module.exports = storage
-
 const stringify = JSON.stringify.bind(JSON)
 const parse = JSON.parse.bind(JSON)
 const get = localStorage.getItem.bind(localStorage)
@@ -16,7 +14,7 @@ const noStore = !(() => {
   }
 })()
 
-function storage (key, val) {
+export const storage = (key, val) => {
   if (noStore) return undefined
 
   return val !== undefined

@@ -33,18 +33,35 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -62,57 +79,25 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./app/offline-worker.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 7:
+/***/ "./app/offline-worker.js":
+/*!*******************************!*\
+  !*** ./app/offline-worker.js ***!
+  \*******************************/
+/*! no static exports found */
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
 /***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 
 /* global fetch, self, caches */
 
-if (false) {
-  self.addEventListener('install', function (event) {
-    // Perform install step:  loading each required file into cache
-    return event.waitUntil(caches.open(__version__)
-    // Add all offline dependencies to the cache
-    .then(function cache() {
-      return cache.addAll(['/codsworth/index.html']);
-    })
-    // At this point everything has been cached
-    .then(function () {
-      return self.skipWaiting();
-    }));
-  });
+if (false) {}
 
-  self.addEventListener('fetch', function (event) {
-    return event.respondWith(caches.match(event.request)
-    // 1. Cache hit - return the response from the cached version
-    // 2. Not in cache - return the result from the live server
-    // `fetch` is essentially a "fallback"
-    .then(function (res) {
-      return res || fetch(event.request);
-    }));
-  });
-
-  self.addEventListener('activate', function (event) {
-    // Calling claim() to force a "controllerchange" event on navigator.serviceWorker
-    event.waitUntil(self.clients.claim());
-
-    return event.waitUntil(caches.keys().then(function (keyList) {
-      Promise.all(keyList.map(function (key) {
-        if ([__version__].indexOf(key) === -1) {
-          return caches.delete(key);
-        }
-      }));
-    }));
-  });
-}
 
 /***/ })
 

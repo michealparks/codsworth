@@ -1,6 +1,6 @@
-require('./weather')
-require('./bg-image')
-require('./time')
+import './weather'
+import './bg-image'
+import './time'
 
 if (navigator.serviceWorker !== undefined) {
   // Listen for claiming of our ServiceWorker
