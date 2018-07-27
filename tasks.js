@@ -1,6 +1,6 @@
 const fs = require('fs')
 const {resolve} = require('path')
-const inline = require('inline-source')
+const {inlineSource} = require('inline-source')
 const source = fs.createReadStream('app/index.html')
 
 module.exports = () => {
