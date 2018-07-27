@@ -3,7 +3,7 @@ if (!__dev__) {
     // Perform install step:  loading each required file into cache
     return event.waitUntil(caches.open(__version__)
       // Add all offline dependencies to the cache
-      .then(function cache () {
+      .then((cache) => {
         return cache.addAll(['/codsworth/index.html'])
       })
       // At this point everything has been cached
