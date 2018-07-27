@@ -43,11 +43,7 @@ const config = {
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(constants)
-  ].concat(__dev__ ? [] : uglify),
-  node: {
-    __dirname: false,
-    __filename: false
-  }
+  ].concat(__dev__ ? [] : uglify)
 }
 
 const pack = (config, watch) => {

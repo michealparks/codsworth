@@ -1,5 +1,3 @@
-/* global fetch, self, caches */
-
 if (!__dev__) {
   self.addEventListener('install', function (event) {
     // Perform install step:  loading each required file into cache

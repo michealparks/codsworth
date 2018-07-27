@@ -5,13 +5,13 @@
   "description": "A slim wallpaper app.",
   "license": "MIT",
   "scripts": {
-    "webpack:dev": "cross-env NODE_ENV=development node webpack",
-    "webpack:prod": "cross-env NODE_ENV=production node webpack",
+    "webpack:dev": "cross-env NODE_ENV=development node webpack.js",
+    "webpack:prod": "cross-env NODE_ENV=production node webpack.js",
     "styl:dev": "stylus --watch app/index.styl --out public/index.css",
     "styl:prod": "stylus --compress < app/index.styl > public/index.css",
     "dev": "cross-env NODE_ENV=development concurrently \"node server\" \"npm run styl:dev\"",
     "prod": "npm run build && NODE_ENV=production node server",
-    "build": "cross-env NODE_ENV=production node webpack && npm run styl:prod",
+    "build": "cross-env NODE_ENV=production node webpack.js && npm run styl:prod",
     "deploy:major": "npm version major && npm run build && gh-pages -d public",
     "deploy:minor": "npm version minor && npm run build && gh-pages -d public",
     "deploy:patch": "npm version patch && npm run build && gh-pages -d public"
@@ -36,7 +36,9 @@
       "XMLHttpRequest",
       "DOMParser",
       "__version__",
-      "__dev__"
+      "__dev__",
+      "self",
+      "caches"
     ]
   }
 }
