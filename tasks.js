@@ -7,7 +7,7 @@ module.exports = () => {
   source.pipe(fs.createWriteStream('public/index.html'))
   source.on('error', console.error.bind(console))
   source.on('end', () => process.env.NODE_ENV === 'development'
-    ? null : inline(resolve('app/index.html'), {
+    ? null : inlineSource(resolve('app/index.html'), {
       compress: true,
       rootpath: resolve('public'),
       ignore: []
