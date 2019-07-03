@@ -1,0 +1,35 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <title>New Tab</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+
+<body class="absolute size-full bg-black">
+  <svg id="loading" class='relative' viewBox="0 0 20 20">
+    <path d="M4 12c-1.1 0-2-0.9-2-2s0.9-2 2-2v0c1.1 0 2 0.9 2 2s-0.9 2-2 2v0z" />
+    <path d="M10 12c-1.1 0-2-0.9-2-2s0.9-2 2-2v0c1.1 0 2 0.9 2 2s-0.9 2-2 2v0z" />
+    <path d="M16 12c-1.1 0-2-0.9-2-2s0.9-2 2-2v0c1.1 0 2 0.9 2 2s-0.9 2-2 2v0z" />
+  </svg>
+
+  <div class="absolute size-full hidden">
+    <div class="absolute size-full bg-black"></div>
+    <div id="background" class="absolute size-full"></div>
+  </div>
+
+  <svg id="settings" viewBox="0 0 24 28">
+    <path d="M24 21v2c0 0.5-0.5 1-1 1h-22c-0.5 0-1-0.5-1-1v-2c0-0.5 0.5-1 1-1h22c0.5 0 1 0.5 1 1zM24 13v2c0 0.5-0.5 1-1 1h-22c-0.5 0-1-0.5-1-1v-2c0-0.5 0.5-1 1-1h22c0.5 0 1 0.5 1 1zM24 5v2c0 0.5-0.5 1-1 1h-22c-0.5 0-1-0.5-1-1v-2c0-0.5 0.5-1 1-1h22c0.5 0 1 0.5 1 1z"/>
+  </svg>
+
+  <div id="information">
+    <a target='_tab' id="title"></a>
+    <a target='_tab' id="author"></a>
+  </div>
+
+</body>
+
+<script type="module" src="./main.js"></script>
+
+</html>

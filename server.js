@@ -1,6 +1,6 @@
 'use strict'
 
-require('./webpack')
+require('./build')
 
 const express = require('express')
 const morgan = require('morgan')
