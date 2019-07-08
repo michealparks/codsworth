@@ -1,4 +1,9 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
+  overflow: hidden;
   display: flex;
   align-content: center;
   justify-content: center;
@@ -12,9 +17,6 @@ a {
   cursor: default;
 }
 
-a:hover {
-  text-decoration: underline;
-}
 
 .absolute {
   position: absolute;
@@ -33,43 +35,90 @@ a:hover {
   background-color: #000;
 }
 
-#loading {
+.loading {
   width: 40px;
 }
 
-#loading path {
+.loading path {
   fill: #fff;
 }
 
-#background {
+.background {
   background-position: center;
   background-size: cover;
   opacity: 0.75;
   transition: opacity 300ms;
 }
 
-#background.hidden {
+.background.hidden {
   opacity: 0;
   pointer-events: none;
   transition: 0;
 }
 
-#settings {
+.btn-refresh {
+  all: initial;
+  z-index: 2;
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 13px;
-  padding: 10px;
+  width: 18px;
+  padding: 12px;
   fill: #fff;
+  color: white;
+  font-family: inherit; 
   opacity: 0.4;
-  transition: opacity 300ms;
+  border-radius: 4px;
+  font-size: 11px;
+  transition: 200ms opacity, 400ms transform;
 }
 
-#settings:hover {
-  opacity: 1;
+@keyframes spin {
+  0%   { transform: rotateZ(  0deg); opacity: 0.4; }
+  50%  { opacity: 1.0; }
+  100% { transform: rotateZ(359deg); opacity: 0.4; }
 }
 
-#information {
+.btn-refresh.active {
+  opacity: 0.4;
+  pointer-events: none;
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+}
+
+.btn-refresh:hover {
+  opacity: 0.8;
+}
+
+.gradient {
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+}
+
+.gradient-left {
+  left: 0;
+  height: 200px;
+  width: 200px;
+  background-image: radial-gradient(
+    circle farthest-side at bottom left,
+    rgba(0,0,0,0.4),
+    transparent);
+}
+
+.gradient-right {
+  right: 0;
+  height: 450px;
+  width: 450px;
+  background-image: radial-gradient(
+    circle farthest-side at bottom right,
+    rgba(0,0,0,0.7),
+    transparent);
+}
+
+.information {
+  z-index: 2;
   color: #fff;
   position: absolute;
   bottom: 0;
@@ -79,6 +128,15 @@ a:hover {
   font-size: 13px;
 }
 
-#title {
+.information .link {
+  opacity: 0.65;
+  transition: 100ms opacity;
+}
+
+.information .link:hover {
+  opacity: 1.0;
+}
+
+.title, .author {
   margin-bottom: 3px;
 }

@@ -1,31 +1,53 @@
-export async function openDB (name, version, upgrade) {
-  const request = window.indexedDB.open(name, version)
-  request.onupgradeneeded = function ({ target }) { upgrade(target.result) }
-  return promise(request)
+let db
+
+export async function openDB () {
+  const request = window.indexedDB.open('galeri', 3)
+
+  request.onupgradeneeded = function (e) {
+    const db = e.target.result
+
+    if (!db.objectStoreNames.contains('images')) {
+      db.createObjectStore('images', {
+        keyPath: 'id',
+        autoIncrement: true
+      })
+    }
+
+    if (!db.objectStoreNames.contains('artObjects')) {
+      db.createObjectStore('artObjects', {
+        keyPath: 'id',
+        autoIncrement: true
+      })
+    }
+  }
+
+  db = await promise(request)
+
+  return db
 }
 
-export async function putDB (db, name, data) {
+export async function putDB (name, data) {
   return promise(db
     .transaction(name, 'readwrite')
     .objectStore(name)
     .put({ ...data, created: new Date().getTime() }))
 }
 
-export async function getDB (db, name, id) {
+export async function getDB (name, id) {
   return promise(db
     .transaction(name)
     .objectStore(name)
     .get(id))
 }
 
-export async function getAllDB (db, name) {
+export async function getAllDB (name) {
   return promise(db
     .transaction(name)
     .objectStore(name)
     .getAll())
 }
 
-export async function clearObjectStore (db, name) {
+export async function clearDB (name) {
   return promise(db
     .transaction(name, 'readwrite')
     .objectStore(name)
@@ -34,8 +56,12 @@ export async function clearObjectStore (db, name) {
 
 function promise (request) {
   return new Promise(function (resolve, reject) {
-    request.onsuccess = function ({ target }) { resolve(target.result) }
-    request.onerror = function ({ target }) { reject(target.result) }
-    request.onabort = function ({ target }) { reject(target.result) }
+    function onEvent ({ target }) {
+      resolve(target.result)
+    }
+
+    request.onsuccess = onEvent
+    request.onerror = onEvent
+    request.onabort = onEvent
   })
 }

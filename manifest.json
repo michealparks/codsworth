@@ -1,17 +1,15 @@
 {
+  "version": "0.1.0",
   "manifest_version": 2,
   "author": "Micheal Parks",
-  // "chrome_settings_overrides": {
-  //   "homepage": "index.html"
-  // },
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "description": "This extension replaces the new tab page with a piece of artwork, updated daily.",
-  "developer": {
-    "name": "Micheal Parks",
-    "url": "https://github.com/michealparks"
+  "icons": {
+    "48": "Galeri.svg",
+    "96": "Galeri.svg"
   },
+  "description": "Replace your empty tab page with art masterpieces, updated frequently.",
   "incognito": "spanning",
   "name": "Galeri",
   "permissions": [
@@ -21,6 +19,5 @@
   ],
   "omnibox": {
     "keyword": "galeri"
-  },
-  "version": "1.0"
+  }
 }

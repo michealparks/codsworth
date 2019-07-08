@@ -1,5 +1,6 @@
 const rollup = require('rollup')
 const nodeResolve = require('rollup-plugin-node-resolve')
+const minify = require('rollup-plugin-babel-minify')
 
 const input = {
   input: './app/main.js',
@@ -13,7 +14,7 @@ const output = {
 
 const config = {
   ...input,
-  output: [output]
+  output
 }
 
 async function build () {
@@ -39,9 +40,12 @@ async function build () {
       }
     })
   } else {
-    const bundle = await rollup.rollup(input)
-    const res = await bundle.generate(config)
-    await bundle.write(res.output)
+    const bundle = await rollup.rollup({
+      input: './app/main.js',
+      plugins: [nodeResolve(), minify({ sourceMap: false, comments: false })]
+    })
+
+    await bundle.write(output)
   }
 }
 
