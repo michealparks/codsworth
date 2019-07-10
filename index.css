@@ -56,6 +56,10 @@ a {
   transition: 0;
 }
 
+.background.portrait {
+  background-position: 50% 20%;
+}
+
 .btn-refresh {
   all: initial;
   z-index: 2;

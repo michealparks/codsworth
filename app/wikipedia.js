@@ -10,11 +10,11 @@ async function randomArtObject () {
 }
 
 async function getArtObjects () {
-  const artObjectsId = localStorage.getItem('artObjectsId')
+  const id = localStorage.getItem('artObjectsId')
 
-  if (artObjectsId) {
-    const res = await getDB('artObjects', parseInt(artObjectsId, 10))
-    const { artObjects } = res
+  if (id) {
+    const res = await getDB('artObjects', 'wikipedia')
+    const { artObjects } = res || {}
 
     if (artObjects && artObjects.length > 0) {
       return artObjects
@@ -31,7 +31,7 @@ async function getArtObjects () {
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
-      artObjects
+      artObjects: { key: 'wikipedia', artObjects }
     })
 
     return artObjects

@@ -1,9 +1,12 @@
 import { getDB } from './db'
 import { metmuseum } from './metmuseum'
 import { wikipedia } from './wikipedia'
+import { rijks } from './rijks'
 
-export async function getArtObject () {
-  const imageId = localStorage.getItem('imageId')
+export async function getArtObject (forceNew) {
+  const imageId = forceNew
+    ? null
+    : localStorage.getItem('imageId')
 
   if (imageId) {
     return getDB('images', parseInt(imageId, 10))
@@ -19,12 +22,14 @@ export async function getArtObject () {
 }
 
 function getRandom () {
-  return wikipedia.randomArtObject()
   const r = Math.floor(Math.random() * 2)
 
+  console.log(r)
+
   switch (r) {
-    case 0: return metmuseum.randomArtObject()
-    case 1: return wikipedia.randomArtObject()
+    case 0: return wikipedia.randomArtObject()
+    case 1: return rijks.randomArtObject()
+    case 2: return metmuseum.randomArtObject()
   }
 }
 

@@ -31,6 +31,10 @@ async function main () {
   window.flush = function () {
     localStorage.removeItem('artObjectsId')
     localStorage.removeItem('imageId')
+
+    localStorage.removeItem('rijks_objects_id')
+    localStorage.removeItem('rijks_page')
+
     try { clearDB('images') } catch (err) { console.error(err) }
     try { clearDB('artObjects') } catch (err) { console.error(err) }
   }

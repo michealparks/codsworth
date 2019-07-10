@@ -33,11 +33,11 @@ export async function putDB (name, data) {
     .put({ ...data, created: new Date().getTime() }))
 }
 
-export async function getDB (name, id) {
+export async function getDB (name, key) {
   return promise(db
     .transaction(name)
     .objectStore(name)
-    .get(id))
+    .get(key))
 }
 
 export async function getAllDB (name) {

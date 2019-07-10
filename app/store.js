@@ -24,7 +24,7 @@ imageStore.subscribe(async function (artObject) {
   localStorage.setItem('imageId', id)
 })
 
-artObjectsStore.subscribe(async function (artObjects) {
-  const id = await putDB('artObjects', { artObjects })
+artObjectsStore.subscribe(async function (data) {
+  const id = await putDB('artObjects', data)
   localStorage.setItem('artObjectsId', id)
 })

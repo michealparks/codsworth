@@ -7,9 +7,7 @@ function setImage (artObject) {
   const url = URL.createObjectURL(artObject.blob)
 
   img.onload = function () {
-    if (img.naturalWidth < img.naturalHeight) {
-      background.style.backgroundPosition = '50% 0'
-    }
+    background.classList.toggle('portrait', img.naturalWidth < img.naturalHeight)
 
     background.style.backgroundImage = `url('${url}')`
 
@@ -24,7 +22,7 @@ function setImage (artObject) {
     }
 
     const authorEl = document.getElementById('author')
-    authorEl.textContent = artObject.authorLink ? `by ${artObject.author}` : ''
+    authorEl.textContent = artObject.author ? `by ${artObject.author}` : ''
 
     if (artObject.authorLink) {
       authorEl.href = artObject.authorLink
@@ -56,11 +54,9 @@ function addListeners () {
       el.classList.remove('active')
       el.classList.add('active')
 
-      localStorage.removeItem('imageId')
-
       imageStore.subscribe(setImage)
 
-      const artObject = await getArtObject()
+      const artObject = await getArtObject(true)
 
       imageStore.dispatch({
         type: 'ADD_ARTOBJECT',

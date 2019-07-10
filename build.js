@@ -2,24 +2,18 @@ const rollup = require('rollup')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const minify = require('rollup-plugin-babel-minify')
 
-const input = {
-  input: './app/main.js',
-  plugins: [nodeResolve()]
-}
-
 const output = {
   dir: './',
   format: 'iife'
 }
 
-const config = {
-  ...input,
-  output
-}
-
 async function build () {
   if (process.env.NODE_ENV === 'development') {
-    const watcher = await rollup.watch(config)
+    const watcher = await rollup.watch({
+      input: './app/main.js',
+      plugins: [nodeResolve()],
+      output
+    })
 
     watcher.on('event', event => {
       if (event.code === 'BUNDLE_START') {

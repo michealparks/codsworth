@@ -7,7 +7,7 @@
   "scripts": {
     "build:dev": "cross-env NODE_ENV=development node build.js",
     "build:prod": "cross-env NODE_ENV=production node build.js",
-    "dev": "cross-env NODE_ENV=development node server.js",
+    "dev": "cross-env NODE_ENV=development node build.js",
     "prod": "npm run build && NODE_ENV=production node server.js",
     "build": "cross-env NODE_ENV=production node build.js",
     "deploy:major": "npm version major && npm run build && gh-pages -d public",
@@ -19,13 +19,13 @@
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "express": "^4.17.0",
+    "express": "^4.17.1",
     "gh-pages": "^2.0.1",
-    "inline-source": "^6.1.10",
+    "inline-source": "^6.2.0",
     "morgan": "^1.9.1",
-    "rollup": "^1.12.2",
+    "rollup": "^1.16.6",
     "rollup-plugin-babel-minify": "^9.0.0",
-    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-sucrase": "^2.1.0",
     "stylus": "^0.54.5"
   },
