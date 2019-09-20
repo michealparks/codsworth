@@ -1,31 +1,28 @@
-function subscribe (fn) {
-  this.subscribers.push(fn)
-}
-
-function unsubscribe (fn) {
-  this.subscribers.splice(this.subscribers.indexOf(fn), 1)
-}
-
-function dispatch (action) {
-  this.state = this.reducer(this.state, action)
-
-  for (let i = 0, l = this.subscribers.length; i < l; i++) {
-    this.subscribers[i](this.state)
-  }
-}
-
-function getState () {
-  return this.state
-}
-
-export function createStore (reducer, preloadedState) {
-  return {
-    state: preloadedState,
+export function createStore (reducer, state) {
+  const store = {
+    state,
     reducer,
     subscribe,
     unsubscribe,
     subscribers: [],
-    dispatch,
-    getState
+    dispatch
   }
+
+  function subscribe (fn) {
+    store.subscribers.push(fn)
+  }
+
+  function unsubscribe (fn) {
+    store.subscribers.splice(store.subscribers.indexOf(fn), 1)
+  }
+
+  function dispatch (action) {
+    store.state = reducer(store.state, action)
+
+    store.subscribers.forEach(function (fn) {
+      fn(store.state)
+    })
+  }
+
+  return store
 }

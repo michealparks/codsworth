@@ -1,5 +1,8 @@
-import { getDB } from './db'
+import { fetch } from './util'
+import { db } from './db'
 import { artObjectsStore } from './store'
+
+const endpoint = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD'
 
 async function randomArtObject () {
   const artObjects = await getArtObjects()
@@ -10,23 +13,34 @@ async function randomArtObject () {
 }
 
 async function getArtObjects () {
-  const id = localStorage.getItem('rijks_objects_id')
+  const res = await db.get('artObjects', 'rijks')
 
-  if (id) {
-    const res = await getDB('artObjects', 'rijks')
-    const { artObjects } = res || {}
-
-    if (artObjects && artObjects.length > 0) {
-      return artObjects
-    } else {
-      localStorage.removeItem('rijks_objects_id')
-      return getArtObjects()
-    }
+  if (res && res.artObjects.length > 0) {
+    return res.artObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10)
-    const artObjects = fetchObjects(page)
+    const [err, objects] = await fetchObjects(page)
 
-    if (!artObjects) return
+    if (err) return
+
+    const artObjects = objects
+      .filter(function (artObject) {
+        return (
+          artObject.webImage !== null &&
+          artObject.webImage !== undefined
+        )
+      }).map(function (artObject) {
+        return {
+          src: artObject.webImage.url,
+          title: artObject.title,
+          author: artObject.principalOrFirstMaker,
+          provider: 'Rijksmuseum',
+          titleLink: artObject.links.web,
+          providerLink: 'https://www.rijksmuseum.nl/en',
+          blob: undefined,
+          timestamp: undefined
+        }
+      })
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -44,7 +58,7 @@ function removeRandomArtObject (artObjects) {
 
   artObjectsStore.dispatch({
     type: 'ADD_ARTOBJECTS',
-    artObjects
+    artObjects: { key: 'rijks', artObjects }
   })
 
   return object
@@ -52,26 +66,16 @@ function removeRandomArtObject (artObjects) {
 
 async function fetchObjects (page) {
   try {
-    const res = await window.fetch(`https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&p=${page}&imgonly=True&type=painting&key=1KfM6MpD`)
+    const res = await fetch(`${endpoint}&p=${page}`)
+
+    if (!res) return [true]
+
     const json = await res.json()
-    return json.artObjects.filter(function (artObject) {
-      return artObject.webImage !== null && artObject.webImage !== undefined
-    }).map(function (artObject) {
-      return {
-        src: artObject.webImage.url,
-        title: artObject.title.length > 60
-          ? `${artObject.title.slice(0, 60)}...`
-          : artObject.title,
-        author: artObject.principalOrFirstMaker,
-        provider: 'Rijksmuseum',
-        titleLink: artObject.links.web,
-        providerLink: 'https://www.rijksmuseum.nl/en',
-        blob: undefined,
-        timestamp: undefined
-      }
-    })
+
+    return [undefined, json.artObjects]
   } catch (err) {
     console.error(err)
+    return [true]
   }
 }
 

@@ -1,4 +1,5 @@
-import { getDB } from './db'
+import { fetch } from './util'
+import { db } from './db'
 import { artObjectsStore } from './store'
 
 async function randomArtObject () {
@@ -10,24 +11,19 @@ async function randomArtObject () {
 }
 
 async function getArtObjects () {
-  const id = localStorage.getItem('artObjectsId')
+  const res = await db.get('artObjects', 'wikipedia')
 
-  if (id) {
-    const res = await getDB('artObjects', 'wikipedia')
-    const { artObjects } = res || {}
-
-    if (artObjects && artObjects.length > 0) {
-      return artObjects
-    } else {
-      localStorage.removeItem('artObjectsId')
-      return getArtObjects()
-    }
+  if (res && res.artObjects.length > 0) {
+    return res.artObjects
   } else {
-    const pageStr = await fetchPage('Wikipedia:Featured_pictures/Artwork/Paintings')
+    const [err, str] = await fetchPage('Wikipedia:Featured_pictures/Artwork/Paintings')
 
-    if (!pageStr) return
+    if (err) return
 
-    const artObjects = parsePage(pageStr)
+    const artObjects = parsePage(str)
+    console.log(artObjects.map(function ({ src }) {
+      return src
+    }))
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -38,16 +34,18 @@ async function getArtObjects () {
   }
 }
 
-function parsePage (pageStr) {
-  const doc = new DOMParser().parseFromString(pageStr, 'text/html')
-  return Array.from(doc.querySelectorAll('.gallerybox')).map(function (artObject) {
-    const img = artObject.querySelector('img') || { src: '' }
-    const links = artObject.querySelectorAll('.gallerytext a')
-    const boldEl = artObject.querySelector('.gallerytext b')
+function parsePage (str) {
+  const doc = new DOMParser().parseFromString(str, 'text/html')
+  const galleryboxes = Array.from(doc.querySelectorAll('.gallerybox'))
+
+  return galleryboxes.map(function (gallerybox) {
+    const img = gallerybox.querySelector('img') || { src: '' }
+    const links = gallerybox.querySelectorAll('.gallerytext a')
+    const boldEl = gallerybox.querySelector('.gallerytext b')
     const titleEl = boldEl.children[0] ? boldEl.children[0] : boldEl
     const authorEl = links.length > 1 ? links[1] : links[0]
     const arr = img.src.split('/').slice(0, -1)
-    const src = arr.concat(`2500px-${arr[arr.length - 1]}`).join('/')
+    const src = arr.concat(`2000px-${arr[arr.length - 1]}`).join('/')
     const title = titleEl.innerText || ''
     const titleLink = titleEl.href
     const author = authorEl.innerText || ''
@@ -72,7 +70,7 @@ function removeRandomArtObject (artObjects) {
 
   artObjectsStore.dispatch({
     type: 'ADD_ARTOBJECTS',
-    artObjects
+    artObjects: { key: 'wikipedia', artObjects }
   })
 
   return object
@@ -80,11 +78,16 @@ function removeRandomArtObject (artObjects) {
 
 async function fetchPage (page) {
   try {
-    const response = await window.fetch(`https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`)
+    const response = await fetch(`https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`)
+
+    if (!response) return [true]
+
     const json = await response.json()
-    return json.parse.text['*']
+
+    return [undefined, json.parse.text['*']]
   } catch (err) {
     console.error(err)
+    return [true]
   }
 }
 

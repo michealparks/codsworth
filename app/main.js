@@ -1,43 +1,40 @@
-import { openDB, clearDB } from './db'
-import { imageStore } from './store'
+import { db } from './db'
 import { dom } from './dom'
-import { getArtObject } from './art-object'
+import { setArtObject } from './art-object'
+
+async function flush () {
+  localStorage.removeItem('rijks_page')
+
+  try { await db.destroy('images') } catch (err) { console.error(err) }
+  try { await db.destroy('artObjects') } catch (err) { console.error(err) }
+}
 
 async function main () {
   navigator.storage.persist()
 
-  await openDB()
+  await db.open('galeri', 1, function (e) {
+    const { result } = e.target
+
+    if (!result.objectStoreNames.contains('images')) {
+      result.createObjectStore('images', {
+        keyPath: 'id',
+        autoIncrement: true
+      })
+    }
+
+    if (!result.objectStoreNames.contains('artObjects')) {
+      result.createObjectStore('artObjects', {
+        keyPath: 'key',
+        autoIncrement: true
+      })
+    }
+  })
 
   dom.addListeners()
 
-  const artObject = await getArtObject()
+  await setArtObject()
 
-  imageStore.dispatch({
-    type: 'ADD_ARTOBJECT',
-    artObject
-  })
-
-  if (artObject.timestamp < Date.now() - (1000 * 60 * 60 * 2)) {
-    localStorage.removeItem('imageId')
-
-    const next = await getArtObject()
-
-    imageStore.dispatch({
-      type: 'ADD_ARTOBJECT',
-      artObject: next
-    })
-  }
-
-  window.flush = function () {
-    localStorage.removeItem('artObjectsId')
-    localStorage.removeItem('imageId')
-
-    localStorage.removeItem('rijks_objects_id')
-    localStorage.removeItem('rijks_page')
-
-    try { clearDB('images') } catch (err) { console.error(err) }
-    try { clearDB('artObjects') } catch (err) { console.error(err) }
-  }
+  window.flush = flush
 }
 
 main()

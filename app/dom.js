@@ -1,7 +1,10 @@
+import { db } from './db'
 import { imageStore } from './store'
-import { getArtObject } from './art-object'
+import { setArtObject } from './art-object'
 
 function setImage (artObject) {
+  if (artObject.id === 'next') return
+
   const background = document.getElementById('background')
   const img = new window.Image()
   const url = URL.createObjectURL(artObject.blob)
@@ -12,7 +15,9 @@ function setImage (artObject) {
     background.style.backgroundImage = `url('${url}')`
 
     const titleEl = document.getElementById('title')
-    titleEl.textContent = artObject.title
+    titleEl.textContent = artObject.title.length > 50
+      ? `${artObject.title.slice(0, 50)}...`
+      : artObject.title
 
     if (artObject.titleLink) {
       titleEl.href = artObject.titleLink
@@ -26,9 +31,9 @@ function setImage (artObject) {
 
     if (artObject.authorLink) {
       authorEl.href = artObject.authorLink
-      titleEl.style.pointerEvents = 'auto'
+      authorEl.style.pointerEvents = 'auto'
     } else {
-      titleEl.style.pointerEvents = 'none'
+      authorEl.style.pointerEvents = 'none'
     }
 
     const providerEl = document.getElementById('provider')
@@ -43,35 +48,30 @@ function setImage (artObject) {
 
 let active = false
 
+const refreshBtn = document.getElementById('btn-refresh')
+
 function addListeners () {
-  document.getElementById('btn-refresh')
-    .addEventListener('click', async function (e) {
-      const el = e.target
-
-      if (active) return
-
-      active = true
-      el.classList.remove('active')
-      el.classList.add('active')
-
-      imageStore.subscribe(setImage)
-
-      const artObject = await getArtObject(true)
-
-      imageStore.dispatch({
-        type: 'ADD_ARTOBJECT',
-        artObject
-      })
-
-      el.addEventListener('animationiteration', function iterate () {
-        el.classList.remove('active')
-        el.removeEventListener('animationiteration', iterate)
-      })
-
-      active = false
-    })
-
   imageStore.subscribe(setImage)
+
+  refreshBtn.addEventListener('animationiteration', function () {
+    if (!active) {
+      refreshBtn.classList.remove('active')
+    }
+  })
+
+  refreshBtn.addEventListener('click', async function (e) {
+    if (active) return
+
+    active = true
+    refreshBtn.classList.add('active')
+
+    imageStore.subscribe(setImage)
+
+    await db.remove('images', 'current')
+    await setArtObject()
+
+    active = false
+  })
 }
 
 export const dom = {

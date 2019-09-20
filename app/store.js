@@ -1,5 +1,5 @@
 import { createStore } from './redux'
-import { putDB } from './db'
+import { db } from './db'
 
 export const imageStore = createStore(function (state, action) {
   switch (action.type) {
@@ -20,11 +20,9 @@ export const artObjectsStore = createStore(function (state, action) {
 })
 
 imageStore.subscribe(async function (artObject) {
-  const id = await putDB('images', artObject)
-  localStorage.setItem('imageId', id)
+  db.put('images', artObject)
 })
 
 artObjectsStore.subscribe(async function (data) {
-  const id = await putDB('artObjects', data)
-  localStorage.setItem('artObjectsId', id)
+  db.put('artObjects', data)
 })
