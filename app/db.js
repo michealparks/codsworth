@@ -1,68 +1,59 @@
 export const db = {
-  db: undefined,
-  open,
-  get,
-  put,
-  getAll,
-  remove,
-  destroy
-}
+  ref: undefined,
 
-function promise (request) {
-  return new Promise(function (resolve) {
-    function onEvent ({ target }) {
-      resolve(target.result)
-      request.removeEventListener('success', onEvent)
-      request.removeEventListener('error', onEvent)
-      request.removeEventListener('abort', onEvent)
-    }
+  async open (name, version, onupgradeneeded) {
+    const request = window.indexedDB.open(name, version)
+    request.onupgradeneeded = onupgradeneeded
+    db.ref = await db.promise(request)
+  },
 
-    request.addEventListener('success', onEvent)
-    request.addEventListener('error', onEvent)
-    request.addEventListener('abort', onEvent)
-  })
-}
+  get (name, key) {
+    return db.promise(db.ref
+      .transaction(name)
+      .objectStore(name)
+      .get(key))
+  },
 
-async function open (name, version, onupgradeneeded) {
-  const request = window.indexedDB.open(name, version)
-  request.onupgradeneeded = onupgradeneeded
-  this.db = await promise(request)
-}
+  put (name, data) {
+    return db.promise(db.ref
+      .transaction(name, 'readwrite')
+      .objectStore(name)
+      .put({ ...data, created: new Date().getTime() }))
+  },
 
-async function get (name, key) {
-  return promise(this.db
-    .transaction(name)
-    .objectStore(name)
-    .get(key))
-}
+  getAll (name) {
+    return db.promise(db.ref
+      .transaction(name)
+      .objectStore(name)
+      .getAll())
+  },
 
-async function put (name, data) {
-  return promise(this.db
-    .transaction(name, 'readwrite')
-    .objectStore(name)
-    .put({
-      ...data,
-      created: new Date().getTime()
-    }))
-}
+  remove (name, key) {
+    return db.promise(db.ref
+      .transaction(name, 'readwrite')
+      .objectStore(name)
+      .delete(key))
+  },
 
-async function getAll (name) {
-  return promise(this.db
-    .transaction(name)
-    .objectStore(name)
-    .getAll())
-}
+  destroy (name) {
+    return db.promise(db.ref
+      .transaction(name, 'readwrite')
+      .objectStore(name)
+      .clear())
+  },
 
-async function remove (name, key) {
-  return promise(this.db
-    .transaction(name, 'readwrite')
-    .objectStore(name)
-    .delete(key))
-}
+  promise (request) {
+    return new Promise(function (resolve) {
+      function onEvent ({ target }) {
+        resolve(target.result)
+        request.removeEventListener('success', onEvent)
+        request.removeEventListener('error', onEvent)
+        request.removeEventListener('abort', onEvent)
+      }
 
-async function destroy (name) {
-  return promise(this.db
-    .transaction(name, 'readwrite')
-    .objectStore(name)
-    .clear())
+      request.addEventListener('success', onEvent)
+      request.addEventListener('error', onEvent)
+      request.addEventListener('abort', onEvent)
+    })
+  }
 }

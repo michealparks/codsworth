@@ -21,9 +21,6 @@ async function getArtObjects () {
     if (err) return
 
     const artObjects = parsePage(str)
-    console.log(artObjects.map(function ({ src }) {
-      return src
-    }))
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -36,9 +33,10 @@ async function getArtObjects () {
 
 function parsePage (str) {
   const doc = new DOMParser().parseFromString(str, 'text/html')
-  const galleryboxes = Array.from(doc.querySelectorAll('.gallerybox'))
+  const galleryboxes = doc.querySelectorAll('.gallerybox')
+  const artObjects = []
 
-  return galleryboxes.map(function (gallerybox) {
+  for (const gallerybox of galleryboxes) {
     const img = gallerybox.querySelector('img') || { src: '' }
     const links = gallerybox.querySelectorAll('.gallerytext a')
     const boldEl = gallerybox.querySelector('.gallerytext b')
@@ -51,7 +49,7 @@ function parsePage (str) {
     const author = authorEl.innerText || ''
     const authorLink = authorEl.href
 
-    return {
+    artObjects.push({
       src: `https://upload.wikimedia.org${src.split('//upload.wikimedia.org').pop()}`,
       title,
       author,
@@ -61,8 +59,10 @@ function parsePage (str) {
       providerLink: 'https://wikipedia.org',
       blob: undefined,
       timestamp: undefined
-    }
-  })
+    })
+  }
+
+  return artObjects
 }
 
 function removeRandomArtObject (artObjects) {

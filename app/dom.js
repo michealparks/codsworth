@@ -2,14 +2,14 @@ import { db } from './db'
 import { imageStore } from './store'
 import { setArtObject } from './art-object'
 
-function setImage (artObject) {
+const setImage = (artObject) => {
   if (artObject.id === 'next') return
 
   const background = document.getElementById('background')
   const img = new window.Image()
   const url = URL.createObjectURL(artObject.blob)
 
-  img.onload = function () {
+  img.onload = () => {
     background.classList.toggle('portrait', img.naturalWidth < img.naturalHeight)
 
     background.style.backgroundImage = `url('${url}')`
@@ -50,16 +50,10 @@ let active = false
 
 const refreshBtn = document.getElementById('btn-refresh')
 
-function addListeners () {
+const addListeners = () => {
   imageStore.subscribe(setImage)
 
-  refreshBtn.addEventListener('animationiteration', function () {
-    if (!active) {
-      refreshBtn.classList.remove('active')
-    }
-  })
-
-  refreshBtn.addEventListener('click', async function (e) {
+  refreshBtn.addEventListener('click', async (e) => {
     if (active) return
 
     active = true
@@ -69,6 +63,8 @@ function addListeners () {
 
     await db.remove('images', 'current')
     await setArtObject()
+
+    refreshBtn.classList.remove('active')
 
     active = false
   })

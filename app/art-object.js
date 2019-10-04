@@ -5,15 +5,14 @@ import { rijks } from './rijks'
 import { imageStore } from './store'
 import { blacklist } from './blacklist'
 
-const twoHours = 1000 * 60 * 60 * 2
-const thirtySeconds = 1000 * 10
+const threeHours = 1000 * 60 * 60 * 3
 
-export async function setArtObject () {
+export const setArtObject = async () => {
   let current, next
 
   current = await db.get('images', 'current')
 
-  const expired = (current && current.timestamp < Date.now() - twoHours)
+  const expired = (current && current.timestamp < Date.now() - threeHours)
 
   if (!current || expired) {
     next = await db.get('images', 'next')
@@ -24,7 +23,6 @@ export async function setArtObject () {
     } else {
       current = await getArtObject()
     }
-    console.log(current)
   }
 
   imageStore.dispatch({
@@ -50,7 +48,7 @@ export async function setArtObject () {
   }
 }
 
-function getRandom () {
+const getRandom = () => {
   const r = Math.floor(Math.random() * 2)
 
   switch (r) {
@@ -59,7 +57,7 @@ function getRandom () {
   }
 }
 
-async function getArtObject () {
+const getArtObject = async () => {
   const artObject = await getRandom()
 
   if (!artObject) {
@@ -67,7 +65,7 @@ async function getArtObject () {
   }
 
   console.log(artObject.src, blacklist.includes(artObject.src))
-  if (blacklist.includes(artObject.src)) {
+  if (blacklist.includes(decodeURI(artObject.src))) {
     return getArtObject()
   }
 
@@ -86,7 +84,7 @@ async function getArtObject () {
   return artObject
 }
 
-async function fetchImageBlob (src) {
+const fetchImageBlob = async (src) => {
   try {
     const res = await fetch(src.replace('chrome-extension://', 'https://'))
 

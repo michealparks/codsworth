@@ -19,10 +19,10 @@ export const artObjectsStore = createStore(function (state, action) {
   }
 })
 
-imageStore.subscribe(async function (artObject) {
+imageStore.subscribe(function (artObject) {
   db.put('images', artObject)
 })
 
-artObjectsStore.subscribe(async function (data) {
+artObjectsStore.subscribe(function (data) {
   db.put('artObjects', data)
 })

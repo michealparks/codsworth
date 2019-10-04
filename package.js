@@ -20,6 +20,8 @@ archive.on('error', function (err) {
   throw err
 })
 
+archive.directory('./', false)
+
 archive.pipe(output)
 
 archive.finalize()

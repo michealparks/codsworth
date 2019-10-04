@@ -1,12 +1,10 @@
-function timeout (time) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
-      resolve()
-    }, time)
+const timeout = (time) => {
+  return new Promise((resolve) => {
+    setTimeout(() => { resolve() }, time)
   })
 }
 
-export async function fetch (...args) {
+export const fetch = async (...args) => {
   const response = await Promise.race([
     timeout(10000),
     window.fetch(...args)

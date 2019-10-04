@@ -17,7 +17,6 @@ a {
   cursor: default;
 }
 
-
 .absolute {
   position: absolute;
 }
@@ -70,7 +69,7 @@ a {
   padding: 12px;
   fill: #fff;
   color: white;
-  font-family: inherit; 
+  font-family: inherit;
   opacity: 0.4;
   border-radius: 4px;
   font-size: 11px;

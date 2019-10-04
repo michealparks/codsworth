@@ -6,7 +6,7 @@ import { artObjectsStore } from './store'
 // because met has no-cors set on images >:|
 const endpoint = 'https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=11|21'
 
-async function randomArtObject () {
+const randomArtObject = async () => {
   const artObjects = await getArtObjects()
 
   if (!artObjects) return
@@ -14,7 +14,7 @@ async function randomArtObject () {
   return removeRandomArtObject(artObjects)
 }
 
-async function getArtObjects () {
+const getArtObjects = async () => {
   const res = await db.get('artObjects', 'met')
 
   if (res && res.artObjects.length > 0) {
@@ -33,7 +33,7 @@ async function getArtObjects () {
   }
 }
 
-async function removeRandomArtObject (artObjects) {
+const removeRandomArtObject = async (artObjects) => {
   const [id] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || [])
 
   const res = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
@@ -63,7 +63,7 @@ async function removeRandomArtObject (artObjects) {
   return artObject
 }
 
-async function fetchObjects (page) {
+const fetchObjects = async (page) => {
   try {
     const res = await fetch(endpoint)
 

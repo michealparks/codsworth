@@ -20,27 +20,24 @@ async function getArtObjects () {
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10)
     const [err, objects] = await fetchObjects(page)
+    const artObjects = []
 
     if (err) return
 
-    const artObjects = objects
-      .filter(function (artObject) {
-        return (
-          artObject.webImage !== null &&
-          artObject.webImage !== undefined
-        )
-      }).map(function (artObject) {
-        return {
-          src: artObject.webImage.url,
-          title: artObject.title,
-          author: artObject.principalOrFirstMaker,
-          provider: 'Rijksmuseum',
-          titleLink: artObject.links.web,
-          providerLink: 'https://www.rijksmuseum.nl/en',
-          blob: undefined,
-          timestamp: undefined
-        }
+    for (const artObject of objects) {
+      if (!artObject.webImage) continue
+
+      artObjects.push({
+        src: artObject.webImage.url,
+        title: artObject.title,
+        author: artObject.principalOrFirstMaker,
+        provider: 'Rijksmuseum',
+        titleLink: artObject.links.web,
+        providerLink: 'https://www.rijksmuseum.nl/en',
+        blob: undefined,
+        timestamp: undefined
       })
+    }
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
