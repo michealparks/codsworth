@@ -1,5 +1,5 @@
 import { db } from './db'
-import { fetch } from './util'
+import { fetchBlob } from './util'
 import { wikipedia } from './wikipedia'
 import { rijks } from './rijks'
 import { imageStore } from './store'
@@ -74,7 +74,8 @@ const getArtObject = async () => {
     return artObject
   }
 
-  const [err, blob] = await fetchImageBlob(artObject.src)
+  const src = artObject.src.replace('chrome-extension://', 'https://')
+  const [err, blob] = await fetchBlob(src)
 
   if (err) return getArtObject()
 
@@ -82,18 +83,4 @@ const getArtObject = async () => {
   artObject.timestamp = Date.now()
 
   return artObject
-}
-
-const fetchImageBlob = async (src) => {
-  try {
-    const res = await fetch(src.replace('chrome-extension://', 'https://'))
-
-    if (!res) return [true]
-
-    const blob = await res.blob()
-    return [undefined, blob]
-  } catch (err) {
-    console.error(err)
-    return [true]
-  }
 }

@@ -1,7 +1,34 @@
-import { createStore } from './redux'
-import { db } from './db'
+const constructStore = (reducer, initialState) => {
+  const subscribers = []
+  let state = initialState
 
-export const imageStore = createStore(function (state, action) {
+  const subscribe = (fn) => {
+    subscribers.push(fn)
+  }
+
+  const unsubscribe = (fn) => {
+    subscribers.splice(subscribers.indexOf(fn), 1)
+  }
+
+  const dispatch = (action) => {
+    state = reducer(state, action)
+
+    for (const fn of subscribers) {
+      fn(state)
+    }
+  }
+
+  return {
+    state,
+    reducer,
+    subscribers,
+    subscribe,
+    unsubscribe,
+    dispatch
+  }
+}
+
+export const imageStore = constructStore((state, action) => {
   switch (action.type) {
     case 'ADD_ARTOBJECT':
       return action.artObject
@@ -10,19 +37,11 @@ export const imageStore = createStore(function (state, action) {
   }
 })
 
-export const artObjectsStore = createStore(function (state, action) {
+export const artObjectsStore = constructStore((state, action) => {
   switch (action.type) {
     case 'ADD_ARTOBJECTS':
       return action.artObjects
     default:
       return state
   }
-})
-
-imageStore.subscribe(function (artObject) {
-  db.put('images', artObject)
-})
-
-artObjectsStore.subscribe(function (data) {
-  db.put('artObjects', data)
 })

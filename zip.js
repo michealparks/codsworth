@@ -3,12 +3,12 @@ const archiver = require('archiver')
 const output = fs.createWriteStream(`${__dirname}/galeri.zip`)
 const archive = archiver('zip', { zlib: { level: 9 } })
 
-output.on('close', function () {
+output.on('close', () => {
   console.log(archive.pointer() + ' total bytes')
   console.log('archiver has been finalized and the output file descriptor has closed.')
 })
 
-archive.on('warning', function (err) {
+archive.on('warning', (err) => {
   if (err.code === 'ENOENT') {
     console.error(err)
   } else {
@@ -16,7 +16,7 @@ archive.on('warning', function (err) {
   }
 })
 
-archive.on('error', function (err) {
+archive.on('error', (err) => {
   throw err
 })
 

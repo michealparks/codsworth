@@ -1,4 +1,4 @@
-import { fetch } from './util'
+import { fetchJSON } from './util'
 import { db } from './db'
 import { artObjectsStore } from './store'
 
@@ -19,12 +19,13 @@ async function getArtObjects () {
     return res.artObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10)
-    const [err, objects] = await fetchObjects(page)
-    const artObjects = []
+    const [err, json] = await fetchJSON(`${endpoint}&p=${page}`)
 
     if (err) return
 
-    for (const artObject of objects) {
+    const artObjects = []
+
+    for (const artObject of json.artObjects) {
       if (!artObject.webImage) continue
 
       artObjects.push({
@@ -59,21 +60,6 @@ function removeRandomArtObject (artObjects) {
   })
 
   return object
-}
-
-async function fetchObjects (page) {
-  try {
-    const res = await fetch(`${endpoint}&p=${page}`)
-
-    if (!res) return [true]
-
-    const json = await res.json()
-
-    return [undefined, json.artObjects]
-  } catch (err) {
-    console.error(err)
-    return [true]
-  }
 }
 
 export const rijks = {

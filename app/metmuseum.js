@@ -1,4 +1,4 @@
-import { fetch } from './util'
+import { fetchJSON } from './util'
 import { db } from './db'
 import { artObjectsStore } from './store'
 
@@ -20,9 +20,11 @@ const getArtObjects = async () => {
   if (res && res.artObjects.length > 0) {
     return res.artObjects
   } else {
-    const [err, artObjects] = await fetchObjects()
+    const [err, json] = await fetchJSON(endpoint)
 
     if (err) return
+
+    const artObjects = json.objectIDs
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -35,13 +37,9 @@ const getArtObjects = async () => {
 
 const removeRandomArtObject = async (artObjects) => {
   const [id] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || [])
+  const [err, object] = await fetchJSON(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
 
-  const res = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
-
-  if (!res) return
-
-  const object = await res.json()
-
+  if (err) return
   if (!object.primaryImage) return
 
   const artObject = {
@@ -61,21 +59,6 @@ const removeRandomArtObject = async (artObjects) => {
   })
 
   return artObject
-}
-
-const fetchObjects = async (page) => {
-  try {
-    const res = await fetch(endpoint)
-
-    if (!res) return [true]
-
-    const json = await res.json()
-
-    return [undefined, json.objectIDs]
-  } catch (err) {
-    console.error(err)
-    return [true]
-  }
 }
 
 export const metmuseum = {

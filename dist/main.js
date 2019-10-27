@@ -58,36 +58,37 @@ const db = {
   }
 };
 
-function createStore (reducer, state) {
-  const store = {
-    state,
-    reducer,
-    subscribe,
-    unsubscribe,
-    subscribers: [],
-    dispatch
+const constructStore = (reducer, initialState) => {
+  const subscribers = [];
+  let state = initialState;
+
+  const subscribe = (fn) => {
+    subscribers.push(fn);
   };
 
-  function subscribe (fn) {
-    store.subscribers.push(fn);
+  const unsubscribe = (fn) => {
+    subscribers.splice(subscribers.indexOf(fn), 1);
+  };
+
+  const dispatch = (action) => {
+    state = reducer(state, action);
+
+    for (const fn of subscribers) {
+      fn(state);
+    }
+  };
+
+  return {
+    state,
+    reducer,
+    subscribers,
+    subscribe,
+    unsubscribe,
+    dispatch
   }
+};
 
-  function unsubscribe (fn) {
-    store.subscribers.splice(store.subscribers.indexOf(fn), 1);
-  }
-
-  function dispatch (action) {
-    store.state = reducer(store.state, action);
-
-    store.subscribers.forEach(function (fn) {
-      fn(store.state);
-    });
-  }
-
-  return store
-}
-
-const imageStore = createStore(function (state, action) {
+const imageStore = constructStore((state, action) => {
   switch (action.type) {
     case 'ADD_ARTOBJECT':
       return action.artObject
@@ -96,7 +97,7 @@ const imageStore = createStore(function (state, action) {
   }
 });
 
-const artObjectsStore = createStore(function (state, action) {
+const artObjectsStore = constructStore((state, action) => {
   switch (action.type) {
     case 'ADD_ARTOBJECTS':
       return action.artObjects
@@ -105,34 +106,44 @@ const artObjectsStore = createStore(function (state, action) {
   }
 });
 
-imageStore.subscribe(function (artObject) {
-  db.put('images', artObject);
-});
-
-artObjectsStore.subscribe(function (data) {
-  db.put('artObjects', data);
-});
-
-function timeout (time) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
-      resolve();
-    }, time);
+const timeout = (time) => {
+  return new Promise((resolve) => {
+    setTimeout(() => { resolve(); }, time);
   })
-}
+};
 
-async function fetch (...args) {
+const fetch = async (...args) => {
   const response = await Promise.race([
     timeout(10000),
     window.fetch(...args)
   ]);
 
-  if (!response) return
-
   if (response.status >= 200 && response.status < 300) {
     return response
+  } else {
+    throw new Error(`request responded with status code ${response.status}`)
   }
-}
+};
+
+const fetchJSON = async (...args) => {
+  try {
+    const response = await fetch(...args);
+    const json = await response.json();
+    return [undefined, json]
+  } catch (err) {
+    return [err]
+  }
+};
+
+const fetchBlob = async (...args) => {
+  try {
+    const response = await fetch(...args);
+    const blob = await response.blob();
+    return [undefined, blob]
+  } catch (err) {
+    return [err]
+  }
+};
 
 async function randomArtObject () {
   const artObjects = await getArtObjects();
@@ -148,14 +159,13 @@ async function getArtObjects () {
   if (res && res.artObjects.length > 0) {
     return res.artObjects
   } else {
-    const [err, str] = await fetchPage('Wikipedia:Featured_pictures/Artwork/Paintings');
+    const page = 'Wikipedia:Featured_pictures/Artwork/Paintings';
+    const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`;
+    const [err, json] = await fetchJSON(url);
 
     if (err) return
 
-    const artObjects = parsePage(str);
-    console.log(artObjects.map(function ({ src }) {
-      return src
-    }));
+    const artObjects = parsePage(json.parse.text['*']);
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -168,9 +178,10 @@ async function getArtObjects () {
 
 function parsePage (str) {
   const doc = new DOMParser().parseFromString(str, 'text/html');
-  const galleryboxes = Array.from(doc.querySelectorAll('.gallerybox'));
+  const galleryboxes = doc.querySelectorAll('.gallerybox');
+  const artObjects = [];
 
-  return galleryboxes.map(function (gallerybox) {
+  for (const gallerybox of galleryboxes) {
     const img = gallerybox.querySelector('img') || { src: '' };
     const links = gallerybox.querySelectorAll('.gallerytext a');
     const boldEl = gallerybox.querySelector('.gallerytext b');
@@ -183,7 +194,7 @@ function parsePage (str) {
     const author = authorEl.innerText || '';
     const authorLink = authorEl.href;
 
-    return {
+    artObjects.push({
       src: `https://upload.wikimedia.org${src.split('//upload.wikimedia.org').pop()}`,
       title,
       author,
@@ -193,8 +204,10 @@ function parsePage (str) {
       providerLink: 'https://wikipedia.org',
       blob: undefined,
       timestamp: undefined
-    }
-  })
+    });
+  }
+
+  return artObjects
 }
 
 function removeRandomArtObject (artObjects) {
@@ -206,21 +219,6 @@ function removeRandomArtObject (artObjects) {
   });
 
   return object
-}
-
-async function fetchPage (page) {
-  try {
-    const response = await fetch(`https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`);
-
-    if (!response) return [true]
-
-    const json = await response.json();
-
-    return [undefined, json.parse.text['*']]
-  } catch (err) {
-    console.error(err);
-    return [true]
-  }
 }
 
 const wikipedia = {
@@ -244,28 +242,26 @@ async function getArtObjects$1 () {
     return res.artObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10);
-    const [err, objects] = await fetchObjects(page);
+    const [err, json] = await fetchJSON(`${endpoint}&p=${page}`);
 
     if (err) return
 
-    const artObjects = objects
-      .filter(function (artObject) {
-        return (
-          artObject.webImage !== null &&
-          artObject.webImage !== undefined
-        )
-      }).map(function (artObject) {
-        return {
-          src: artObject.webImage.url,
-          title: artObject.title,
-          author: artObject.principalOrFirstMaker,
-          provider: 'Rijksmuseum',
-          titleLink: artObject.links.web,
-          providerLink: 'https://www.rijksmuseum.nl/en',
-          blob: undefined,
-          timestamp: undefined
-        }
+    const artObjects = [];
+
+    for (const artObject of json.artObjects) {
+      if (!artObject.webImage) continue
+
+      artObjects.push({
+        src: artObject.webImage.url,
+        title: artObject.title,
+        author: artObject.principalOrFirstMaker,
+        provider: 'Rijksmuseum',
+        titleLink: artObject.links.web,
+        providerLink: 'https://www.rijksmuseum.nl/en',
+        blob: undefined,
+        timestamp: undefined
       });
+    }
 
     artObjectsStore.dispatch({
       type: 'ADD_ARTOBJECTS',
@@ -289,31 +285,17 @@ function removeRandomArtObject$1 (artObjects) {
   return object
 }
 
-async function fetchObjects (page) {
-  try {
-    const res = await fetch(`${endpoint}&p=${page}`);
-
-    if (!res) return [true]
-
-    const json = await res.json();
-
-    return [undefined, json.artObjects]
-  } catch (err) {
-    console.error(err);
-    return [true]
-  }
-}
-
 const rijks = {
   randomArtObject: randomArtObject$1
 };
 
-// Below is a list of artwork deemed NSFW. It's quite a moving selection,
-// but people may be using this app in an office setting.
+// A list of artwork deemed NSFW. It is a moving selection of works,
+// but people may not be able to appreciate the true extent of their beauty in an office setting.
 
-// If a piece is found that is delightful, yet awkward in a non-progressive
-// setting, please add a PR here.
+// If a work is found to be delightful, yet very awkward in a non-progressive
+// environment, please add a PR for an addition here.
 const blacklist = [
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg/2000px-Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/John_William_Waterhouse_-_Echo_and_Narcissus_-_Google_Art_Project.jpg/2000px-John_William_Waterhouse_-_Echo_and_Narcissus_-_Google_Art_Project.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Hugo_van_der_Goes_-_The_Fall_of_Man_and_The_Lamentation_-_Google_Art_Project.jpg/2000px-Hugo_van_der_Goes_-_The_Fall_of_Man_and_The_Lamentation_-_Google_Art_Project.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Antonio_Allegri%2C_called_Correggio_-_Jupiter_and_Io_-_Google_Art_Project.jpg/2000px-Antonio_Allegri%2C_called_Correggio_-_Jupiter_and_Io_-_Google_Art_Project.jpg',
@@ -335,12 +317,12 @@ const blacklist = [
   'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Pierre-Auguste_Renoir%2C_French_-_The_Large_Bathers_-_Google_Art_Project.jpg/2000px-Pierre-Auguste_Renoir%2C_French_-_The_Large_Bathers_-_Google_Art_Project.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Peter_Paul_Rubens_-_The_Birth_of_the_Milky_Way%2C_1636-1637.jpg/2000px-Peter_Paul_Rubens_-_The_Birth_of_the_Milky_Way%2C_1636-1637.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Edvard_Munch_-_Madonna_-_Google_Art_Project.jpg/2000px-Edvard_Munch_-_Madonna_-_Google_Art_Project.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Feszty_Panorama.jpg/2000px-Feszty_Panorama.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Feszty_Panorama.jpg/2000px-Feszty_Panorama.jpg'
 ];
 
 const threeHours = 1000 * 60 * 60 * 3;
 
-async function setArtObject () {
+const setArtObject = async () => {
   let current, next;
 
   current = await db.get('images', 'current');
@@ -356,7 +338,6 @@ async function setArtObject () {
     } else {
       current = await getArtObject();
     }
-    console.log(current);
   }
 
   imageStore.dispatch({
@@ -380,18 +361,18 @@ async function setArtObject () {
       }
     });
   }
-}
+};
 
-function getRandom () {
+const getRandom = () => {
   const r = Math.floor(Math.random() * 2);
 
   switch (r) {
     case 0: return wikipedia.randomArtObject()
     case 1: return rijks.randomArtObject()
   }
-}
+};
 
-async function getArtObject () {
+const getArtObject = async () => {
   const artObject = await getRandom();
 
   if (!artObject) {
@@ -399,7 +380,7 @@ async function getArtObject () {
   }
 
   console.log(artObject.src, blacklist.includes(artObject.src));
-  if (blacklist.includes(artObject.src)) {
+  if (blacklist.includes(decodeURI(artObject.src))) {
     return getArtObject()
   }
 
@@ -408,7 +389,8 @@ async function getArtObject () {
     return artObject
   }
 
-  const [err, blob] = await fetchImageBlob(artObject.src);
+  const src = artObject.src.replace('chrome-extension://', 'https://');
+  const [err, blob] = await fetchBlob(src);
 
   if (err) return getArtObject()
 
@@ -416,109 +398,104 @@ async function getArtObject () {
   artObject.timestamp = Date.now();
 
   return artObject
-}
+};
 
-async function fetchImageBlob (src) {
-  try {
-    const res = await fetch(src.replace('chrome-extension://', 'https://'));
+const ui = document.getElementById('ui');
+const refreshBtn = document.getElementById('btn-refresh');
+const background = document.getElementById('background');
+const title = document.getElementById('title');
+const author = document.getElementById('author');
+const provider = document.getElementById('provider');
 
-    if (!res) return [true]
+const hideUI = () => {
+  ui.style.display = 'none';
+};
 
-    const blob = await res.blob();
-    return [undefined, blob]
-  } catch (err) {
-    console.error(err);
-    return [true]
-  }
-}
-
-function setImage (artObject) {
+const setImage = (artObject) => {
   if (artObject.id === 'next') return
 
-  const background = document.getElementById('background');
   const img = new window.Image();
   const url = URL.createObjectURL(artObject.blob);
 
-  img.onload = function () {
+  img.onload = () => {
     background.classList.toggle('portrait', img.naturalWidth < img.naturalHeight);
-
     background.style.backgroundImage = `url('${url}')`;
 
-    const titleEl = document.getElementById('title');
-    titleEl.textContent = artObject.title.length > 50
+    title.textContent = artObject.title.length > 50
       ? `${artObject.title.slice(0, 50)}...`
       : artObject.title;
 
     if (artObject.titleLink) {
-      titleEl.href = artObject.titleLink;
-      titleEl.style.pointerEvents = 'auto';
+      title.href = artObject.titleLink;
+      title.style.pointerEvents = 'auto';
     } else {
-      titleEl.style.pointerEvents = 'none';
+      title.style.pointerEvents = 'none';
     }
 
-    const authorEl = document.getElementById('author');
-    authorEl.textContent = artObject.author ? `by ${artObject.author}` : '';
+    author.textContent = artObject.author ? `by ${artObject.author}` : '';
 
     if (artObject.authorLink) {
-      authorEl.href = artObject.authorLink;
-      authorEl.style.pointerEvents = 'auto';
+      author.href = artObject.authorLink;
+      author.style.pointerEvents = 'auto';
     } else {
-      authorEl.style.pointerEvents = 'none';
+      author.style.pointerEvents = 'none';
     }
 
-    const providerEl = document.getElementById('provider');
-    providerEl.textContent = `from ${artObject.provider}`;
-    providerEl.href = artObject.providerLink;
+    provider.textContent = `from ${artObject.provider}`;
+    provider.href = artObject.providerLink;
   };
 
   img.src = url;
 
   imageStore.unsubscribe(setImage);
-}
+};
 
-let active = false;
-
-const refreshBtn = document.getElementById('btn-refresh');
-
-function addListeners () {
+const replaceArtObject = async () => {
   imageStore.subscribe(setImage);
 
-  refreshBtn.addEventListener('animationiteration', function () {
+  await db.remove('images', 'current');
+  await setArtObject();
 
+  return true
+};
+
+const addListeners = () => {
+  imageStore.subscribe(setImage);
+
+  refreshBtn.addEventListener('click', async (e) => {
+    if (e.target.classList.has('active')) return
+
+    e.target.classList.add('active');
+
+    await replaceArtObject();
+
+    e.target.classList.remove('active');
   });
 
-  refreshBtn.addEventListener('click', async function (e) {
-    if (active) return
-
-    active = true;
-    refreshBtn.classList.add('active');
-
-    imageStore.subscribe(setImage);
-
-    await db.remove('images', 'current');
-    await setArtObject();
-
-    refreshBtn.classList.remove('active');
-
-    active = false;
-  });
-}
+  window.replaceArtObject = replaceArtObject;
+  window.hideUI = hideUI;
+};
 
 const dom = {
   addListeners
 };
 
-async function flush () {
+const flush = async () => {
   localStorage.removeItem('rijks_page');
 
-  try { await db.destroy('images'); } catch (err) { console.error(err); }
-  try { await db.destroy('artObjects'); } catch (err) { console.error(err); }
-}
+  try {
+    await db.destroy('images');
+  } catch (err) { console.error(err); }
 
-async function main () {
+  try {
+    await db.destroy('artObjects');
+  } catch (err) { console.error(err); }
+};
+
+const main = async () => {
   navigator.storage.persist();
 
-  await db.open('galeri', 1, function (e) {
+  await db.open('galeri', 1, (e) => {
     const { result } = e.target;
 
     if (!result.objectStoreNames.contains('images')) {
@@ -536,11 +513,20 @@ async function main () {
     }
   });
 
+  imageStore.subscribe((artObject) => {
+    db.put('images', artObject);
+  });
+
+  artObjectsStore.subscribe((data) => {
+    db.put('artObjects', data);
+  });
+
+
   dom.addListeners();
 
   await setArtObject();
 
   window.flush = flush;
-}
+};
 
 main();

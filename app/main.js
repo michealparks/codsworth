@@ -1,4 +1,5 @@
 import { db } from './db'
+import { imageStore, artObjectsStore } from './store'
 import { dom } from './dom'
 import { setArtObject } from './art-object'
 
@@ -34,6 +35,15 @@ const main = async () => {
       })
     }
   })
+
+  imageStore.subscribe((artObject) => {
+    db.put('images', artObject)
+  })
+
+  artObjectsStore.subscribe((data) => {
+    db.put('artObjects', data)
+  })
+
 
   dom.addListeners()
 

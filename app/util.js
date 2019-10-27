@@ -10,9 +10,29 @@ export const fetch = async (...args) => {
     window.fetch(...args)
   ])
 
-  if (!response) return
-
   if (response.status >= 200 && response.status < 300) {
     return response
+  } else {
+    throw new Error(`request responded with status code ${response.status}`)
+  }
+}
+
+export const fetchJSON = async (...args) => {
+  try {
+    const response = await fetch(...args)
+    const json = await response.json()
+    return [undefined, json]
+  } catch (err) {
+    return [err]
+  }
+}
+
+export const fetchBlob = async (...args) => {
+  try {
+    const response = await fetch(...args)
+    const blob = await response.blob()
+    return [undefined, blob]
+  } catch (err) {
+    return [err]
   }
 }
