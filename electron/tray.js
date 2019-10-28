@@ -1,27 +1,39 @@
-const { Tray, Menu } = require('electron')
+const { Tray, Menu, app } = require('electron')
 
 let tray
 
 export const constructTray = ({ events }) => {
   tray = new Tray('./dist/icon-dark_32x32.png')
+
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Next artwork',
+      label: 'Loading...'
+    }, {
+      label: 'Next Artwork',
       type: 'normal',
       click: events.onNext
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Active Features',
+      enabled: false
     }, {
       label: 'Background',
       type: 'checkbox',
       click: events.onToggleBackground
     }, {
-      label: 'ScreenSaver',
+      label: 'Screen Saver',
       type: 'checkbox',
       click: events.onToggleScreenSaver
     }, {
-      label: 'Run on startup',
+      type: 'separator'
+    }, {
+      label: 'Run On Startup',
       type: 'checkbox',
-      checked: true,
+      checked: app.getLoginItemSettings().openAtLogin,
       click: events.onToggleStartup
+    }, {
+      type: 'separator'
     }, {
       label: 'Quit',
       role: 'quit',
@@ -29,6 +41,14 @@ export const constructTray = ({ events }) => {
       click: events.onQuit
     }
   ])
-  tray.setToolTip('This is my application.')
+
   tray.setContextMenu(contextMenu)
+
+  const setInfo = (str) => {
+    contextMenu[0].label = str
+  }
+
+  return {
+    setInfo
+  }
 }

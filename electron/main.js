@@ -7,15 +7,22 @@ app.requestSingleInstanceLock()
 
 // if (app.dock) app.dock.hide()
 
-const hours = (n) => {
-  return n * 1000 * 60 * 60
-}
-
 app.once('ready', () => {
   const background = constructBackground(screen)
 
+  let nextArtworkId
+
+  const setTimer = () => {
+    if (nextArtworkId) clearInterval(nextArtworkId)
+
+    nextArtworkId = setInterval(() => {
+      background.next()
+    }, 3 * 1000 * 60 * 60)
+  }
+
   const onNext = () => {
     background.next()
+    setTimer()
   }
 
   const onToggleBackground = () => {
@@ -27,7 +34,9 @@ app.once('ready', () => {
   }
 
   const onToggleStartup = () => {
-
+    app.setLoginItemSettings({
+      openAtLogin: !app.getLoginItemSettings().openAtLogin
+    })
   }
 
   const onQuit = () => {
@@ -44,7 +53,5 @@ app.once('ready', () => {
     }
   })
 
-  setInterval(() => {
-    background.next()
-  }, hours(3))
+  setTimer()
 })

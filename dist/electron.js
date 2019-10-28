@@ -1,27 +1,39 @@
-const { Tray, Menu } = require('electron');
+const { Tray, Menu, app } = require('electron');
 
 let tray;
 
 const constructTray = ({ events }) => {
   tray = new Tray('./dist/icon-dark_32x32.png');
+
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Next artwork',
+      label: 'Loading...'
+    }, {
+      label: 'Next Artwork',
       type: 'normal',
       click: events.onNext
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Active Features',
+      enabled: false
     }, {
       label: 'Background',
       type: 'checkbox',
       click: events.onToggleBackground
     }, {
-      label: 'ScreenSaver',
+      label: 'Screen Saver',
       type: 'checkbox',
       click: events.onToggleScreenSaver
     }, {
-      label: 'Run on startup',
+      type: 'separator'
+    }, {
+      label: 'Run On Startup',
       type: 'checkbox',
-      checked: true,
+      checked: app.getLoginItemSettings().openAtLogin,
       click: events.onToggleStartup
+    }, {
+      type: 'separator'
     }, {
       label: 'Quit',
       role: 'quit',
@@ -29,8 +41,16 @@ const constructTray = ({ events }) => {
       click: events.onQuit
     }
   ]);
-  tray.setToolTip('This is my application.');
+
   tray.setContextMenu(contextMenu);
+
+  const setInfo = (str) => {
+    contextMenu[0].label = str;
+  };
+
+  return {
+    setInfo
+  }
 };
 
 const path = require('path');
@@ -83,21 +103,28 @@ const constructBackground = (screen) => {
   }
 };
 
-const { app, screen } = require('electron');
+const { app: app$1, screen } = require('electron');
 
-app.requestSingleInstanceLock();
+app$1.requestSingleInstanceLock();
 
 // if (app.dock) app.dock.hide()
 
-const hours = (n) => {
-  return n * 1000 * 60 * 60
-};
-
-app.once('ready', () => {
+app$1.once('ready', () => {
   const background = constructBackground(screen);
+
+  let nextArtworkId;
+
+  const setTimer = () => {
+    if (nextArtworkId) clearInterval(nextArtworkId);
+
+    nextArtworkId = setInterval(() => {
+      background.next();
+    }, 3 * 1000 * 60 * 60);
+  };
 
   const onNext = () => {
     background.next();
+    setTimer();
   };
 
   const onToggleBackground = () => {
@@ -109,11 +136,13 @@ app.once('ready', () => {
   };
 
   const onToggleStartup = () => {
-
+    app$1.setLoginItemSettings({
+      openAtLogin: !app$1.getLoginItemSettings().openAtLogin
+    });
   };
 
   const onQuit = () => {
-    app.quit();
+    app$1.quit();
   };
 
   constructTray({
@@ -126,7 +155,5 @@ app.once('ready', () => {
     }
   });
 
-  setInterval(() => {
-    background.next();
-  }, hours(3));
+  setTimer();
 });
