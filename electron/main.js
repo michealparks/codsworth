@@ -7,6 +7,10 @@ app.requestSingleInstanceLock()
 
 // if (app.dock) app.dock.hide()
 
+const hours = (n) => {
+  return n * 1000 * 60 * 60
+}
+
 app.once('ready', () => {
   const background = constructBackground(screen)
 
@@ -39,4 +43,8 @@ app.once('ready', () => {
       onQuit
     }
   })
+
+  setInterval(() => {
+    background.next()
+  }, hours(3))
 })

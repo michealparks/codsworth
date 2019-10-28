@@ -1,37 +1,36 @@
-const { app, Tray, Menu } = require('electron');
+const { Tray, Menu } = require('electron');
 
 let tray;
 
-const constructTray = (background) => {
+const constructTray = ({ events }) => {
   tray = new Tray('./dist/icon-dark_32x32.png');
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Next artwork',
       type: 'normal',
-      click () {
-        for (const win of background.all()) {
-          win.webContents.send('replaceArtObject');
-        }
-      }
+      click: events.onNext
     }, {
       label: 'Background',
-      type: 'checkbox'
+      type: 'checkbox',
+      click: events.onToggleBackground
     }, {
       label: 'ScreenSaver',
-      type: 'checkbox'
+      type: 'checkbox',
+      click: events.onToggleScreenSaver
+    }, {
+      label: 'Run on startup',
+      type: 'checkbox',
+      checked: true,
+      click: events.onToggleStartup
     }, {
       label: 'Quit',
       role: 'quit',
       type: 'normal',
-      click () {
-        app.quit();
-      }
+      click: events.onQuit
     }
   ]);
   tray.setToolTip('This is my application.');
   tray.setContextMenu(contextMenu);
-
-  return tray
 };
 
 const path = require('path');
@@ -73,23 +72,61 @@ const constructBackground = (screen) => {
     windows.push(win);
   }
 
-  const all = () => {
-    return windows
+  const next = async () => {
+    for (const win of windows) {
+      win.webContents.send('replaceArtObject');
+    }
   };
 
   return {
-    all
+    next
   }
 };
 
-const { app: app$1, screen } = require('electron');
+const { app, screen } = require('electron');
 
-app$1.requestSingleInstanceLock();
+app.requestSingleInstanceLock();
 
 // if (app.dock) app.dock.hide()
 
-app$1.once('ready', () => {
+const hours = (n) => {
+  return n * 1000 * 60 * 60
+};
+
+app.once('ready', () => {
   const background = constructBackground(screen);
-  const tray = constructTray(background);
-  
+
+  const onNext = () => {
+    background.next();
+  };
+
+  const onToggleBackground = () => {
+
+  };
+
+  const onToggleScreenSaver = () => {
+
+  };
+
+  const onToggleStartup = () => {
+
+  };
+
+  const onQuit = () => {
+    app.quit();
+  };
+
+  constructTray({
+    events: {
+      onNext,
+      onToggleBackground,
+      onToggleScreenSaver,
+      onToggleStartup,
+      onQuit
+    }
+  });
+
+  setInterval(() => {
+    background.next();
+  }, hours(3));
 });
