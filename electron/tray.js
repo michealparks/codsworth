@@ -1,35 +1,34 @@
-const { app, Tray, Menu } = require('electron')
+const { Tray, Menu } = require('electron')
 
 let tray
 
-export const constructTray = (background) => {
+export const constructTray = ({ events }) => {
   tray = new Tray('./dist/icon-dark_32x32.png')
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Next artwork',
       type: 'normal',
-      click () {
-        for (const win of background.all()) {
-          win.webContents.send('replaceArtObject')
-        }
-      }
+      click: events.onNext
     }, {
       label: 'Background',
-      type: 'checkbox'
+      type: 'checkbox',
+      click: events.onToggleBackground
     }, {
       label: 'ScreenSaver',
-      type: 'checkbox'
+      type: 'checkbox',
+      click: events.onToggleScreenSaver
+    }, {
+      label: 'Run on startup',
+      type: 'checkbox',
+      checked: true,
+      click: events.onToggleStartup
     }, {
       label: 'Quit',
       role: 'quit',
       type: 'normal',
-      click () {
-        app.quit()
-      }
+      click: events.onQuit
     }
   ])
   tray.setToolTip('This is my application.')
   tray.setContextMenu(contextMenu)
-
-  return tray
 }

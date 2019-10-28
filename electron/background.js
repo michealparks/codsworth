@@ -37,11 +37,13 @@ export const constructBackground = (screen) => {
     windows.push(win)
   }
 
-  const all = () => {
-    return windows
+  const next = async () => {
+    for (const win of windows) {
+      win.webContents.send('replaceArtObject')
+    }
   }
 
   return {
-    all
+    next
   }
 }

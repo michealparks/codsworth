@@ -9,6 +9,34 @@ app.requestSingleInstanceLock()
 
 app.once('ready', () => {
   const background = constructBackground(screen)
-  const tray = constructTray(background)
-  
+
+  const onNext = () => {
+    background.next()
+  }
+
+  const onToggleBackground = () => {
+
+  }
+
+  const onToggleScreenSaver = () => {
+
+  }
+
+  const onToggleStartup = () => {
+
+  }
+
+  const onQuit = () => {
+    app.quit()
+  }
+
+  constructTray({
+    events: {
+      onNext,
+      onToggleBackground,
+      onToggleScreenSaver,
+      onToggleStartup,
+      onQuit
+    }
+  })
 })
