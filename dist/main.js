@@ -463,7 +463,7 @@ const addListeners = () => {
   imageStore.subscribe(setImage);
 
   refreshBtn.addEventListener('click', async (e) => {
-    if (e.target.classList.has('active')) return
+    if (e.target.classList.contains('active')) return
 
     e.target.classList.add('active');
 
