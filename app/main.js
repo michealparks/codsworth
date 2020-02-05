@@ -1,55 +1,27 @@
-import { db } from './db'
-import { imageStore, artObjectsStore } from './store'
+import { store } from './store'
 import { dom } from './dom'
-import { setArtObject } from './art-object'
+import { setCurrentArtObject } from './art-object'
 
-const flush = async () => {
-  localStorage.removeItem('rijks_page')
-
-  try {
-    await db.destroy('images')
-  } catch (err) { console.error(err) }
-
-  try {
-    await db.destroy('artObjects')
-  } catch (err) { console.error(err) }
+const getCurrentArtObject = () => {
+  return store.state.currentArtObject
 }
 
 const main = async () => {
   navigator.storage.persist()
 
-  await db.open('galeri', 1, (e) => {
-    const { result } = e.target
-
-    if (!result.objectStoreNames.contains('images')) {
-      result.createObjectStore('images', {
-        keyPath: 'id',
-        autoIncrement: true
-      })
-    }
-
-    if (!result.objectStoreNames.contains('artObjects')) {
-      result.createObjectStore('artObjects', {
-        keyPath: 'key',
-        autoIncrement: true
-      })
-    }
-  })
-
-  imageStore.subscribe((artObject) => {
-    db.put('images', artObject)
-  })
-
-  artObjectsStore.subscribe((data) => {
-    db.put('artObjects', data)
-  })
-
+  await store.initialize()
 
   dom.addListeners()
 
-  await setArtObject()
+  await setCurrentArtObject()
 
-  window.flush = flush
+  if (window.onApplicationReady !== undefined) {
+    window.onApplicationReady({
+      getCurrentArtObject,
+      setCurrentArtObject,
+      hideUI: dom.hideUI
+    })
+  }
 }
 
 main()

@@ -1,47 +1,92 @@
-const constructStore = (reducer, initialState) => {
-  const subscribers = []
-  let state = initialState
+import { db } from './db'
 
-  const subscribe = (fn) => {
-    subscribers.push(fn)
+// N.A.S.T.Y. - Not Another State Transformation Yack
+const constructStore = (stateGetter, reducer) => {
+  const subscribers = new Map()
+
+  const initialize = async () => {
+    store.state = await stateGetter()
   }
 
-  const unsubscribe = (fn) => {
-    subscribers.splice(subscribers.indexOf(fn), 1)
+  const subscribe = (channel, fn) => {
+    if (subscribers.has(channel) === false) {
+      subscribers.set(channel, [])
+    }
+
+    subscribers.get(channel).push(fn)
+  }
+
+  const unsubscribe = (channel, fn) => {
+    const fns = subscribers.get(channel)
+    fns.splice(fns.indexOf(fn), 1)
   }
 
   const dispatch = (action) => {
-    state = reducer(state, action)
+    reducer(store.state, action)
 
-    for (const fn of subscribers) {
-      fn(state)
+    for (const fn of subscribers.get(action.type) || []) {
+      fn(store.state)
     }
   }
 
-  return {
-    state,
-    reducer,
-    subscribers,
+  const store = {
+    state: {},
+    initialize,
     subscribe,
     unsubscribe,
     dispatch
   }
+
+  return store
 }
 
-export const imageStore = constructStore((state, action) => {
-  switch (action.type) {
-    case 'ADD_ARTOBJECT':
-      return action.artObject
-    default:
-      return state
-  }
-})
+export const store = constructStore(async () => {
+  await db.open('galeri', 2, (e) => {
+    const { result } = e.target
 
-export const artObjectsStore = constructStore((state, action) => {
+    if (result.objectStoreNames.contains('artObject') === false) {
+      result.createObjectStore('artObject', {
+        keyPath: 'id',
+        autoIncrement: true
+      })
+    }
+
+    if (result.objectStoreNames.contains('artObjects') === false) {
+      result.createObjectStore('artObjects', {
+        keyPath: 'id',
+        autoIncrement: true
+      })
+    }
+  })
+
+  const currentArtObjects = await db.getAll('artObject')
+  const artObjects = await db.getAll('artObjects')
+  const wikipediaArtObjects = artObjects.find(({ id }) => id === 'wikipedia')
+  const rijksArtObjects = artObjects.find(({ id }) => id === 'rijks')
+
+  return Object.seal({
+    currentArtObject: currentArtObjects.find(({ id }) => id === 'current'),
+    nextArtObject: currentArtObjects.find(({ id }) => id === 'next'),
+    wikipediaArtObjects: wikipediaArtObjects ? wikipediaArtObjects.artObjects : [],
+    rijksArtObjects: rijksArtObjects ? rijksArtObjects.artObjects : []
+  })
+}, (state, action) => {
   switch (action.type) {
-    case 'ADD_ARTOBJECTS':
-      return action.artObjects
-    default:
-      return state
+    case 'setCurrentArtObject':
+      db.put('artObject', { id: 'current', ...action.artObject })
+      state.currentArtObject = action.artObject
+      break
+    case 'setNextArtObject':
+      db.put('artObject', { id: 'next', ...action.artObject })
+      state.nextArtObject = action.artObject
+      break
+    case 'setWikipediaArtObjects':
+      db.put('artObjects', { id: 'wikipedia', artObjects: action.artObjects })
+      state.wikipediaArtObjects = action.artObjects
+      break
+    case 'setRijksArtObjects':
+      db.put('artObjects', { id: 'rijks', artObjects: action.artObjects })
+      state.rijksArtObjects = action.artObjects
+      break
   }
 })

@@ -1,20 +1,18 @@
 const { ipcRenderer } = require('electron');
 
-const init = () => {
-  if (!window.hideUI) {
-    return setTimeout(init, 100)
-  }
-
-  window.hideUI();
+window.onApplicationReady = (api) => {
+  api.hideUI();
 
   ipcRenderer.on('replaceArtObject', async () => {
-    await window.replaceArtObject();
-    console.log('replace');
+    const artObject = await api.setCurrentArtObject({ replace: true });
+
+    ipcRenderer.send('artworkReplaced', artObject);
   });
 
-  ipcRenderer.on('getArtObject', async () => {
-    
+  ipcRenderer.on('getArtObject', () => {
+    console.log('bob', api.getCurrentArtObject());
+    ipcRenderer.send('sendArtObject', api.getCurrentArtObject());
   });
+
+  ipcRenderer.send('backgroundReady', api.getCurrentArtObject());
 };
-
-init();

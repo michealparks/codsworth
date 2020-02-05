@@ -1,7 +1,9 @@
-// A list of artwork deemed NSFW. It is a moving selection of works,
-// but people may not be able to appreciate the true extent of their beauty in an office setting.
+// A list of artworks deemed NSFW. This list is a quite moving selection,
+// but people may not be able to appreciate the true extent of their beauty in an
+// American corporate office setting.
 
 // If a work is found to be delightful, yet very awkward in a non-progressive
+// (or progressive, pending the definition of that word changing over time)
 // environment, please add a PR for an addition here.
 export const blacklist = [
   'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg/2000px-Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg',

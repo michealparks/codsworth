@@ -1,12 +1,19 @@
 const path = require('path')
-const { BrowserWindow } = require('electron')
+const { BrowserWindow, ipcMain } = require('electron')
 
 export const constructBackground = (screen) => {
+  let readyResolver
+
+  const readyPromise = new Promise((resolve) => { readyResolver = resolve })
   const windows = []
+
+  ipcMain.once('backgroundReady', (ev, arg) => {
+    readyResolver(arg)
+  })
 
   for (const display of screen.getAllDisplays()) {
     // Create the browser window.
-    let win = new BrowserWindow({
+    const win = new BrowserWindow({
       type: 'desktop',
       width: display.size.width,
       height: display.size.height + 20,
@@ -24,12 +31,14 @@ export const constructBackground = (screen) => {
 
     win.loadFile('index.html')
 
-    win.once('ready-to-show', () => {
-      win.showInactive()
-    })
+    if (true || process.platform !== 'win32') {
+      win.once('ready-to-show', () => {
+        win.showInactive()
+      })
+    }
 
     win.once('closed', () => {
-      win = undefined
+      windows.splice(windows.indexOf(win), 1)
     })
 
     win.openDevTools({ mode: 'detach' })
@@ -37,13 +46,33 @@ export const constructBackground = (screen) => {
     windows.push(win)
   }
 
-  const next = async () => {
-    for (const win of windows) {
-      win.webContents.send('replaceArtObject')
-    }
+  const ready = () => {
+    return readyPromise
+  }
+
+  const next = () => {
+    return new Promise((resolve) => {
+      windows[0].webContents.send('replaceArtObject')
+
+      ipcMain.once('artworkReplaced', (ev, arg) => {
+        resolve(arg)
+      })
+    })
+  }
+
+  const getArtObject = async () => {
+    return new Promise((resolve) => {
+      windows[0].webContents.send('getArtObject')
+
+      ipcMain.once('sendArtObject', (ev, arg) => {
+        resolve(arg)
+      })
+    })
   }
 
   return {
-    next
+    ready,
+    next,
+    getArtObject
   }
 }

@@ -4,15 +4,21 @@ const childProcess = require('child_process')
 const execFile = promisify(childProcess.execFile)
 
 // Binary source → https://github.com/sindresorhus/win-wallpaper
-const binary = path.join(__dirname, 'win-wallpaper.exe')
+export const constructWallpaper = () => {
+  const binary = path.join(__dirname, 'win-wallpaper.exe')
 
-const get = async () => {
-  const { stdout } = await execFile(binary)
-  return stdout.trim()
+  const get = async () => {
+    const { stdout } = await execFile(binary)
+    return stdout.trim()
+  }
+
+  const set = async (imagePath) => {
+    
+    return execFile(binary, [path.resolve(imagePath)])
+  }
+
+  return {
+    get,
+    set
+  }
 }
-
-const set = async imagePath => {
-  return execFile(binary, [path.resolve(imagePath)])
-}
-
-export const wallpaper = { get, set }

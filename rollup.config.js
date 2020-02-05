@@ -1,8 +1,16 @@
-import replace from 'rollup-plugin-replace'
-import resolve from 'rollup-plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import replace from '@rollup/plugin-replace'
+import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 
 const DEV = process.env.NODE_ENV === 'development'
+
+const plugins = [
+  commonjs(),
+  resolve(),
+  replace({ DEV }),
+  DEV ? undefined : terser()
+]
 
 module.exports = [{
   input: './app/main.js',
@@ -11,9 +19,7 @@ module.exports = [{
     format: 'esm'
   },
   plugins: [
-    resolve({ mainFields: ['module', 'main'] }),
-    replace({ DEV }),
-    DEV ? undefined : terser()
+    ...plugins
   ]
 }, {
   input: './electron/main.js',
@@ -22,9 +28,7 @@ module.exports = [{
     format: 'esm'
   },
   plugins: [
-    resolve(),
-    replace({ DEV }),
-    DEV ? undefined : terser()
+    ...plugins
   ]
 }, {
   input: './electron/preload.js',
@@ -33,7 +37,6 @@ module.exports = [{
     format: 'esm'
   },
   plugins: [
-    replace({ DEV }),
-    DEV ? undefined : terser()
+    ...plugins
   ]
 }]

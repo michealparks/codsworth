@@ -2,16 +2,16 @@ const { Tray, Menu, app } = require('electron');
 
 let tray;
 
-const constructTray = ({ events }) => {
+const constructTray = ({ events, artObject }) => {
   tray = new Tray('./dist/icon-dark_32x32.png');
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Loading...'
+      label: artObject.title
     }, {
       label: 'Next Artwork',
       type: 'normal',
-      click: events.onNext
+      click: events.replaceArtwork
     }, {
       type: 'separator'
     }, {
@@ -54,14 +54,21 @@ const constructTray = ({ events }) => {
 };
 
 const path = require('path');
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, ipcMain } = require('electron');
 
 const constructBackground = (screen) => {
+  let readyResolver;
+
+  const readyPromise = new Promise((resolve) => { readyResolver = resolve; });
   const windows = [];
+
+  ipcMain.once('backgroundReady', (ev, arg) => {
+    readyResolver(arg);
+  });
 
   for (const display of screen.getAllDisplays()) {
     // Create the browser window.
-    let win = new BrowserWindow({
+    const win = new BrowserWindow({
       type: 'desktop',
       width: display.size.width,
       height: display.size.height + 20,
@@ -79,12 +86,14 @@ const constructBackground = (screen) => {
 
     win.loadFile('index.html');
 
-    win.once('ready-to-show', () => {
-      win.showInactive();
-    });
+    {
+      win.once('ready-to-show', () => {
+        win.showInactive();
+      });
+    }
 
     win.once('closed', () => {
-      win = undefined;
+      windows.splice(windows.indexOf(win), 1);
     });
 
     win.openDevTools({ mode: 'detach' });
@@ -92,62 +101,98 @@ const constructBackground = (screen) => {
     windows.push(win);
   }
 
-  const next = async () => {
-    for (const win of windows) {
-      win.webContents.send('replaceArtObject');
-    }
+  const ready = () => {
+    return readyPromise
+  };
+
+  const next = () => {
+    return new Promise((resolve) => {
+      windows[0].webContents.send('replaceArtObject');
+
+      ipcMain.once('artworkReplaced', (ev, arg) => {
+        resolve(arg);
+      });
+    })
+  };
+
+  const getArtObject = async () => {
+    return new Promise((resolve) => {
+      windows[0].webContents.send('getArtObject');
+
+      ipcMain.once('sendArtObject', (ev, arg) => {
+        resolve(arg);
+      });
+    })
   };
 
   return {
-    next
+    ready,
+    next,
+    getArtObject
   }
 };
 
+const { promisify } = require('util');
+const path$1 = require('path');
+const childProcess = require('child_process');
+const execFile = promisify(childProcess.execFile);
+
 const { app: app$1, screen } = require('electron');
 
-app$1.requestSingleInstanceLock();
+let nextArtworkId;
+let background;
+let wallpaper;
 
-// if (app.dock) app.dock.hide()
+const setTimer = () => {
+  if (nextArtworkId) clearTimeout(nextArtworkId);
 
-app$1.once('ready', () => {
-  const background = constructBackground(screen);
+  nextArtworkId = setTimeout(replaceArtwork, 3 * 1000 * 60 * 60);
+};
 
-  let nextArtworkId;
+const replaceArtwork = async () => {
+  const artObject = await background.next();
+  console.log('artObject', artObject);
 
-  const setTimer = () => {
-    if (nextArtworkId) clearInterval(nextArtworkId);
+  if (process.platform === 'win32') {
+    wallpaper.set();
+  }
 
-    nextArtworkId = setInterval(() => {
-      background.next();
-    }, 3 * 1000 * 60 * 60);
-  };
+  setTimer();
+};
 
-  const onNext = () => {
-    background.next();
-    setTimer();
-  };
+const onToggleBackground = () => {
 
-  const onToggleBackground = () => {
+};
 
-  };
+const onToggleScreenSaver = () => {
 
-  const onToggleScreenSaver = () => {
+};
 
-  };
+const onToggleStartup = () => {
+  app$1.setLoginItemSettings({
+    openAtLogin: !app$1.getLoginItemSettings().openAtLogin
+  });
+};
 
-  const onToggleStartup = () => {
-    app$1.setLoginItemSettings({
-      openAtLogin: !app$1.getLoginItemSettings().openAtLogin
-    });
-  };
+const onQuit = () => {
+  app$1.quit();
+};
 
-  const onQuit = () => {
-    app$1.quit();
-  };
+const main = async () => {
+  background = constructBackground(screen);
+
+  const artObject = await background.ready();
+
+  if (process.platform === 'win32') {
+    // wallpaper = constructWallpaper()
+    console.log('here');
+    console.log(artObject);
+  }
 
   constructTray({
+    artObject,
     events: {
-      onNext,
+      replaceArtwork,
       onToggleBackground,
       onToggleScreenSaver,
       onToggleStartup,
@@ -156,4 +201,10 @@ app$1.once('ready', () => {
   });
 
   setTimer();
-});
+};
+
+app$1.requestSingleInstanceLock();
+
+if (app$1.dock) app$1.dock.hide();
+
+app$1.on('ready', main);

@@ -1,49 +1,39 @@
-import { db } from './db'
 import { fetchBlob } from './util'
 import { wikipedia } from './wikipedia'
 import { rijks } from './rijks'
-import { imageStore } from './store'
+import { store } from './store'
 import { blacklist } from './blacklist'
 
 const threeHours = 1000 * 60 * 60 * 3
 
-export const setArtObject = async () => {
-  let current, next
+const isExpired = (timestamp) => {
+  return timestamp < Date.now() - threeHours
+}
 
-  current = await db.get('images', 'current')
+export const setCurrentArtObject = async (config = {}) => {
+  let current = store.state.currentArtObject
+  let next = store.state.nextArtObject
 
-  const expired = (current && current.timestamp < Date.now() - threeHours)
-
-  if (!current || expired) {
-    next = await db.get('images', 'next')
-
-    if (next) {
-      current = next
-      await db.remove('images', 'next')
-    } else {
+  if (current === undefined || isExpired(current.timestamp) || config.replace === true) {
+    if (next === undefined) {
       current = await getArtObject()
+    } else {
+      current = next
+      next = undefined
     }
   }
 
-  imageStore.dispatch({
-    type: 'ADD_ARTOBJECT',
-    artObject: {
-      ...current,
-      id: 'current'
-    }
+  store.dispatch({
+    type: 'setCurrentArtObject',
+    artObject: current
   })
 
-  next = await db.get('images', 'next')
-
-  if (!next) {
+  if (next === undefined) {
     next = await getArtObject()
 
-    imageStore.dispatch({
-      type: 'ADD_ARTOBJECT',
-      artObject: {
-        ...next,
-        id: 'next'
-      }
+    store.dispatch({
+      type: 'setNextArtObject',
+      artObject: next
     })
   }
 }

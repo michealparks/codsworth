@@ -1,6 +1,5 @@
 import { fetchJSON } from './util'
-import { db } from './db'
-import { artObjectsStore } from './store'
+import { store } from './store'
 
 async function randomArtObject () {
   const artObjects = await getArtObjects()
@@ -11,10 +10,8 @@ async function randomArtObject () {
 }
 
 async function getArtObjects () {
-  const res = await db.get('artObjects', 'wikipedia')
-
-  if (res && res.artObjects.length > 0) {
-    return res.artObjects
+  if (store.state.wikipediaArtObjects.length > 0) {
+    return store.state.wikipediaArtObjects
   } else {
     const page = 'Wikipedia:Featured_pictures/Artwork/Paintings'
     const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`
@@ -24,9 +21,9 @@ async function getArtObjects () {
 
     const artObjects = parsePage(json.parse.text['*'])
 
-    artObjectsStore.dispatch({
-      type: 'ADD_ARTOBJECTS',
-      artObjects: { key: 'wikipedia', artObjects }
+    store.dispatch({
+      type: 'setWikipediaArtObjects',
+      artObjects
     })
 
     return artObjects
@@ -70,9 +67,9 @@ function parsePage (str) {
 function removeRandomArtObject (artObjects) {
   const [object] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || [])
 
-  artObjectsStore.dispatch({
-    type: 'ADD_ARTOBJECTS',
-    artObjects: { key: 'wikipedia', artObjects }
+  store.dispatch({
+    type: 'setWikipediaArtObjects',
+    artObjects
   })
 
   return object

@@ -1,108 +1,158 @@
-const db = {
-  ref: undefined,
+let client;
 
-  async open (name, version, onupgradeneeded) {
-    const request = window.indexedDB.open(name, version);
-    request.onupgradeneeded = onupgradeneeded;
-    db.ref = await db.promise(request);
-  },
+const promise = (req) => {
+  return new Promise((resolve) => {
+    const onEvent = ({ target }) => {
+      resolve(target.result);
+      req.removeEventListener('success', onEvent);
+      req.removeEventListener('error', onEvent);
+      req.removeEventListener('abort', onEvent);
+    };
 
-  get (name, key) {
-    return db.promise(db.ref
-      .transaction(name)
-      .objectStore(name)
-      .get(key))
-  },
-
-  put (name, data) {
-    return db.promise(db.ref
-      .transaction(name, 'readwrite')
-      .objectStore(name)
-      .put({ ...data, created: new Date().getTime() }))
-  },
-
-  getAll (name) {
-    return db.promise(db.ref
-      .transaction(name)
-      .objectStore(name)
-      .getAll())
-  },
-
-  remove (name, key) {
-    return db.promise(db.ref
-      .transaction(name, 'readwrite')
-      .objectStore(name)
-      .delete(key))
-  },
-
-  destroy (name) {
-    return db.promise(db.ref
-      .transaction(name, 'readwrite')
-      .objectStore(name)
-      .clear())
-  },
-
-  promise (request) {
-    return new Promise(function (resolve) {
-      function onEvent ({ target }) {
-        resolve(target.result);
-        request.removeEventListener('success', onEvent);
-        request.removeEventListener('error', onEvent);
-        request.removeEventListener('abort', onEvent);
-      }
-
-      request.addEventListener('success', onEvent);
-      request.addEventListener('error', onEvent);
-      request.addEventListener('abort', onEvent);
-    })
-  }
+    req.addEventListener('success', onEvent);
+    req.addEventListener('error', onEvent);
+    req.addEventListener('abort', onEvent);
+  })
 };
 
-const constructStore = (reducer, initialState) => {
-  const subscribers = [];
-  let state = initialState;
+const open = async (name, version, onupgradeneeded) => {
+  const request = window.indexedDB.open(name, version);
+  request.onupgradeneeded = onupgradeneeded;
+  client = await promise(request);
+};
 
-  const subscribe = (fn) => {
-    subscribers.push(fn);
+const get = (name, key) => {
+  return promise(client
+    .transaction(name)
+    .objectStore(name)
+    .get(key))
+};
+
+const put = (name, data) => {
+  return promise(client
+    .transaction(name, 'readwrite')
+    .objectStore(name)
+    .put({ ...data, created: new Date().getTime() }))
+};
+
+const getAll = (name) => {
+  return promise(client
+    .transaction(name)
+    .objectStore(name)
+    .getAll())
+};
+
+const remove = (name, key) => {
+  return promise(client
+    .transaction(name, 'readwrite')
+    .objectStore(name)
+    .delete(key))
+};
+
+const destroy = (name) => {
+  return promise(client
+    .transaction(name, 'readwrite')
+    .objectStore(name)
+    .clear())
+};
+
+const db = {
+  open,
+  get,
+  put,
+  getAll,
+  remove,
+  destroy
+};
+
+// N.A.S.T.Y. - Not Another State Transformation Yack
+const constructStore = (stateGetter, reducer) => {
+  const subscribers = new Map();
+
+  const initialize = async () => {
+    store.state = await stateGetter();
   };
 
-  const unsubscribe = (fn) => {
-    subscribers.splice(subscribers.indexOf(fn), 1);
+  const subscribe = (channel, fn) => {
+    if (subscribers.has(channel) === false) {
+      subscribers.set(channel, []);
+    }
+
+    subscribers.get(channel).push(fn);
+  };
+
+  const unsubscribe = (channel, fn) => {
+    const fns = subscribers.get(channel);
+    fns.splice(fns.indexOf(fn), 1);
   };
 
   const dispatch = (action) => {
-    state = reducer(state, action);
+    reducer(store.state, action);
 
-    for (const fn of subscribers) {
-      fn(state);
+    for (const fn of subscribers.get(action.type) || []) {
+      fn(store.state);
     }
   };
 
-  return {
-    state,
-    reducer,
-    subscribers,
+  const store = {
+    state: {},
+    initialize,
     subscribe,
     unsubscribe,
     dispatch
-  }
+  };
+
+  return store
 };
 
-const imageStore = constructStore((state, action) => {
-  switch (action.type) {
-    case 'ADD_ARTOBJECT':
-      return action.artObject
-    default:
-      return state
-  }
-});
+const store = constructStore(async () => {
+  await db.open('galeri', 2, (e) => {
+    const { result } = e.target;
 
-const artObjectsStore = constructStore((state, action) => {
+    if (result.objectStoreNames.contains('artObject') === false) {
+      result.createObjectStore('artObject', {
+        keyPath: 'id',
+        autoIncrement: true
+      });
+    }
+
+    if (result.objectStoreNames.contains('artObjects') === false) {
+      result.createObjectStore('artObjects', {
+        keyPath: 'id',
+        autoIncrement: true
+      });
+    }
+  });
+
+  const currentArtObjects = await db.getAll('artObject');
+  const artObjects = await db.getAll('artObjects');
+  const wikipediaArtObjects = artObjects.find(({ id }) => id === 'wikipedia');
+  const rijksArtObjects = artObjects.find(({ id }) => id === 'rijks');
+
+  return Object.seal({
+    currentArtObject: currentArtObjects.find(({ id }) => id === 'current'),
+    nextArtObject: currentArtObjects.find(({ id }) => id === 'next'),
+    wikipediaArtObjects: wikipediaArtObjects ? wikipediaArtObjects.artObjects : [],
+    rijksArtObjects: rijksArtObjects ? rijksArtObjects.artObjects : []
+  })
+}, (state, action) => {
   switch (action.type) {
-    case 'ADD_ARTOBJECTS':
-      return action.artObjects
-    default:
-      return state
+    case 'setCurrentArtObject':
+      db.put('artObject', { id: 'current', ...action.artObject });
+      state.currentArtObject = action.artObject;
+      break
+    case 'setNextArtObject':
+      db.put('artObject', { id: 'next', ...action.artObject });
+      state.nextArtObject = action.artObject;
+      break
+    case 'setWikipediaArtObjects':
+      db.put('artObjects', { id: 'wikipedia', artObjects: action.artObjects });
+      state.wikipediaArtObjects = action.artObjects;
+      break
+    case 'setRijksArtObjects':
+      db.put('artObjects', { id: 'rijks', artObjects: action.artObjects });
+      state.rijksArtObjects = action.artObjects;
+      break
   }
 });
 
@@ -118,7 +168,7 @@ const fetch = async (...args) => {
     window.fetch(...args)
   ]);
 
-  if (response.status >= 200 && response.status < 300) {
+  if (response.ok) {
     return response
   } else {
     throw new Error(`request responded with status code ${response.status}`)
@@ -154,10 +204,8 @@ async function randomArtObject () {
 }
 
 async function getArtObjects () {
-  const res = await db.get('artObjects', 'wikipedia');
-
-  if (res && res.artObjects.length > 0) {
-    return res.artObjects
+  if (store.state.wikipediaArtObjects.length > 0) {
+    return store.state.wikipediaArtObjects
   } else {
     const page = 'Wikipedia:Featured_pictures/Artwork/Paintings';
     const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`;
@@ -167,9 +215,9 @@ async function getArtObjects () {
 
     const artObjects = parsePage(json.parse.text['*']);
 
-    artObjectsStore.dispatch({
-      type: 'ADD_ARTOBJECTS',
-      artObjects: { key: 'wikipedia', artObjects }
+    store.dispatch({
+      type: 'setWikipediaArtObjects',
+      artObjects
     });
 
     return artObjects
@@ -213,9 +261,9 @@ function parsePage (str) {
 function removeRandomArtObject (artObjects) {
   const [object] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || []);
 
-  artObjectsStore.dispatch({
-    type: 'ADD_ARTOBJECTS',
-    artObjects: { key: 'wikipedia', artObjects }
+  store.dispatch({
+    type: 'setWikipediaArtObjects',
+    artObjects
   });
 
   return object
@@ -230,21 +278,19 @@ const endpoint = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30
 async function randomArtObject$1 () {
   const artObjects = await getArtObjects$1();
 
-  if (!artObjects) return
+  if (artObjects === undefined) return
 
   return removeRandomArtObject$1(artObjects)
 }
 
 async function getArtObjects$1 () {
-  const res = await db.get('artObjects', 'rijks');
-
-  if (res && res.artObjects.length > 0) {
-    return res.artObjects
+  if (store.state.rijksArtObjects.length > 0) {
+    return store.state.rijksArtObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10);
     const [err, json] = await fetchJSON(`${endpoint}&p=${page}`);
 
-    if (err) return
+    if (err !== undefined) return
 
     const artObjects = [];
 
@@ -263,9 +309,9 @@ async function getArtObjects$1 () {
       });
     }
 
-    artObjectsStore.dispatch({
-      type: 'ADD_ARTOBJECTS',
-      artObjects: { key: 'rijks', artObjects }
+    store.dispatch({
+      type: 'setRijksArtObjects',
+      artObjects
     });
 
     localStorage.setItem('rijks_page', page + 1);
@@ -277,9 +323,9 @@ async function getArtObjects$1 () {
 function removeRandomArtObject$1 (artObjects) {
   const [object] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || []);
 
-  artObjectsStore.dispatch({
-    type: 'ADD_ARTOBJECTS',
-    artObjects: { key: 'rijks', artObjects }
+  store.dispatch({
+    type: 'setRijksArtObjects',
+    artObjects
   });
 
   return object
@@ -289,10 +335,12 @@ const rijks = {
   randomArtObject: randomArtObject$1
 };
 
-// A list of artwork deemed NSFW. It is a moving selection of works,
-// but people may not be able to appreciate the true extent of their beauty in an office setting.
+// A list of artworks deemed NSFW. This list is a quite moving selection,
+// but people may not be able to appreciate the true extent of their beauty in an
+// American corporate office setting.
 
 // If a work is found to be delightful, yet very awkward in a non-progressive
+// (or progressive, pending the definition of that word changing over time)
 // environment, please add a PR for an addition here.
 const blacklist = [
   'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg/2000px-Pierre-Auguste_Renoir_-_Parisiennes_in_Algerian_Costume_or_Harem_-_Google_Art_Project.jpg',
@@ -322,43 +370,34 @@ const blacklist = [
 
 const threeHours = 1000 * 60 * 60 * 3;
 
-const setArtObject = async () => {
-  let current, next;
+const isExpired = (timestamp) => {
+  return timestamp < Date.now() - threeHours
+};
 
-  current = await db.get('images', 'current');
+const setCurrentArtObject = async (config = {}) => {
+  let current = store.state.currentArtObject;
+  let next = store.state.nextArtObject;
 
-  const expired = (current && current.timestamp < Date.now() - threeHours);
-
-  if (!current || expired) {
-    next = await db.get('images', 'next');
-
-    if (next) {
-      current = next;
-      await db.remove('images', 'next');
-    } else {
+  if (current === undefined || isExpired(current.timestamp) || config.replace === true) {
+    if (next === undefined) {
       current = await getArtObject();
+    } else {
+      current = next;
+      next = undefined;
     }
   }
 
-  imageStore.dispatch({
-    type: 'ADD_ARTOBJECT',
-    artObject: {
-      ...current,
-      id: 'current'
-    }
+  store.dispatch({
+    type: 'setCurrentArtObject',
+    artObject: current
   });
 
-  next = await db.get('images', 'next');
-
-  if (!next) {
+  if (next === undefined) {
     next = await getArtObject();
 
-    imageStore.dispatch({
-      type: 'ADD_ARTOBJECT',
-      artObject: {
-        ...next,
-        id: 'next'
-      }
+    store.dispatch({
+      type: 'setNextArtObject',
+      artObject: next
     });
   }
 };
@@ -403,130 +442,88 @@ const getArtObject = async () => {
 const ui = document.getElementById('ui');
 const refreshBtn = document.getElementById('btn-refresh');
 const background = document.getElementById('background');
-const title = document.getElementById('title');
-const author = document.getElementById('author');
-const provider = document.getElementById('provider');
+const titleNode = document.getElementById('title');
+const authorNode = document.getElementById('author');
+const providerNode = document.getElementById('provider');
 
 const hideUI = () => {
   ui.style.display = 'none';
 };
 
-const setImage = (artObject) => {
-  if (artObject.id === 'next') return
+const setImage = (state) => {
+  const { blob, title, titleLink, author, authorLink, provider, providerLink } = state.currentArtObject;
 
   const img = new window.Image();
-  const url = URL.createObjectURL(artObject.blob);
+  const url = URL.createObjectURL(blob);
 
   img.onload = () => {
     background.classList.toggle('portrait', img.naturalWidth < img.naturalHeight);
     background.style.backgroundImage = `url('${url}')`;
 
-    title.textContent = artObject.title.length > 50
-      ? `${artObject.title.slice(0, 50)}...`
-      : artObject.title;
+    titleNode.textContent = title.length > 50 ? `${title.slice(0, 50)}...` : title;
 
-    if (artObject.titleLink) {
-      title.href = artObject.titleLink;
-      title.style.pointerEvents = 'auto';
+    if (titleLink) {
+      titleNode.href = titleLink;
+      titleNode.style.pointerEvents = 'auto';
     } else {
-      title.style.pointerEvents = 'none';
+      titleNode.style.pointerEvents = 'none';
     }
 
-    author.textContent = artObject.author ? `by ${artObject.author}` : '';
+    authorNode.textContent = author ? `by ${author}` : '';
 
-    if (artObject.authorLink) {
-      author.href = artObject.authorLink;
-      author.style.pointerEvents = 'auto';
+    if (authorLink) {
+      authorNode.href = authorLink;
+      authorNode.style.pointerEvents = 'auto';
     } else {
-      author.style.pointerEvents = 'none';
+      authorNode.style.pointerEvents = 'none';
     }
 
-    provider.textContent = `from ${artObject.provider}`;
-    provider.href = artObject.providerLink;
+    providerNode.textContent = `from ${provider}`;
+    providerNode.href = providerLink;
   };
 
   img.src = url;
-
-  imageStore.unsubscribe(setImage);
-};
-
-const replaceArtObject = async () => {
-  imageStore.subscribe(setImage);
-
-  await db.remove('images', 'current');
-  await setArtObject();
-
-  return true
 };
 
 const addListeners = () => {
-  imageStore.subscribe(setImage);
+  store.subscribe('setCurrentArtObject', setImage);
 
   refreshBtn.addEventListener('click', async (e) => {
     if (e.target.classList.contains('active')) return
 
     e.target.classList.add('active');
 
-    await replaceArtObject();
+    await setCurrentArtObject({ replace: true });
 
     e.target.classList.remove('active');
   });
-
-  window.replaceArtObject = replaceArtObject;
-  window.hideUI = hideUI;
 };
 
 const dom = {
+  hideUI,
   addListeners
 };
 
-const flush = async () => {
-  localStorage.removeItem('rijks_page');
-
-  try {
-    await db.destroy('images');
-  } catch (err) { console.error(err); }
-
-  try {
-    await db.destroy('artObjects');
-  } catch (err) { console.error(err); }
+const getCurrentArtObject = () => {
+  return store.state.currentArtObject
 };
 
 const main = async () => {
   navigator.storage.persist();
 
-  await db.open('galeri', 1, (e) => {
-    const { result } = e.target;
-
-    if (!result.objectStoreNames.contains('images')) {
-      result.createObjectStore('images', {
-        keyPath: 'id',
-        autoIncrement: true
-      });
-    }
-
-    if (!result.objectStoreNames.contains('artObjects')) {
-      result.createObjectStore('artObjects', {
-        keyPath: 'key',
-        autoIncrement: true
-      });
-    }
-  });
-
-  imageStore.subscribe((artObject) => {
-    db.put('images', artObject);
-  });
-
-  artObjectsStore.subscribe((data) => {
-    db.put('artObjects', data);
-  });
-
+  await store.initialize();
 
   dom.addListeners();
 
-  await setArtObject();
+  await setCurrentArtObject();
 
-  window.flush = flush;
+  if (window.onApplicationReady !== undefined) {
+    window.onApplicationReady({
+      getCurrentArtObject,
+      setCurrentArtObject,
+      hideUI: dom.hideUI
+    });
+  }
 };
 
 main();

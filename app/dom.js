@@ -1,83 +1,67 @@
-import { db } from './db'
-import { imageStore } from './store'
-import { setArtObject } from './art-object'
+import { store } from './store'
+import { setCurrentArtObject } from './art-object'
 
 const ui = document.getElementById('ui')
 const refreshBtn = document.getElementById('btn-refresh')
 const background = document.getElementById('background')
-const title = document.getElementById('title')
-const author = document.getElementById('author')
-const provider = document.getElementById('provider')
+const titleNode = document.getElementById('title')
+const authorNode = document.getElementById('author')
+const providerNode = document.getElementById('provider')
 
 const hideUI = () => {
   ui.style.display = 'none'
 }
 
-const setImage = (artObject) => {
-  if (artObject.id === 'next') return
+const setImage = (state) => {
+  const { blob, title, titleLink, author, authorLink, provider, providerLink } = state.currentArtObject
 
   const img = new window.Image()
-  const url = URL.createObjectURL(artObject.blob)
+  const url = URL.createObjectURL(blob)
 
   img.onload = () => {
     background.classList.toggle('portrait', img.naturalWidth < img.naturalHeight)
     background.style.backgroundImage = `url('${url}')`
 
-    title.textContent = artObject.title.length > 50
-      ? `${artObject.title.slice(0, 50)}...`
-      : artObject.title
+    titleNode.textContent = title.length > 50 ? `${title.slice(0, 50)}...` : title
 
-    if (artObject.titleLink) {
-      title.href = artObject.titleLink
-      title.style.pointerEvents = 'auto'
+    if (titleLink) {
+      titleNode.href = titleLink
+      titleNode.style.pointerEvents = 'auto'
     } else {
-      title.style.pointerEvents = 'none'
+      titleNode.style.pointerEvents = 'none'
     }
 
-    author.textContent = artObject.author ? `by ${artObject.author}` : ''
+    authorNode.textContent = author ? `by ${author}` : ''
 
-    if (artObject.authorLink) {
-      author.href = artObject.authorLink
-      author.style.pointerEvents = 'auto'
+    if (authorLink) {
+      authorNode.href = authorLink
+      authorNode.style.pointerEvents = 'auto'
     } else {
-      author.style.pointerEvents = 'none'
+      authorNode.style.pointerEvents = 'none'
     }
 
-    provider.textContent = `from ${artObject.provider}`
-    provider.href = artObject.providerLink
+    providerNode.textContent = `from ${provider}`
+    providerNode.href = providerLink
   }
 
   img.src = url
-
-  imageStore.unsubscribe(setImage)
-}
-
-const replaceArtObject = async () => {
-  imageStore.subscribe(setImage)
-
-  await db.remove('images', 'current')
-  await setArtObject()
-
-  return true
 }
 
 const addListeners = () => {
-  imageStore.subscribe(setImage)
+  store.subscribe('setCurrentArtObject', setImage)
 
   refreshBtn.addEventListener('click', async (e) => {
     if (e.target.classList.contains('active')) return
 
     e.target.classList.add('active')
 
-    await replaceArtObject()
+    await setCurrentArtObject({ replace: true })
 
     e.target.classList.remove('active')
   })
-
-  window.replaceArtObject = replaceArtObject
-  window.hideUI = hideUI
 }
 
 export const dom = {
+  hideUI,
   addListeners
 }

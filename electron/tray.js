@@ -2,16 +2,16 @@ const { Tray, Menu, app } = require('electron')
 
 let tray
 
-export const constructTray = ({ events }) => {
+export const constructTray = ({ events, artObject }) => {
   tray = new Tray('./dist/icon-dark_32x32.png')
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Loading...'
+      label: artObject.title
     }, {
       label: 'Next Artwork',
       type: 'normal',
-      click: events.onNext
+      click: events.replaceArtwork
     }, {
       type: 'separator'
     }, {

@@ -1,51 +1,65 @@
 import { constructTray } from './tray.js'
 import { constructBackground } from './background.js'
+import { constructWallpaper } from './wallpaper.js'
+import { image } from './image'
 
 const { app, screen } = require('electron')
 
-app.requestSingleInstanceLock()
+let nextArtworkId
+let background
+let wallpaper
 
-// if (app.dock) app.dock.hide()
+const setTimer = () => {
+  if (nextArtworkId) clearTimeout(nextArtworkId)
 
-app.once('ready', () => {
-  const background = constructBackground(screen)
+  nextArtworkId = setTimeout(replaceArtwork, 3 * 1000 * 60 * 60)
+}
 
-  let nextArtworkId
+const replaceArtwork = async () => {
+  const artObject = await background.next()
+  console.log('artObject', artObject)
 
-  const setTimer = () => {
-    if (nextArtworkId) clearInterval(nextArtworkId)
-
-    nextArtworkId = setInterval(() => {
-      background.next()
-    }, 3 * 1000 * 60 * 60)
+  if (process.platform === 'win32') {
+    wallpaper.set()
   }
 
-  const onNext = () => {
-    background.next()
-    setTimer()
-  }
+  setTimer()
+}
 
-  const onToggleBackground = () => {
+const onToggleBackground = () => {
 
-  }
+}
 
-  const onToggleScreenSaver = () => {
+const onToggleScreenSaver = () => {
 
-  }
+}
 
-  const onToggleStartup = () => {
-    app.setLoginItemSettings({
-      openAtLogin: !app.getLoginItemSettings().openAtLogin
-    })
-  }
+const onToggleStartup = () => {
+  app.setLoginItemSettings({
+    openAtLogin: !app.getLoginItemSettings().openAtLogin
+  })
+}
 
-  const onQuit = () => {
-    app.quit()
+const onQuit = () => {
+  app.quit()
+}
+
+const main = async () => {
+  background = constructBackground(screen)
+
+  const artObject = await background.ready()
+
+  if (process.platform === 'win32') {
+    // wallpaper = constructWallpaper()
+    console.log('here')
+    console.log(artObject)
+    const result = image.fetch(artObject.src)
   }
 
   constructTray({
+    artObject,
     events: {
-      onNext,
+      replaceArtwork,
       onToggleBackground,
       onToggleScreenSaver,
       onToggleStartup,
@@ -54,4 +68,10 @@ app.once('ready', () => {
   })
 
   setTimer()
-})
+}
+
+app.requestSingleInstanceLock()
+
+if (app.dock) app.dock.hide()
+
+app.on('ready', main)
