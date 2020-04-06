@@ -66,6 +66,7 @@ const db = {
 };
 
 // N.A.S.T.Y. - Not Another State Transformation Yack
+// It's pretty much a redux impl that syncs with indexeddb.
 const constructStore = (stateGetter, reducer) => {
   const subscribers = new Map();
 
@@ -165,7 +166,7 @@ const timeout = (time) => {
 const fetch = async (...args) => {
   const response = await Promise.race([
     timeout(10000),
-    window.fetch(...args)
+    globalThis.fetch(...args)
   ]);
 
   if (response.ok) {
@@ -505,7 +506,16 @@ const dom = {
 };
 
 const getCurrentArtObject = () => {
-  return store.state.currentArtObject
+  const object = store.state.currentArtObject;
+
+  return {
+    src: object.src,
+    title: object.title,
+    author: object.author,
+    provider: object.provider,
+    titleLink: object.titleLink,
+    providerLink: object.providerLink
+  }
 };
 
 const main = async () => {

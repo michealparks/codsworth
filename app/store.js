@@ -1,6 +1,7 @@
-import { db } from './db'
+import { db } from './db.js'
 
 // N.A.S.T.Y. - Not Another State Transformation Yack
+// It's pretty much a redux impl that syncs with indexeddb.
 const constructStore = (stateGetter, reducer) => {
   const subscribers = new Map()
 

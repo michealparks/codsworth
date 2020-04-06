@@ -1,8 +1,11 @@
-import fetch from 'node-fetch'
+import { fetchBuffer } from '../util/fetch.js'
 import fs from 'fs'
+import crypto from 'crypto'
 import { promisify } from 'util'
-import { extname } from 'path'
+import { extname, resolve } from 'path'
 import FileType from 'file-type'
+
+const { app } = require('electron')
 
 const writeFile = promisify(fs.writeFile)
 
@@ -12,16 +15,16 @@ const writeFile = promisify(fs.writeFile)
  * @return { string } filepath
  */
 const fetchImage = async (url) => {
-  const response = await fetch(url)
+  const [bufErr, buffer] = await fetchBuffer(url)
 
-  if (response.ok === false) return ''
+  if (bufErr) return bufErr
 
-  const filename = crypto.createHash('md5').update(url).digest()
-  const buffer = await response.buffer()
-  const ext = await FileType.fromBuffer(buffer)
-  console.log(ext)
-  // const result = await writeFile(`./${url}`)
+  const { ext } = await FileType.fromBuffer(buffer)
+  const filename = `artwork_${crypto.createHash('md5').update(url).digest('base64')}.${ext}`
+  const path = resolve(`${app.getPath('userData')}`, filename)
+  const writeErr = await writeFile(path, buffer)
 
+  return writeErr
 }
 
 export const image = {

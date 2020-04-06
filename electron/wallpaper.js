@@ -12,8 +12,7 @@ export const constructWallpaper = () => {
     return stdout.trim()
   }
 
-  const set = async (imagePath) => {
-    
+  const set = (imagePath) => {
     return execFile(binary, [path.resolve(imagePath)])
   }
 

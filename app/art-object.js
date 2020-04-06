@@ -1,8 +1,8 @@
-import { fetchBlob } from './util'
-import { wikipedia } from './wikipedia'
-import { rijks } from './rijks'
-import { store } from './store'
-import { blacklist } from './blacklist'
+import { fetchBlob } from '../util/fetch.js'
+import { wikipedia } from './wikipedia.js'
+import { rijks } from './rijks.js'
+import { store } from './store.js'
+import { blacklist } from './blacklist.js'
 
 const threeHours = 1000 * 60 * 60 * 3
 

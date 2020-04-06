@@ -1,5 +1,5 @@
-import { store } from './store'
-import { setCurrentArtObject } from './art-object'
+import { store } from './store.js'
+import { setCurrentArtObject } from './art-object.js'
 
 const ui = document.getElementById('ui')
 const refreshBtn = document.getElementById('btn-refresh')

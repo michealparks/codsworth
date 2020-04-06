@@ -1,5 +1,5 @@
-import { fetchJSON } from './util'
-import { store } from './store'
+import { fetchJSON } from '../util/fetch.js'
+import { store } from './store.js'
 
 const endpoint = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD'
 

@@ -1,7 +1,10 @@
+import fetch from 'node-fetch'
 import { constructTray } from './tray.js'
 import { constructBackground } from './background.js'
 import { constructWallpaper } from './wallpaper.js'
 import { image } from './image'
+
+globalThis.fetch = fetch
 
 const { app, screen } = require('electron')
 
@@ -53,7 +56,8 @@ const main = async () => {
     // wallpaper = constructWallpaper()
     console.log('here')
     console.log(artObject)
-    const result = image.fetch(artObject.src)
+    const result = await image.fetch(artObject.src)
+    console.log(result)
   }
 
   constructTray({

@@ -1,8 +1,6 @@
 import { fetchJSON } from './util'
 import { store } from './store'
 
-// Note: this is temporarily abandoned
-// because met has no-cors set on images >:|
 const endpoint = 'https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=11|21'
 
 const randomArtObject = async () => {

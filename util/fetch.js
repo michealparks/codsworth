@@ -7,7 +7,7 @@ const timeout = (time) => {
 export const fetch = async (...args) => {
   const response = await Promise.race([
     timeout(10000),
-    window.fetch(...args)
+    globalThis.fetch(...args)
   ])
 
   if (response.ok) {
@@ -32,6 +32,16 @@ export const fetchBlob = async (...args) => {
     const response = await fetch(...args)
     const blob = await response.blob()
     return [undefined, blob]
+  } catch (err) {
+    return [err]
+  }
+}
+
+export const fetchBuffer = async (...args) => {
+  try {
+    const response = await fetch(...args)
+    const buffer = await response.buffer()
+    return [undefined, buffer]
   } catch (err) {
     return [err]
   }

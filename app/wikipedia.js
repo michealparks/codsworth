@@ -1,5 +1,5 @@
-import { fetchJSON } from './util'
-import { store } from './store'
+import { fetchJSON } from '../util/fetch.js'
+import { store } from './store.js'
 
 async function randomArtObject () {
   const artObjects = await getArtObjects()

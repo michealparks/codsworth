@@ -1,5 +1,5 @@
-import { fetchJSON } from './util'
-import { store } from './store'
+import { fetchJSON } from '../util/fetch.js'
+import { store } from './store.js'
 
 // Note: this is temporarily abandoned
 // because met has no-cors set on images >:|
