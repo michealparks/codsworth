@@ -1,23 +1,24 @@
 const timeout = (time) => {
-  return new Promise((resolve) => {
-    setTimeout(() => { resolve() }, time)
+  return new Promise((resolve, reject) => {
+    setTimeout(reject, time)
   })
 }
 
-export const fetch = async (...args) => {
+const fetch = async (...args) => {
   const response = await Promise.race([
-    timeout(10000),
+    timeout(20000),
     globalThis.fetch(...args)
   ])
 
   if (response.ok) {
     return response
   } else {
-    throw new Error(`request responded with status code ${response.status}`)
+    const text = await response.text()
+    throw new Error(`${args[0]} - ${response.status} - ${text}`)
   }
 }
 
-export const fetchJSON = async (...args) => {
+const fetchJSON = async (...args) => {
   try {
     const response = await fetch(...args)
     const json = await response.json()
@@ -27,22 +28,18 @@ export const fetchJSON = async (...args) => {
   }
 }
 
-export const fetchBlob = async (...args) => {
-  try {
-    const response = await fetch(...args)
-    const blob = await response.blob()
-    return [undefined, blob]
-  } catch (err) {
-    return [err]
-  }
+const fetchBlob = async (...args) => {
+  const response = await fetch(...args)
+  return response.blob()
 }
 
-export const fetchBuffer = async (...args) => {
-  try {
-    const response = await fetch(...args)
-    const buffer = await response.buffer()
-    return [undefined, buffer]
-  } catch (err) {
-    return [err]
-  }
+const fetchBuffer = async (...args) => {
+  const response = await fetch(...args)
+  return response.buffer()
+}
+
+module.exports = {
+  fetchJSON,
+  fetchBlob,
+  fetchBuffer
 }

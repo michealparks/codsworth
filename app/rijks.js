@@ -1,7 +1,7 @@
 import { fetchJSON } from '../util/fetch.js'
 import { store } from './store.js'
 
-const endpoint = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD'
+const url = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD'
 
 async function randomArtObject () {
   const artObjects = await getArtObjects()
@@ -16,9 +16,13 @@ async function getArtObjects () {
     return store.state.rijksArtObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10)
-    const [err, json] = await fetchJSON(`${endpoint}&p=${page}`)
 
-    if (err !== undefined) return
+    let json
+    try {
+      json = await fetchJSON(`${url}&p=${page}`)
+    } catch {
+      return
+    }
 
     const artObjects = []
 

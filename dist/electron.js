@@ -7,14 +7,14 @@ var http = _interopDefault(require('http'));
 var Url = _interopDefault(require('url'));
 var https = _interopDefault(require('https'));
 var zlib = _interopDefault(require('zlib'));
+var util$2 = _interopDefault(require('util'));
+var path = _interopDefault(require('path'));
+var child_process = _interopDefault(require('child_process'));
 var fs = _interopDefault(require('fs'));
+var os = _interopDefault(require('os'));
 var crypto = _interopDefault(require('crypto'));
-var util$1 = require('util');
-var util$1__default = _interopDefault(util$1);
-var path$2 = require('path');
 var assert = _interopDefault(require('assert'));
 var tty = _interopDefault(require('tty'));
-var os = _interopDefault(require('os'));
 
 // Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
 
@@ -1639,7 +1639,521 @@ fetch.isRedirect = function (code) {
 // expose Promise
 fetch.Promise = global.Promise;
 
-const { Tray, Menu, app } = require('electron');
+var lib = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': fetch,
+	Headers: Headers,
+	Request: Request,
+	Response: Response,
+	FetchError: FetchError
+});
+
+const {promisify} = util$2;
+
+
+
+const execFile = promisify(child_process.execFile);
+
+// Binary source → https://github.com/sindresorhus/macos-wallpaper
+const binary = path.join(__dirname, 'macos-wallpaper');
+
+var get = async ({screen = 'main'} = {}) => {
+	let {stdout} = await execFile(binary, ['get', '--screen', screen]);
+	stdout = stdout.trim();
+
+	if (screen === 'all') {
+		return stdout.split('\n');
+	}
+
+	return stdout;
+};
+
+var set = async (imagePath, {screen = 'all', scale = 'auto'} = {}) => {
+	if (typeof imagePath !== 'string') {
+		throw new TypeError('Expected a string');
+	}
+
+	const arguments_ = [
+		'set',
+		path.resolve(imagePath),
+		'--screen',
+		screen,
+		'--scale',
+		scale
+	];
+
+	await execFile(binary, arguments_);
+};
+
+var screens = async () => {
+	const {stdout} = await execFile(binary, ['screens']);
+	return stdout.trim().split('\n').map(line => line.replace(/^\d+ - /, ''));
+};
+
+var macos = {
+	get: get,
+	set: set,
+	screens: screens
+};
+
+const {promisify: promisify$1} = util$2;
+
+
+
+const execFile$1 = promisify$1(child_process.execFile);
+
+// Binary source → https://github.com/sindresorhus/win-wallpaper
+const binary$1 = path.join(__dirname, 'win-wallpaper.exe');
+
+var get$1 = async () => {
+	const {stdout} = await execFile$1(binary$1);
+	return stdout.trim();
+};
+
+var set$1 = async imagePath => {
+	if (typeof imagePath !== 'string') {
+		throw new TypeError('Expected a string');
+	}
+
+	await execFile$1(binary$1, [path.resolve(imagePath)]);
+};
+
+var win = {
+	get: get$1,
+	set: set$1
+};
+
+function unwrapExports (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+function getCjsExportFromNamespace (n) {
+	return n && n['default'] || n;
+}
+
+const {promisify: promisify$2} = util$2;
+
+
+
+const execFile$2 = promisify$2(child_process.execFile);
+
+var commandExists = async cmd => {
+	// `which` all commands and expect stdout to return a positive
+	try {
+		let {stdout} = await execFile$2('which', ['-a', cmd]);
+		stdout = stdout.trim();
+
+		if (!stdout) {
+			return false;
+		}
+
+		return true;
+	} catch (_) {
+		return false;
+	}
+};
+
+var hasLine = (string, lineToFind) => string.split('\n').find(line => line.trim() === lineToFind);
+
+var execFile_1 = execFile$2;
+var exec = promisify$2(child_process.exec);
+var readFile = promisify$2(fs.readFile);
+
+var util = {
+	commandExists: commandExists,
+	hasLine: hasLine,
+	execFile: execFile_1,
+	exec: exec,
+	readFile: readFile
+};
+
+const {commandExists: commandExists$1, execFile: execFile$3, hasLine: hasLine$1} = util;
+
+var isAvailable = async () => {
+	if (!await commandExists$1('gsettings')) {
+		return false;
+	}
+
+	try {
+		const {stdout} = await execFile$3('gsettings', ['list-schemas']);
+		return hasLine$1(stdout, 'org.cinnamon.desktop.background');
+	} catch (_) {
+		return false;
+	}
+};
+
+var set$2 = async imagePath => {
+	await execFile$3('gsettings', [
+		'set',
+		'org.cinnamon.desktop.background',
+		'picture-uri',
+		`file://${imagePath}`
+	]);
+};
+
+var get$2 = async () => {
+	const {stdout} = await execFile$3('gsettings', [
+		'get',
+		'org.cinnamon.desktop.background',
+		'picture-uri'
+	]);
+
+	return stdout.trim().slice(8, -1);
+};
+
+var cinnamon = {
+	isAvailable: isAvailable,
+	set: set$2,
+	get: get$2
+};
+
+const {commandExists: commandExists$2, execFile: execFile$4} = util;
+
+var isAvailable$1 = () => commandExists$2('dconf');
+
+var set$3 = async imagePath => {
+	await execFile$4('dconf', [
+		'write',
+		'/org/mate/desktop/background/picture-filename',
+		`"${imagePath}"`
+	]);
+};
+
+var get$3 = async () => {
+	const {stdout} = await execFile$4('dconf', [
+		'read',
+		'/org/mate/desktop/background/picture-filename'
+	]);
+
+	return stdout.trim().slice(1, -1);
+};
+
+var dconf = {
+	isAvailable: isAvailable$1,
+	set: set$3,
+	get: get$3
+};
+
+const {commandExists: commandExists$3, execFile: execFile$5} = util;
+
+var isAvailable$2 = () => commandExists$3('dcop');
+
+var set$4 = async imagePath => {
+	await execFile$5('dcop', [
+		'kdesktop',
+		'KBackgroundIface',
+		'setWallpaper',
+		`${imagePath} 1`
+	]);
+};
+
+var dcop = {
+	isAvailable: isAvailable$2,
+	set: set$4
+};
+
+const {commandExists: commandExists$4, execFile: execFile$6} = util;
+
+var isAvailable$3 = () => commandExists$4('feh');
+
+var set$5 = async imagePath => {
+	await execFile$6('feh', ['--bg-fill', imagePath]);
+};
+
+var feh = {
+	isAvailable: isAvailable$3,
+	set: set$5
+};
+
+const {commandExists: commandExists$5, execFile: execFile$7} = util;
+
+var isAvailable$4 = () => commandExists$5('gconftool-2');
+
+var set$6 = async imagePath => {
+	await execFile$7('gconftool-2', [
+		'--set',
+		'/desktop/gnome/background/picture_filename',
+		'--type',
+		'string',
+		imagePath
+	]);
+};
+
+var gconftool2 = {
+	isAvailable: isAvailable$4,
+	set: set$6
+};
+
+const {commandExists: commandExists$6, execFile: execFile$8} = util;
+
+var isAvailable$5 = () => commandExists$6('gsettings');
+
+var set$7 = async imagePath => {
+	await execFile$8('gsettings', [
+		'set',
+		'org.gnome.desktop.background',
+		'picture-uri',
+		`file://${imagePath}`
+	]);
+};
+
+var get$4 = async () => {
+	const {stdout} = await execFile$8('gsettings', [
+		'get',
+		'org.gnome.desktop.background',
+		'picture-uri'
+	]);
+
+	return stdout.trim().slice(8, -1);
+};
+
+var gnome = {
+	isAvailable: isAvailable$5,
+	set: set$7,
+	get: get$4
+};
+
+const {commandExists: commandExists$7, execFile: execFile$9, hasLine: hasLine$2} = util;
+
+var isAvailable$6 = async () => {
+	if (!await commandExists$7('gsettings')) {
+		return false;
+	}
+
+	try {
+		const {stdout} = await execFile$9('gsettings', ['list-schemas']);
+		return hasLine$2(stdout, 'org.mate.background');
+	} catch (_) {
+		return false;
+	}
+};
+
+var set$8 = async imagePath => {
+	await execFile$9('gsettings', [
+		'set',
+		'org.mate.background',
+		'picture-filename',
+		imagePath
+	]);
+};
+
+var get$5 = async () => {
+	const {stdout} = await execFile$9('gsettings', [
+		'get',
+		'org.mate.background',
+		'picture-filename'
+	]);
+
+	return stdout.trim().slice(1, -1);
+};
+
+var mate = {
+	isAvailable: isAvailable$6,
+	set: set$8,
+	get: get$5
+};
+
+const {commandExists: commandExists$8, execFile: execFile$a, readFile: readFile$1} = util;
+
+const homeDir = os.homedir();
+
+var isAvailable$7 = () => commandExists$8('nitrogen');
+
+var set$9 = async imagePath => {
+	await execFile$a('nitrogen', [
+		'--set-zoom-fill',
+		'--save',
+		imagePath
+	]);
+};
+
+var get$6 = async () => {
+	const configFile = path.join(homeDir, '.config/nitrogen/bg-saved.cfg');
+	const config = await readFile$1(configFile, 'utf8');
+
+	return config.trim().split('\n').find(line => line.startsWith('file=')).replace('file=', '');
+};
+
+var nitrogen = {
+	isAvailable: isAvailable$7,
+	set: set$9,
+	get: get$6
+};
+
+const {commandExists: commandExists$9, execFile: execFile$b} = util;
+
+var isAvailable$8 = () => commandExists$9('pcmanfm');
+
+var set$a = async imagePath => {
+	await execFile$b('pcmanfm', ['--set-wallpaper', imagePath]);
+};
+
+var pcmanfm = {
+	isAvailable: isAvailable$8,
+	set: set$a
+};
+
+const {commandExists: commandExists$a, execFile: execFile$c} = util;
+
+var isAvailable$9 = () => commandExists$a('setroot');
+
+var set$b = async imagePath => {
+	await execFile$c('setroot', [imagePath]);
+};
+
+var setroot = {
+	isAvailable: isAvailable$9,
+	set: set$b
+};
+
+const {commandExists: commandExists$b, execFile: execFile$d} = util;
+
+var isAvailable$a = () => commandExists$b('xfconf-query');
+
+var set$c = async imagePath => {
+	await execFile$d('xfconf-query', [
+		'--channel',
+		'xfce4-desktop',
+		'--property',
+		'/backdrop/screen0/monitor0/image-path',
+		'--set',
+		`${imagePath}`
+	]);
+};
+
+var xfconfQuery = {
+	isAvailable: isAvailable$a,
+	set: set$c
+};
+
+var backgroundManagers = {
+	cinnamon: cinnamon,
+	dconf: dconf,
+	dcop: dcop,
+	feh: feh,
+	gconftool2: gconftool2,
+	gnome: gnome,
+	mate: mate,
+	nitrogen: nitrogen,
+	pcmanfm: pcmanfm,
+	setroot: setroot,
+	xfconfquery: xfconfQuery
+};
+
+var linux = createCommonjsModule(function (module, exports) {
+
+
+
+let availableApps;
+
+async function setAvailableApps() {
+	availableApps = [];
+
+	const promises = Object.values(backgroundManagers).map(async manager => {
+		if (await manager.isAvailable()) {
+			availableApps.push(manager);
+		}
+	});
+
+	await Promise.all(promises);
+}
+
+exports.get = async () => {
+	if (!availableApps) {
+		await setAvailableApps();
+		return exports.get();
+	}
+
+	const wallpapersVoted = new Map();
+	const promises = availableApps.map(async app => {
+		if (typeof app.get !== 'function') {
+			return;
+		}
+
+		const imagePath = await app.get();
+
+		if (typeof imagePath !== 'undefined') {
+			if (!wallpapersVoted.get(imagePath)) {
+				wallpapersVoted.set(imagePath, 0);
+			}
+
+			wallpapersVoted.set(imagePath, wallpapersVoted.get(imagePath) + 1);
+		}
+	});
+
+	await Promise.all(promises.map(promise => promise.catch(() => {})));
+
+	let wallpaperMostVoted;
+	let wallpaperMostVotedCount;
+
+	for (const [wallpaper] of wallpapersVoted) {
+		if (!wallpaperMostVoted || wallpaperMostVoted[wallpaper] > wallpaperMostVotedCount) {
+			wallpaperMostVoted = wallpaper;
+			wallpaperMostVotedCount = wallpaperMostVoted[wallpaper];
+		}
+	}
+
+	return wallpaperMostVoted;
+};
+
+exports.set = async imagePath => {
+	if (typeof imagePath !== 'string') {
+		throw new TypeError('Expected a string');
+	}
+
+	if (!availableApps) {
+		await setAvailableApps();
+		await exports.set(imagePath);
+		return;
+	}
+
+	const promises = availableApps.map(async app => {
+		if (typeof app.set === 'function') {
+			await app.set(path.resolve(imagePath));
+		}
+	});
+
+	await Promise.all(promises.map(promise => promise.catch(() => {})));
+};
+});
+var linux_1 = linux.get;
+var linux_2 = linux.set;
+
+let wallpaper;
+if (process.platform === 'darwin') {
+	wallpaper = macos;
+} else if (process.platform === 'win32') {
+	wallpaper = win;
+} else {
+	wallpaper = linux;
+}
+
+var wallpaper_1 = wallpaper;
+// TODO: remove this in the next major version
+var default_1 = wallpaper;
+wallpaper_1.default = default_1;
+
+var pathFile = path.join(__dirname, 'path.txt');
+
+function getElectronPath () {
+  if (fs.existsSync(pathFile)) {
+    var executablePath = fs.readFileSync(pathFile, 'utf-8');
+    if (process.env.ELECTRON_OVERRIDE_DIST_PATH) {
+      return path.join(process.env.ELECTRON_OVERRIDE_DIST_PATH, executablePath)
+    }
+    return path.join(__dirname, 'dist', executablePath)
+  } else {
+    throw new Error('Electron failed to install correctly, please delete node_modules/electron and try installing again')
+  }
+}
+
+var electron = getElectronPath();
+
+const { Tray, Menu, app } = electron;
 
 let tray;
 
@@ -1652,7 +2166,7 @@ const constructTray = ({ events, artObject }) => {
     }, {
       label: 'Next Artwork',
       type: 'normal',
-      click: events.replaceArtwork
+      click: events.setArtwork
     }, {
       type: 'separator'
     }, {
@@ -1694,8 +2208,17 @@ const constructTray = ({ events, artObject }) => {
   }
 };
 
-const path = require('path');
-const { BrowserWindow, ipcMain } = require('electron');
+var tray_1 = { constructTray };
+var tray_2 = tray_1.constructTray;
+
+var tray$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': tray_1,
+	__moduleExports: tray_1,
+	constructTray: tray_2
+});
+
+const { BrowserWindow, ipcMain } = electron;
 
 const constructBackground = (screen) => {
   let readyResolver;
@@ -1726,12 +2249,6 @@ const constructBackground = (screen) => {
     });
 
     win.loadFile('index.html');
-
-    {
-      win.once('ready-to-show', () => {
-        win.showInactive();
-      });
-    }
 
     win.once('closed', () => {
       windows.splice(windows.indexOf(win), 1);
@@ -1773,20 +2290,25 @@ const constructBackground = (screen) => {
   }
 };
 
-const { promisify } = require('util');
-const path$1 = require('path');
-const childProcess = require('child_process');
-const execFile = promisify(childProcess.execFile);
+var background = { constructBackground };
+var background_1 = background.constructBackground;
+
+var background$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': background,
+	__moduleExports: background,
+	constructBackground: background_1
+});
 
 const timeout = (time) => {
-  return new Promise((resolve) => {
-    setTimeout(() => { resolve(); }, time);
+  return new Promise((resolve, reject) => {
+    setTimeout(reject, time);
   })
 };
 
 const fetch$1 = async (...args) => {
   const response = await Promise.race([
-    timeout(10000),
+    timeout(20000),
     globalThis.fetch(...args)
   ]);
 
@@ -1797,23 +2319,39 @@ const fetch$1 = async (...args) => {
   }
 };
 
-const fetchBuffer = async (...args) => {
+const fetchJSON = async (...args) => {
   try {
     const response = await fetch$1(...args);
-    const buffer = await response.buffer();
-    return [undefined, buffer]
+    const json = await response.json();
+    return [undefined, json]
   } catch (err) {
     return [err]
   }
 };
 
-function unwrapExports (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
+const fetchBlob = async (...args) => {
+  try {
+    const response = await fetch$1(...args);
+    const blob = await response.blob();
+    return [undefined, blob]
+  } catch (err) {
+    return [err]
+  }
+};
 
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
+const fetchBuffer = async (...args) => {
+  const response = await fetch$1(...args);
+  const buffer = await response.buffer();
+  return buffer
+};
+
+var fetch$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	fetch: fetch$1,
+	fetchJSON: fetchJSON,
+	fetchBlob: fetchBlob,
+	fetchBuffer: fetchBuffer
+});
 
 var FsPromise = createCommonjsModule(function (module, exports) {
 /**
@@ -1926,7 +2464,7 @@ unwrapExports(EndOfFileStream);
 var EndOfFileStream_1 = EndOfFileStream.defaultMessages;
 var EndOfFileStream_2 = EndOfFileStream.EndOfStreamError;
 
-var lib = createCommonjsModule(function (module, exports) {
+var lib$1 = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 
 
@@ -2065,9 +2603,9 @@ exports.StreamReader = StreamReader;
 
 });
 
-unwrapExports(lib);
-var lib_1 = lib.EndOfStreamError;
-var lib_2 = lib.StreamReader;
+unwrapExports(lib$1);
+var lib_1 = lib$1.EndOfStreamError;
+var lib_2 = lib$1.StreamReader;
 
 var AbstractTokenizer_1 = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2094,7 +2632,7 @@ class AbstractTokenizer {
         const buffer = Buffer.alloc(token.len);
         const len = await this.readBuffer(buffer, { position });
         if (len < token.len)
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         return token.get(buffer, 0);
     }
     /**
@@ -2107,7 +2645,7 @@ class AbstractTokenizer {
         const buffer = Buffer.alloc(token.len);
         const len = await this.peekBuffer(buffer, { position });
         if (len < token.len)
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         return token.get(buffer, 0);
     }
     /**
@@ -2118,7 +2656,7 @@ class AbstractTokenizer {
     async readNumber(token) {
         const len = await this.readBuffer(this.numBuffer, { length: token.len });
         if (len < token.len)
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         return token.get(this.numBuffer, 0);
     }
     /**
@@ -2129,7 +2667,7 @@ class AbstractTokenizer {
     async peekNumber(token) {
         const len = await this.peekBuffer(this.numBuffer, { length: token.len });
         if (len < token.len)
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         return token.get(this.numBuffer, 0);
     }
     async close() {
@@ -3172,7 +3710,7 @@ function getDate() {
  */
 
 function log(...args) {
-	return process.stderr.write(util$1__default.format(...args) + '\n');
+	return process.stderr.write(util$2.format(...args) + '\n');
 }
 
 /**
@@ -3228,7 +3766,7 @@ const {formatters} = module.exports;
 
 formatters.o = function (v) {
 	this.inspectOpts.colors = this.useColors;
-	return util$1__default.inspect(v, this.inspectOpts)
+	return util$2.inspect(v, this.inspectOpts)
 		.replace(/\s*\n\s*/g, ' ');
 };
 
@@ -3238,7 +3776,7 @@ formatters.o = function (v) {
 
 formatters.O = function (v) {
 	this.inspectOpts.colors = this.useColors;
-	return util$1__default.inspect(v, this.inspectOpts);
+	return util$2.inspect(v, this.inspectOpts);
 };
 });
 var node_1 = node.init;
@@ -3273,7 +3811,7 @@ const maxBufferSize = 1 * 1000 * 1000;
 class ReadStreamTokenizer extends AbstractTokenizer_1.AbstractTokenizer {
     constructor(stream, fileInfo) {
         super(fileInfo);
-        this.streamReader = new lib.StreamReader(stream);
+        this.streamReader = new lib$1.StreamReader(stream);
     }
     /**
      * Get file information, an HTTP-client may implement this doing a HEAD request
@@ -3320,7 +3858,7 @@ class ReadStreamTokenizer extends AbstractTokenizer_1.AbstractTokenizer {
         const bytesRead = await this.streamReader.read(buffer, offset, length);
         this.position += bytesRead;
         if ((!options || !options.mayBeLess) && bytesRead < length) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         return bytesRead;
     }
@@ -3361,7 +3899,7 @@ class ReadStreamTokenizer extends AbstractTokenizer_1.AbstractTokenizer {
         }
         bytesRead = await this.streamReader.peek(buffer, offset, length);
         if ((!options || !options.mayBeLess) && bytesRead < length) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         return bytesRead;
     }
@@ -3457,7 +3995,7 @@ class BufferTokenizer {
         }
         const bytes2read = Math.min(this.buffer.length - position, length);
         if ((!options || !options.mayBeLess) && bytes2read < length) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         else {
             this.buffer.copy(buffer, offset, position, position + bytes2read);
@@ -3478,7 +4016,7 @@ class BufferTokenizer {
     }
     async peekToken(token, position = this.position) {
         if (this.buffer.length - position < token.len) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         return token.get(this.buffer, position);
     }
@@ -3512,7 +4050,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 
-exports.EndOfStreamError = lib.EndOfStreamError;
+exports.EndOfStreamError = lib$1.EndOfStreamError;
 /**
  * Construct ReadStreamTokenizer from given Stream.
  * Will set fileSize, if provided given Stream has set the .path property/
@@ -3585,7 +4123,7 @@ class FileTokenizer extends AbstractTokenizer_1.AbstractTokenizer {
         const res = await FsPromise.read(this.fd, buffer, offset, length, this.position);
         this.position += res.bytesRead;
         if (res.bytesRead < length && (!options || !options.mayBeLess)) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         return res.bytesRead;
     }
@@ -3621,7 +4159,7 @@ class FileTokenizer extends AbstractTokenizer_1.AbstractTokenizer {
         }
         const res = await FsPromise.read(this.fd, buffer, offset, length, position);
         if ((!options || !options.mayBeLess) && res.bytesRead < length) {
-            throw new lib.EndOfStreamError();
+            throw new lib$1.EndOfStreamError();
         }
         return res.bytesRead;
     }
@@ -3661,7 +4199,7 @@ unwrapExports(FileTokenizer_1);
 var FileTokenizer_2 = FileTokenizer_1.FileTokenizer;
 var FileTokenizer_3 = FileTokenizer_1.fromFile;
 
-var lib$1 = createCommonjsModule(function (module, exports) {
+var lib$2 = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 
 
@@ -3690,11 +4228,11 @@ exports.fromStream = fromStream;
 
 });
 
-unwrapExports(lib$1);
-var lib_1$1 = lib$1.fromFile;
-var lib_2$1 = lib$1.EndOfStreamError;
-var lib_3 = lib$1.fromBuffer;
-var lib_4 = lib$1.fromStream;
+unwrapExports(lib$2);
+var lib_1$1 = lib$2.fromFile;
+var lib_2$1 = lib$2.EndOfStreamError;
+var lib_3 = lib$2.fromBuffer;
+var lib_4 = lib$2.fromStream;
 
 var read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m;
@@ -3786,7 +4324,7 @@ var ieee754 = {
 	write: write
 };
 
-var lib$2 = createCommonjsModule(function (module, exports) {
+var lib$3 = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 
 
@@ -4404,42 +4942,42 @@ exports.writeIntBE = writeIntBE;
 
 });
 
-unwrapExports(lib$2);
-var lib_1$2 = lib$2.UINT8;
-var lib_2$2 = lib$2.UINT16_LE;
-var lib_3$1 = lib$2.UINT16_BE;
-var lib_4$1 = lib$2.UINT24_LE;
-var lib_5 = lib$2.UINT24_BE;
-var lib_6 = lib$2.UINT32_LE;
-var lib_7 = lib$2.UINT32_BE;
-var lib_8 = lib$2.INT8;
-var lib_9 = lib$2.INT16_BE;
-var lib_10 = lib$2.INT16_LE;
-var lib_11 = lib$2.INT24_LE;
-var lib_12 = lib$2.INT24_BE;
-var lib_13 = lib$2.INT32_BE;
-var lib_14 = lib$2.INT32_LE;
-var lib_15 = lib$2.UINT64_LE;
-var lib_16 = lib$2.INT64_LE;
-var lib_17 = lib$2.UINT64_BE;
-var lib_18 = lib$2.INT64_BE;
-var lib_19 = lib$2.Float16_BE;
-var lib_20 = lib$2.Float16_LE;
-var lib_21 = lib$2.Float32_BE;
-var lib_22 = lib$2.Float32_LE;
-var lib_23 = lib$2.Float64_BE;
-var lib_24 = lib$2.Float64_LE;
-var lib_25 = lib$2.Float80_BE;
-var lib_26 = lib$2.Float80_LE;
-var lib_27 = lib$2.IgnoreType;
-var lib_28 = lib$2.BufferType;
-var lib_29 = lib$2.StringType;
-var lib_30 = lib$2.AnsiStringType;
-var lib_31 = lib$2.writeIntLE;
-var lib_32 = lib$2.readUIntBE;
-var lib_33 = lib$2.writeUIntBE;
-var lib_34 = lib$2.readIntBE;
-var lib_35 = lib$2.writeIntBE;
+unwrapExports(lib$3);
+var lib_1$2 = lib$3.UINT8;
+var lib_2$2 = lib$3.UINT16_LE;
+var lib_3$1 = lib$3.UINT16_BE;
+var lib_4$1 = lib$3.UINT24_LE;
+var lib_5 = lib$3.UINT24_BE;
+var lib_6 = lib$3.UINT32_LE;
+var lib_7 = lib$3.UINT32_BE;
+var lib_8 = lib$3.INT8;
+var lib_9 = lib$3.INT16_BE;
+var lib_10 = lib$3.INT16_LE;
+var lib_11 = lib$3.INT24_LE;
+var lib_12 = lib$3.INT24_BE;
+var lib_13 = lib$3.INT32_BE;
+var lib_14 = lib$3.INT32_LE;
+var lib_15 = lib$3.UINT64_LE;
+var lib_16 = lib$3.INT64_LE;
+var lib_17 = lib$3.UINT64_BE;
+var lib_18 = lib$3.INT64_BE;
+var lib_19 = lib$3.Float16_BE;
+var lib_20 = lib$3.Float16_LE;
+var lib_21 = lib$3.Float32_BE;
+var lib_22 = lib$3.Float32_LE;
+var lib_23 = lib$3.Float64_BE;
+var lib_24 = lib$3.Float64_LE;
+var lib_25 = lib$3.Float80_BE;
+var lib_26 = lib$3.Float80_LE;
+var lib_27 = lib$3.IgnoreType;
+var lib_28 = lib$3.BufferType;
+var lib_29 = lib$3.StringType;
+var lib_30 = lib$3.AnsiStringType;
+var lib_31 = lib$3.writeIntLE;
+var lib_32 = lib$3.readUIntBE;
+var lib_33 = lib$3.writeUIntBE;
+var lib_34 = lib$3.readIntBE;
+var lib_35 = lib$3.writeIntBE;
 
 var stringToBytes = string => [...string].map(character => character.charCodeAt(0));
 
@@ -4496,7 +5034,7 @@ var uint32SyncSafeToken = {
 	len: 4
 };
 
-var util = {
+var util$1 = {
 	stringToBytes: stringToBytes,
 	tarHeaderChecksumMatches: tarHeaderChecksumMatches,
 	uint8ArrayUtf8ByteString: uint8ArrayUtf8ByteString_1,
@@ -4758,7 +5296,7 @@ const {
 	tarHeaderChecksumMatches: tarHeaderChecksumMatches$1,
 	uint32SyncSafeToken: uint32SyncSafeToken$1,
 	uint8ArrayUtf8ByteString: uint8ArrayUtf8ByteString$1
-} = util;
+} = util$1;
 
 
 const minimumBytes = 4100; // A fair amount of file-types are detectable within this range
@@ -5011,7 +5549,7 @@ async function _fromTokenizer(tokenizer) {
 					extraFieldLength: buffer.readUInt16LE(28)
 				};
 
-				zipHeader.filename = await tokenizer.readToken(new lib$2.StringType(zipHeader.filenameLength, 'utf-8'));
+				zipHeader.filename = await tokenizer.readToken(new lib$3.StringType(zipHeader.filenameLength, 'utf-8'));
 				await tokenizer.ignore(zipHeader.extraFieldLength);
 
 				// Assumes signed `.xpi` from addons.mozilla.org
@@ -5061,7 +5599,7 @@ async function _fromTokenizer(tokenizer) {
 				// - one entry indicating specific type of file.
 				// MS Office, OpenOffice and LibreOffice may put the parts in different order, so the check should not rely on it.
 				if (zipHeader.filename === 'mimetype' && zipHeader.compressedSize === zipHeader.uncompressedSize) {
-					const mimeType = await tokenizer.readToken(new lib$2.StringType(zipHeader.compressedSize, 'utf-8'));
+					const mimeType = await tokenizer.readToken(new lib$3.StringType(zipHeader.compressedSize, 'utf-8'));
 
 					switch (mimeType) {
 						case 'application/epub+zip':
@@ -5397,7 +5935,7 @@ async function _fromTokenizer(tokenizer) {
 	// https://github.com/threatstack/libmagic/blob/master/magic/Magdir/matroska
 	if (check([0x1A, 0x45, 0xDF, 0xA3])) { // Root element: EBML
 		async function readField() {
-			const msb = await tokenizer.peekNumber(lib$2.UINT8);
+			const msb = await tokenizer.peekNumber(lib$3.UINT8);
 			let mask = 0x80;
 			let ic = 0; // 0 = A, 1 = B, 2 = C, 3 = D
 
@@ -5426,7 +5964,7 @@ async function _fromTokenizer(tokenizer) {
 			while (children > 0) {
 				const e = await readElement();
 				if (e.id === 0x4282) {
-					return tokenizer.readToken(new lib$2.StringType(e.len, 'utf-8')); // Return DocType
+					return tokenizer.readToken(new lib$3.StringType(e.len, 'utf-8')); // Return DocType
 				}
 
 				await tokenizer.ignore(e.len); // ignore payload
@@ -5625,7 +6163,7 @@ async function _fromTokenizer(tokenizer) {
 
 	if (checkString('!<arch>')) {
 		await tokenizer.ignore(8);
-		const str = await tokenizer.readToken(new lib$2.StringType(13, 'ascii'));
+		const str = await tokenizer.readToken(new lib$3.StringType(13, 'ascii'));
 		if (str === 'debian-binary') {
 			return {
 				ext: 'deb',
@@ -5654,8 +6192,8 @@ async function _fromTokenizer(tokenizer) {
 
 		async function readChunkHeader() {
 			return {
-				length: await tokenizer.readToken(lib$2.INT32_BE),
-				type: await tokenizer.readToken(new lib$2.StringType(4, 'binary'))
+				length: await tokenizer.readToken(lib$3.INT32_BE),
+				type: await tokenizer.readToken(new lib$3.StringType(4, 'binary'))
 			};
 		}
 
@@ -5735,7 +6273,7 @@ async function _fromTokenizer(tokenizer) {
 			await tokenizer.readBuffer(guid);
 			return {
 				id: guid,
-				size: await tokenizer.readToken(lib$2.UINT64_LE)
+				size: await tokenizer.readToken(lib$3.UINT64_LE)
 			};
 		}
 
@@ -5803,7 +6341,7 @@ async function _fromTokenizer(tokenizer) {
 		// JPEG-2000 family
 
 		await tokenizer.ignore(20);
-		const type = await tokenizer.readToken(new lib$2.StringType(4, 'ascii'));
+		const type = await tokenizer.readToken(new lib$3.StringType(4, 'ascii'));
 		switch (type) {
 			case 'jp2 ':
 				return {
@@ -6079,7 +6617,7 @@ Object.defineProperty(fileType, 'mimeTypes', {
 var core$1 = fileType;
 
 async function fromFile(path) {
-	const tokenizer = await lib$1.fromFile(path);
+	const tokenizer = await lib$2.fromFile(path);
 	try {
 		return await core$1.fromTokenizer(tokenizer);
 	} finally {
@@ -6107,104 +6645,121 @@ Object.defineProperty(fileType$1, 'mimeTypes', {
 
 var fileType_1 = fileType$1;
 
-const { app: app$1 } = require('electron');
+const { fetchBuffer: fetchBuffer$1 } = fetch$2;
 
-const writeFile = util$1.promisify(fs.writeFile);
+
+const { promisify: promisify$3 } = util$2;
+const { resolve } = path;
+
+const { app: app$1 } = electron;
+const mkdir = promisify$3(fs.mkdir);
+const writeFile = promisify$3(fs.writeFile);
+
+const createHash = (url) => {
+  const hash = crypto.createHash('md5').update(url).digest('base64');
+  return hash.replace('==', '2').replace('=', '1')
+};
 
 /**
  * Fetches and image, writes it to disk, and returns a filepath
  * @param {string} url
- * @return { string } filepath
+ * @return {string} filepath
  */
-const fetchImage = async (url) => {
-  const [bufErr, buffer] = await fetchBuffer(url);
-
-  if (bufErr) return bufErr
-
+const download = async (url) => {
+  const buffer = await fetchBuffer$1(url);
   const { ext } = await fileType_1.fromBuffer(buffer);
-  const filename = `artwork_${crypto.createHash('md5').update(url).digest('base64')}.${ext}`;
-  const path = path$2.resolve(`${app$1.getPath('userData')}`, filename);
-  const writeErr = await writeFile(path, buffer);
+  const filename = `artwork_${createHash(url)}.${ext}`;
+  const appPath = app$1.getPath('appData');
+  const path = resolve(`${appPath}`, 'Galeri', filename);
 
-  return writeErr
+  try {
+    await mkdir(resolve(appPath, 'Galeri'));
+  } catch (err) {}
+
+  await writeFile(path, buffer);
+
+  return path
 };
 
-const image = {
-  fetch: fetchImage
-};
-
-globalThis.fetch = fetch;
-
-const { app: app$2, screen } = require('electron');
-
-let nextArtworkId;
-let background;
-let wallpaper;
-
-const setTimer = () => {
-  if (nextArtworkId) clearTimeout(nextArtworkId);
-
-  nextArtworkId = setTimeout(replaceArtwork, 3 * 1000 * 60 * 60);
-};
-
-const replaceArtwork = async () => {
-  const artObject = await background.next();
-  console.log('artObject', artObject);
-
-  if (process.platform === 'win32') {
-    wallpaper.set();
+var image = {
+  image: {
+    download
   }
-
-  setTimer();
 };
+var image_1 = image.image;
 
-const onToggleBackground = () => {
+var image$1 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	'default': image,
+	__moduleExports: image,
+	image: image_1
+});
 
-};
+var fetch$3 = getCjsExportFromNamespace(lib);
 
-const onToggleScreenSaver = () => {
+const { app: app$2, screen } = electron;
+const { constructTray: constructTray$1 } = tray$1;
+const { constructBackground: constructBackground$1 } = background$1;
+const { image: image$2 } = image$1;
 
-};
-
-const onToggleStartup = () => {
-  app$2.setLoginItemSettings({
-    openAtLogin: !app$2.getLoginItemSettings().openAtLogin
-  });
-};
-
-const onQuit = () => {
-  app$2.quit();
-};
-
-const main = async () => {
-  background = constructBackground(screen);
-
-  const artObject = await background.ready();
-
-  if (process.platform === 'win32') {
-    // wallpaper = constructWallpaper()
-    console.log('here');
-    console.log(artObject);
-    const result = await image.fetch(artObject.src);
-    console.log(result);
-  }
-
-  constructTray({
-    artObject,
-    events: {
-      replaceArtwork,
-      onToggleBackground,
-      onToggleScreenSaver,
-      onToggleStartup,
-      onQuit
-    }
-  });
-
-  setTimer();
-};
+globalThis.fetch = fetch$3;
 
 app$2.requestSingleInstanceLock();
 
 if (app$2.dock) app$2.dock.hide();
 
-app$2.on('ready', main);
+app$2.on('ready', async () => {
+  let timerId = -1;
+
+  const setArtwork = async (artObject) => {
+    const imgPath = await image$2.download(artObject.src);
+    console.log(imgPath);
+    const response = await wallpaper_1.set(imgPath);
+    console.log(response);
+  };
+
+  const replaceArtwork = async () => {
+    const artObject = await background.next();
+    await setArtwork(artObject);
+  };
+
+  const initTimer = () => {
+    if (timerId) clearTimeout(timerId);
+
+    timerId = setTimeout(() => {
+      setArtwork();
+      initTimer();
+    }, 3 * 1000 * 60 * 60);
+  };
+
+  try {
+    console.log(await wallpaper_1.get());
+  } catch (err) {
+    console.log(err);
+  }
+  
+  const background = constructBackground$1(screen);
+  const artObject = await background.ready();
+
+  try {
+    await setArtwork(artObject);
+  } catch (err) {
+    console.log(err);
+  }
+  
+
+  constructTray$1({
+    artObject,
+    events: {
+      replaceArtwork,
+      onToggleBackground: () => {},
+      onToggleScreenSaver: () => {},
+      onToggleStartup: () => app$2.setLoginItemSettings({
+        openAtLogin: !app$2.getLoginItemSettings().openAtLogin
+      }),
+      onQuit: () => app$2.quit()
+    }
+  });
+
+  initTimer();
+});

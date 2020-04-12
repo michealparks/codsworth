@@ -36,6 +36,12 @@ export const setCurrentArtObject = async (config = {}) => {
       artObject: next
     })
   }
+
+  return current
+}
+
+export const replaceArtObject = (config) => {
+  return setCurrentArtObject({ ...config, replace: true })
 }
 
 const getRandom = () => {
@@ -65,12 +71,13 @@ const getArtObject = async () => {
   }
 
   const src = artObject.src.replace('chrome-extension://', 'https://')
-  const [err, blob] = await fetchBlob(src)
 
-  if (err) return getArtObject()
+  try {
+    artObject.blob = await fetchBlob(src)
+  } catch (err) {
+    return getArtObject()
+  }
 
-  artObject.blob = blob
   artObject.timestamp = Date.now()
-
   return artObject
 }

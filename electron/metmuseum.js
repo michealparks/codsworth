@@ -1,5 +1,5 @@
-import { fetchJSON } from './util'
-import { store } from './store'
+const { fetchJSON } = require('./util')
+const { store } = require('./store')
 
 const endpoint = 'https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=11|21'
 
@@ -58,6 +58,8 @@ const removeRandomArtObject = async (artObjects) => {
   return artObject
 }
 
-export const metmuseum = {
-  randomArtObject
+module.exports = {
+  metmuseum: {
+    randomArtObject
+  }
 }

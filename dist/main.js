@@ -32,7 +32,7 @@ const put = (name, data) => {
   return promise(client
     .transaction(name, 'readwrite')
     .objectStore(name)
-    .put({ ...data, created: new Date().getTime() }))
+    .put({ ...data, created: Date.now() }))
 };
 
 const getAll = (name) => {
@@ -106,24 +106,26 @@ const constructStore = (stateGetter, reducer) => {
   return store
 };
 
+const handleUpgrade = (e) => {
+  const { result } = e.target;
+
+  if (result.objectStoreNames.contains('artObject') === false) {
+    result.createObjectStore('artObject', {
+      keyPath: 'id',
+      autoIncrement: true
+    });
+  }
+
+  if (result.objectStoreNames.contains('artObjects') === false) {
+    result.createObjectStore('artObjects', {
+      keyPath: 'id',
+      autoIncrement: true
+    });
+  }
+};
+
 const store = constructStore(async () => {
-  await db.open('galeri', 2, (e) => {
-    const { result } = e.target;
-
-    if (result.objectStoreNames.contains('artObject') === false) {
-      result.createObjectStore('artObject', {
-        keyPath: 'id',
-        autoIncrement: true
-      });
-    }
-
-    if (result.objectStoreNames.contains('artObjects') === false) {
-      result.createObjectStore('artObjects', {
-        keyPath: 'id',
-        autoIncrement: true
-      });
-    }
-  });
+  await db.open('galeri', 2, handleUpgrade);
 
   const currentArtObjects = await db.getAll('artObject');
   const artObjects = await db.getAll('artObjects');
@@ -158,21 +160,22 @@ const store = constructStore(async () => {
 });
 
 const timeout = (time) => {
-  return new Promise((resolve) => {
-    setTimeout(() => { resolve(); }, time);
+  return new Promise((resolve, reject) => {
+    setTimeout(reject, time);
   })
 };
 
 const fetch = async (...args) => {
   const response = await Promise.race([
-    timeout(10000),
+    timeout(20000),
     globalThis.fetch(...args)
   ]);
 
   if (response.ok) {
     return response
   } else {
-    throw new Error(`request responded with status code ${response.status}`)
+    const text = await response.text();
+    throw new Error(`${args[0]} - ${response.status} - ${text}`)
   }
 };
 
@@ -187,14 +190,22 @@ const fetchJSON = async (...args) => {
 };
 
 const fetchBlob = async (...args) => {
-  try {
-    const response = await fetch(...args);
-    const blob = await response.blob();
-    return [undefined, blob]
-  } catch (err) {
-    return [err]
-  }
+  const response = await fetch(...args);
+  return response.blob()
 };
+
+const fetchBuffer = async (...args) => {
+  const response = await fetch(...args);
+  return response.buffer()
+};
+
+var fetch_1 = {
+  fetchJSON,
+  fetchBlob,
+  fetchBuffer
+};
+var fetch_2 = fetch_1.fetchJSON;
+var fetch_3 = fetch_1.fetchBlob;
 
 async function randomArtObject () {
   const artObjects = await getArtObjects();
@@ -210,9 +221,12 @@ async function getArtObjects () {
   } else {
     const page = 'Wikipedia:Featured_pictures/Artwork/Paintings';
     const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`;
-    const [err, json] = await fetchJSON(url);
-
-    if (err) return
+    let json;
+    try {
+      json = await fetch_2(url);
+    } catch {
+      return
+    }
 
     const artObjects = parsePage(json.parse.text['*']);
 
@@ -274,7 +288,7 @@ const wikipedia = {
   randomArtObject
 };
 
-const endpoint = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD';
+const url = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD';
 
 async function randomArtObject$1 () {
   const artObjects = await getArtObjects$1();
@@ -289,9 +303,13 @@ async function getArtObjects$1 () {
     return store.state.rijksArtObjects
   } else {
     const page = parseInt(localStorage.getItem('rijks_page') || 1, 10);
-    const [err, json] = await fetchJSON(`${endpoint}&p=${page}`);
 
-    if (err !== undefined) return
+    let json;
+    try {
+      json = await fetch_2(`${url}&p=${page}`);
+    } catch {
+      return
+    }
 
     const artObjects = [];
 
@@ -401,6 +419,12 @@ const setCurrentArtObject = async (config = {}) => {
       artObject: next
     });
   }
+
+  return current
+};
+
+const replaceArtObject = (config) => {
+  return setCurrentArtObject({ ...config, replace: true })
 };
 
 const getRandom = () => {
@@ -430,13 +454,14 @@ const getArtObject = async () => {
   }
 
   const src = artObject.src.replace('chrome-extension://', 'https://');
-  const [err, blob] = await fetchBlob(src);
 
-  if (err) return getArtObject()
+  try {
+    artObject.blob = await fetch_3(src);
+  } catch (err) {
+    return getArtObject()
+  }
 
-  artObject.blob = blob;
   artObject.timestamp = Date.now();
-
   return artObject
 };
 
@@ -505,17 +530,21 @@ const dom = {
   addListeners
 };
 
-const getCurrentArtObject = () => {
-  const object = store.state.currentArtObject;
+const setFullscreenMode = (callback) => {
+  const endFullscreen = () => {
+    window.removeEventListener('keydown', endFullscreen);
+    window.removeEventListener('mousedown', endFullscreen);
+    window.removeEventListener('touchstart', endFullscreen);
+    callback();
+  };
 
-  return {
-    src: object.src,
-    title: object.title,
-    author: object.author,
-    provider: object.provider,
-    titleLink: object.titleLink,
-    providerLink: object.providerLink
-  }
+  window.addEventListener('keydown', endFullscreen, { passive: true });
+  window.addEventListener('mousedown', endFullscreen, { passive: true });
+  window.addEventListener('touchstart', endFullscreen, { passive: true });
+};
+
+const getCurrentArtObject = () => {
+  return store.state.currentArtObject
 };
 
 const main = async () => {
@@ -529,8 +558,10 @@ const main = async () => {
 
   if (window.onApplicationReady !== undefined) {
     window.onApplicationReady({
+      replaceArtObject,
       getCurrentArtObject,
       setCurrentArtObject,
+      setFullscreenMode,
       hideUI: dom.hideUI
     });
   }

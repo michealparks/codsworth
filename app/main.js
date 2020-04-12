@@ -1,18 +1,10 @@
 import { store } from './store.js'
 import { dom } from './dom.js'
-import { setCurrentArtObject } from './art-object.js'
+import { setCurrentArtObject, replaceArtObject } from './art-object.js'
+import { setFullscreenMode } from './fullscreen.js'
 
 const getCurrentArtObject = () => {
-  const object = store.state.currentArtObject
-
-  return {
-    src: object.src,
-    title: object.title,
-    author: object.author,
-    provider: object.provider,
-    titleLink: object.titleLink,
-    providerLink: object.providerLink
-  }
+  return store.state.currentArtObject
 }
 
 const main = async () => {
@@ -26,8 +18,10 @@ const main = async () => {
 
   if (window.onApplicationReady !== undefined) {
     window.onApplicationReady({
+      replaceArtObject,
       getCurrentArtObject,
       setCurrentArtObject,
+      setFullscreenMode,
       hideUI: dom.hideUI
     })
   }

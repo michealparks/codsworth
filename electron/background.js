@@ -1,7 +1,7 @@
 const path = require('path')
 const { BrowserWindow, ipcMain } = require('electron')
 
-export const constructBackground = (screen) => {
+const constructBackground = (screen) => {
   let readyResolver
 
   const readyPromise = new Promise((resolve) => { readyResolver = resolve })
@@ -25,17 +25,11 @@ export const constructBackground = (screen) => {
       frame: false,
       transparent: true,
       webPreferences: {
-        preload: path.resolve('./dist/preload.js')
+        preload: path.resolve('./electron/preload.js')
       }
     })
 
-    win.loadFile('index.html')
-
-    if (true || process.platform !== 'win32') {
-      win.once('ready-to-show', () => {
-        win.showInactive()
-      })
-    }
+    win.loadFile(path.resolve('./dist/index.html'))
 
     win.once('closed', () => {
       windows.splice(windows.indexOf(win), 1)
@@ -76,3 +70,5 @@ export const constructBackground = (screen) => {
     getArtObject
   }
 }
+
+module.exports = { constructBackground }

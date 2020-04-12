@@ -32,7 +32,7 @@ const put = (name, data) => {
   return promise(client
     .transaction(name, 'readwrite')
     .objectStore(name)
-    .put({ ...data, created: new Date().getTime() }))
+    .put({ ...data, created: Date.now() }))
 }
 
 const getAll = (name) => {

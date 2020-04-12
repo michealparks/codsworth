@@ -1,121 +1,78 @@
-
-import https from 'https'
-import { autoUpdater } from 'electron'
-import { parse } from 'url'
-import { requestJSON } from './index'
-import { version } from '../../package.json'
-
+const { autoUpdater } = require('electron')
+const { fetchJSON } = require('../util/fetch.js')
+const constants = require('./consts.js')
 const REGEX_ZIP_URL = /\/(v)?(\d+\.\d+\.\d+)\/.*\.zip/
+const __dev__ = process.env.NODE_ENV === 'development'
+const win32 = process.platform === 'win32'
+const headers = { 'User-Agent': 'galeri' }
 
-let updateListener
+if (__dev__) {
+  autoUpdater.on('error', e =>
+    console.error('update error: ', e))
+  autoUpdater.on('checking-for-update', e =>
+    console.log('checking for update: ', e))
+  autoUpdater.on('update-available', e =>
+    console.log('update available: ', e))
+  autoUpdater.on('update-not-available', e =>
+    console.log('update not available: ', e))
+}
 
-export function autoupdate () {
-  if (__dev) {
-    autoUpdater.on('error', console.error.bind(console))
-    autoUpdater.on('checking-for-update', console.log.bind(console))
-    autoUpdater.on('update-available', console.log.bind(console))
-    autoUpdater.on('update-not-available', console.log.bind(console))
+autoUpdater.on('update-downloaded', (msg) => {
+  autoUpdater.quitAndInstall()
+})
+
+const parseTag = (tag = '') => {
+  return tag.slice(1).split('.').map(Number)
+}
+
+const check = async () => {
+  const latestTag = await fetchJSON(constants.GITHUB_RELEASE_API, { headers })
+  const tag = parseTag(latestTag.tag_name)
+
+  if (!newVersionExists(tag)) {
+    return false
   }
 
-  autoUpdater.on('update-downloaded', (msg) => {
-    autoUpdater.quitAndInstall()
-  })
-
-  check(onCheck)
-
-  setInterval(() => {
-    check(onCheck)
-  }, CHECK_UPDATE_INTERVAL)
-
-  return { onUpdateAvailable }
-}
-
-function onUpdateAvailable(listener) {
-  updateListener = listener
-}
-
-function check(next) {
-  requestJSON(GITHUB_RELEASE_API, function (err, json) {
-    if (err) return next(err)
-    const tag = json.tag_name
-
-    if (err) next(err)
-
-    if (tag === undefined || !isValid(tag)) {
-      next({ type: 'error', msg: 'Could not find a valid release tag.' })
-    }
-
-    if (!isNewerVersionAvailable(tag)) {
-      next({ type: 'warn', msg: 'There is no newer version.' })
-    }
-
-    getFeedURL(tag, next)
-  })
-}
-
-function onCheck(err, feedUrl) {
-  if (err) return console.error(err)
+  const feedUrl = await getFeedURL(tag)
 
   autoUpdater.setFeedURL(feedUrl)
   autoUpdater.checkForUpdates()
 }
 
-function isValid(tag) {
-  return tag.slice(1).split('.').length === 3
-}
+check()
+setInterval(check, constants.CHECK_UPDATE_INTERVAL)
 
-function isNewerVersionAvailable(latest) {
-  const latestArr = latest.slice(1).split('.')
-  const currentArr = version.slice(1).split('.')
+const newVersionExists = (tag) => {
+  const current = parseTag(constants.APP_VERSION)
 
-  // Major version update
-  if ((latestArr[0] | 0) > (currentArr[0] | 0)) {
-    if (updateListener) updateListener(latest)
-    return true
+  let i = 0
+  for (const version of current) {
+    if (tag[i] > version) {
+      return true
+    }
+    i += 1
   }
 
-  // Minor version update
-  if ((latestArr[1] | 0) > (currentArr[1] | 0)) {
-    if (updateListener) updateListener(latest)
-    return true
-  }
-
-  // Patch update
-  if ((latestArr[2] | 0) > (currentArr[2] | 0)) {
-    return true
-  }
-
-  // No update
   return false
 }
 
-function getFeedURL(tag, next) {
-  if (__windows) {
-    next(`${GITHUB_URL}/releases/download/${tag}`)
-    return
+const getFeedURL = async (tag) => {
+  if (win32) {
+    return `${constants.GITHUB_URL}/releases/download/${tag}`
   }
 
-  requestJSON(`${GITHUB_URL_RAW}/updater.json`, function (err, json) {
-    if (err) return next(err)
+  const json = await fetchJSON(`${constants.GITHUB_URL_RAW}/updater.json`)
+  const match = json.url.match(REGEX_ZIP_URL)
 
-    const zipurl = json.url
-    const match = zipurl.match(REGEX_ZIP_URL)
-    const zipVerison = match[match.length - 1]
+  if (!match) {
+    throw new Error(`The zipUrl (${json.url}) is a invalid release URL`)
+  }
 
-    if (!match) {
-      return next({
-        type: 'error',
-        msg: `The zipurl (${zipurl}) is a invalid release URL`
-      })
-    }
+  const zipVerison = match[match.length - 1]
 
-    if (zipVerison !== tag.slice(1)) {
-      next({
-        type: 'error',
-        msg: `The feedUrl does not link to latest tag (zipurl=${zipVerison}; latestVersion=${tag})`
-      })
-    }
+  if (zipVerison !== tag.slice(1)) {
+    throw new Error(`The feedUrl does not link to latest tag (zipUrl=${zipVerison}; latestVersion=${tag})`)
+  }
 
-    next(undefined, `${GITHUB_URL_RAW}/updater.json`)
-  })
+  return `${constants.GITHUB_URL_RAW}/updater.json`
 }

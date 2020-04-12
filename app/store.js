@@ -41,24 +41,26 @@ const constructStore = (stateGetter, reducer) => {
   return store
 }
 
+const handleUpgrade = (e) => {
+  const { result } = e.target
+
+  if (result.objectStoreNames.contains('artObject') === false) {
+    result.createObjectStore('artObject', {
+      keyPath: 'id',
+      autoIncrement: true
+    })
+  }
+
+  if (result.objectStoreNames.contains('artObjects') === false) {
+    result.createObjectStore('artObjects', {
+      keyPath: 'id',
+      autoIncrement: true
+    })
+  }
+}
+
 export const store = constructStore(async () => {
-  await db.open('galeri', 2, (e) => {
-    const { result } = e.target
-
-    if (result.objectStoreNames.contains('artObject') === false) {
-      result.createObjectStore('artObject', {
-        keyPath: 'id',
-        autoIncrement: true
-      })
-    }
-
-    if (result.objectStoreNames.contains('artObjects') === false) {
-      result.createObjectStore('artObjects', {
-        keyPath: 'id',
-        autoIncrement: true
-      })
-    }
-  })
+  await db.open('galeri', 2, handleUpgrade)
 
   const currentArtObjects = await db.getAll('artObject')
   const artObjects = await db.getAll('artObjects')

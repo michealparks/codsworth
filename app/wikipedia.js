@@ -15,9 +15,12 @@ async function getArtObjects () {
   } else {
     const page = 'Wikipedia:Featured_pictures/Artwork/Paintings'
     const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`
-    const [err, json] = await fetchJSON(url)
-
-    if (err) return
+    let json
+    try {
+      json = await fetchJSON(url)
+    } catch {
+      return
+    }
 
     const artObjects = parsePage(json.parse.text['*'])
 

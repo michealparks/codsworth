@@ -3,7 +3,8 @@ import { store } from './store.js'
 
 // Note: this is temporarily abandoned
 // because met has no-cors set on images >:|
-const endpoint = 'https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=11|21'
+const collectionURL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects?departmentIds=11|21'
+const objectURL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects'
 
 const randomArtObject = async () => {
   const artObjects = await getArtObjects()
@@ -14,14 +15,15 @@ const randomArtObject = async () => {
 }
 
 const getArtObjects = async () => {
-  const { artObjects } = store.state
-
   if (store.state.artObjects.length > 0) {
-    return artObjects
+    return store.state.artObjects
   } else {
-    const [err, json] = await fetchJSON(endpoint)
-
-    if (err) return
+    let json
+    try {
+      json = await fetchJSON(collectionURL)
+    } catch {
+      return
+    }
 
     const artObjects = json.objectIDs
 
@@ -36,9 +38,14 @@ const getArtObjects = async () => {
 
 const removeRandomArtObject = async (artObjects) => {
   const [id] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || [])
-  const [err, object] = await fetchJSON(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
 
-  if (err !== undefined) return
+  let object
+  try {
+    object = await fetchJSON(`${objectURL}/${id}`)
+  } catch {
+    return
+  }
+
   if (object.primaryImage === undefined) return
 
   const artObject = {

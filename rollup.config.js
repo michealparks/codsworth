@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser'
 const { DEV, PROD } = process.env
 
 const plugins = [
+  commonjs(),
   replace({ DEV, PROD }),
   PROD && terser()
 ]
@@ -18,27 +19,6 @@ module.exports = [{
   },
   plugins: [
     resolve(),
-    ...plugins
-  ]
-}, {
-  input: './electron/main.js',
-  output: {
-    file: './dist/electron.js',
-    format: 'cjs'
-  },
-  plugins: [
-    resolve({ preferBuiltins: true }),
-    commonjs(),
-    ...plugins
-  ]
-}, {
-  input: './electron/preload.js',
-  output: {
-    file: './dist/preload.js',
-    format: 'cjs'
-  },
-  plugins: [
-    resolve({ preferBuiltins: false }),
     ...plugins
   ]
 }]
