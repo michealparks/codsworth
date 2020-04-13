@@ -1,17 +1,18 @@
 require('./config.js')
 require('./updater.js')
+
 const wallpaper = require('wallpaper')
-const { app, screen } = require('electron')
+const { app, screen, powerMonitor } = require('electron')
 const { constructTray } = require('./tray.js')
 const { constructBackground } = require('./background.js')
-const { image } = require('./image')
+const { image } = require('./image.js')
 
 app.on('ready', async () => {
-  const setArtwork = async ({ src, buffer, title }) => {
-    const imgPath = await image.fromBuffer(src, buffer)
+  const setArtwork = async (artObject) => {
+    const imgPath = await image.fromBuffer(artObject.src, artObject.buffer)
     await wallpaper.set(imgPath)
 
-    tray.setInfo({ title })
+    tray.setArtObject(artObject)
   }
 
   const replaceArtwork = async () => {
@@ -20,25 +21,20 @@ app.on('ready', async () => {
     await setArtwork(artObject)
   }
 
-  const openArtworkLink = () => {
-
-  }
-
   const background = constructBackground(screen)
 
   const tray = constructTray({
     events: {
-      openArtworkLink,
-      replaceArtwork,
-      onToggleBackground: () => {},
-      onToggleScreenSaver: () => {},
-      onToggleStartup: () => app.setLoginItemSettings({
-        openAtLogin: !app.getLoginItemSettings().openAtLogin
-      }),
-      onQuit: () => app.quit()
+      replaceArtwork
     }
   })
 
-  await background.ready()
-  await replaceArtwork()
+  const artObject = await background.ready()
+  await setArtwork(artObject)
+
+  powerMonitor.on('suspend', () => {
+    replaceArtwork()
+  })
+
+  powerMonitor.on()
 })

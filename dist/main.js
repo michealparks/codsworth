@@ -180,13 +180,8 @@ const fetch = async (...args) => {
 };
 
 const fetchJSON = async (...args) => {
-  try {
-    const response = await fetch(...args);
-    const json = await response.json();
-    return [undefined, json]
-  } catch (err) {
-    return [err]
-  }
+  const response = await fetch(...args);
+  return response.json()
 };
 
 const fetchBlob = async (...args) => {
@@ -199,10 +194,16 @@ const fetchBuffer = async (...args) => {
   return response.buffer()
 };
 
+const fetchArrayBuffer = async (...args) => {
+  const response = await fetch(...args);
+  return response.arrayBuffer()
+};
+
 var fetch_1 = {
   fetchJSON,
   fetchBlob,
-  fetchBuffer
+  fetchBuffer,
+  fetchArrayBuffer
 };
 var fetch_2 = fetch_1.fetchJSON;
 var fetch_3 = fetch_1.fetchBlob;
@@ -252,9 +253,9 @@ function parsePage (str) {
     const authorEl = links.length > 1 ? links[1] : links[0];
     const arr = img.src.split('/').slice(0, -1);
     const src = arr.concat(`2000px-${arr[arr.length - 1]}`).join('/');
-    const title = titleEl.innerText || '';
+    const title = (titleEl.innerText || '').trim();
     const titleLink = titleEl.href;
-    const author = authorEl.innerText || '';
+    const author = (authorEl.innerText || '').trim();
     const authorLink = authorEl.href;
 
     artObjects.push({
@@ -318,8 +319,8 @@ async function getArtObjects$1 () {
 
       artObjects.push({
         src: artObject.webImage.url,
-        title: artObject.title,
-        author: artObject.principalOrFirstMaker,
+        title: (artObject.title || '').trim(),
+        author: (artObject.principalOrFirstMaker || '').trim(),
         provider: 'Rijksmuseum',
         titleLink: artObject.links.web,
         providerLink: 'https://www.rijksmuseum.nl/en',
@@ -443,7 +444,6 @@ const getArtObject = async () => {
     return getArtObject()
   }
 
-  console.log(artObject.src, blacklist.includes(artObject.src));
   if (blacklist.includes(decodeURI(artObject.src))) {
     return getArtObject()
   }

@@ -31,8 +31,8 @@ async function getArtObjects () {
 
       artObjects.push({
         src: artObject.webImage.url,
-        title: artObject.title,
-        author: artObject.principalOrFirstMaker,
+        title: (artObject.title || '').trim(),
+        author: (artObject.principalOrFirstMaker || '').trim(),
         provider: 'Rijksmuseum',
         titleLink: artObject.links.web,
         providerLink: 'https://www.rijksmuseum.nl/en',

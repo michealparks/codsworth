@@ -60,7 +60,6 @@ const getArtObject = async () => {
     return getArtObject()
   }
 
-  console.log(artObject.src, blacklist.includes(artObject.src))
   if (blacklist.includes(decodeURI(artObject.src))) {
     return getArtObject()
   }

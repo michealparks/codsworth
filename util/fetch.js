@@ -19,13 +19,8 @@ const fetch = async (...args) => {
 }
 
 const fetchJSON = async (...args) => {
-  try {
-    const response = await fetch(...args)
-    const json = await response.json()
-    return [undefined, json]
-  } catch (err) {
-    return [err]
-  }
+  const response = await fetch(...args)
+  return response.json()
 }
 
 const fetchBlob = async (...args) => {
@@ -38,8 +33,14 @@ const fetchBuffer = async (...args) => {
   return response.buffer()
 }
 
+const fetchArrayBuffer = async (...args) => {
+  const response = await fetch(...args)
+  return response.arrayBuffer()
+}
+
 module.exports = {
   fetchJSON,
   fetchBlob,
-  fetchBuffer
+  fetchBuffer,
+  fetchArrayBuffer
 }
