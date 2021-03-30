@@ -7,7 +7,7 @@ const { DEV, PROD } = process.env
 
 const plugins = [
   commonjs(),
-  replace({ DEV, PROD }),
+  replace({ DEV, PROD, preventAssignment: true }),
   PROD && terser()
 ]
 

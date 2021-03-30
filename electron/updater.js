@@ -1,6 +1,6 @@
 const { autoUpdater } = require('electron')
 const { fetchJSON } = require('../util/fetch.js')
-const constants = require('./consts.js')
+
 const REGEX_ZIP_URL = /\/(v)?(\d+\.\d+\.\d+)\/.*\.zip/
 const __dev__ = process.env.NODE_ENV === 'development'
 const win32 = process.platform === 'win32'
@@ -24,23 +24,6 @@ autoUpdater.on('update-downloaded', (msg) => {
 const parseTag = (tag = '') => {
   return tag.slice(1).split('.').map(Number)
 }
-
-const check = async () => {
-  const latestTag = await fetchJSON(constants.GITHUB_RELEASE_API, { headers })
-  const tag = parseTag(latestTag.tag_name)
-
-  if (!newVersionExists(tag)) {
-    return false
-  }
-
-  const feedUrl = await getFeedURL(tag)
-
-  autoUpdater.setFeedURL(feedUrl)
-  autoUpdater.checkForUpdates()
-}
-
-check()
-setInterval(check, constants.CHECK_UPDATE_INTERVAL)
 
 const newVersionExists = (tag) => {
   const current = parseTag(constants.APP_VERSION)
@@ -76,3 +59,24 @@ const getFeedURL = async (tag) => {
 
   return `${constants.GITHUB_URL_RAW}/updater.json`
 }
+
+const checkForUpdate = async () => {
+  try {
+    const latestTag = await fetchJSON(constants.GITHUB_RELEASE_API, { headers })
+    const tag = parseTag(latestTag.tag_name)
+
+    if (!newVersionExists(tag)) {
+      return { success: true, update: false }
+    }
+
+    const feedUrl = await getFeedURL(tag)
+
+    autoUpdater.setFeedURL(feedUrl)
+    autoUpdater.checkForUpdates()
+    return { success: true, update: true }
+  } catch {
+    return { success: false, update: false }
+  }
+}
+
+module.exports = { checkForUpdate }

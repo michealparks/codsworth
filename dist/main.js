@@ -205,18 +205,16 @@ var fetch_1 = {
   fetchBuffer,
   fetchArrayBuffer
 };
-var fetch_2 = fetch_1.fetchJSON;
-var fetch_3 = fetch_1.fetchBlob;
 
-async function randomArtObject () {
-  const artObjects = await getArtObjects();
+async function randomArtObject$1 () {
+  const artObjects = await getArtObjects$1();
 
   if (!artObjects) return
 
-  return removeRandomArtObject(artObjects)
+  return removeRandomArtObject$1(artObjects)
 }
 
-async function getArtObjects () {
+async function getArtObjects$1 () {
   if (store.state.wikipediaArtObjects.length > 0) {
     return store.state.wikipediaArtObjects
   } else {
@@ -224,7 +222,7 @@ async function getArtObjects () {
     const url = `https://en.wikipedia.org/w/api.php?action=parse&prop=text&page=${page}&format=json&origin=*`;
     let json;
     try {
-      json = await fetch_2(url);
+      json = await fetch_1.fetchJSON(url);
     } catch {
       return
     }
@@ -274,7 +272,7 @@ function parsePage (str) {
   return artObjects
 }
 
-function removeRandomArtObject (artObjects) {
+function removeRandomArtObject$1 (artObjects) {
   const [object] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || []);
 
   store.dispatch({
@@ -286,20 +284,20 @@ function removeRandomArtObject (artObjects) {
 }
 
 const wikipedia = {
-  randomArtObject
+  randomArtObject: randomArtObject$1
 };
 
 const url = 'https://www.rijksmuseum.nl/api/en/collection?format=json&ps=30&imgonly=True&type=painting&key=1KfM6MpD';
 
-async function randomArtObject$1 () {
-  const artObjects = await getArtObjects$1();
+async function randomArtObject () {
+  const artObjects = await getArtObjects();
 
   if (artObjects === undefined) return
 
-  return removeRandomArtObject$1(artObjects)
+  return removeRandomArtObject(artObjects)
 }
 
-async function getArtObjects$1 () {
+async function getArtObjects () {
   if (store.state.rijksArtObjects.length > 0) {
     return store.state.rijksArtObjects
   } else {
@@ -307,7 +305,7 @@ async function getArtObjects$1 () {
 
     let json;
     try {
-      json = await fetch_2(`${url}&p=${page}`);
+      json = await fetch_1.fetchJSON(`${url}&p=${page}`);
     } catch {
       return
     }
@@ -340,7 +338,7 @@ async function getArtObjects$1 () {
   }
 }
 
-function removeRandomArtObject$1 (artObjects) {
+function removeRandomArtObject (artObjects) {
   const [object] = (artObjects.splice(Math.floor(Math.random() * artObjects.length), 1) || []);
 
   store.dispatch({
@@ -352,7 +350,7 @@ function removeRandomArtObject$1 (artObjects) {
 }
 
 const rijks = {
-  randomArtObject: randomArtObject$1
+  randomArtObject
 };
 
 // A list of artworks deemed NSFW. This list is a quite moving selection,
@@ -456,7 +454,7 @@ const getArtObject = async () => {
   const src = artObject.src.replace('chrome-extension://', 'https://');
 
   try {
-    artObject.blob = await fetch_3(src);
+    artObject.blob = await fetch_1.fetchBlob(src);
   } catch (err) {
     return getArtObject()
   }
@@ -543,8 +541,10 @@ const setFullscreenMode = (callback) => {
   window.addEventListener('touchstart', endFullscreen, { passive: true });
 };
 
-const getCurrentArtObject = () => {
-  return store.state.currentArtObject
+const getCurrentArtObject = async () => {
+  const object = store.state.currentArtObject;
+  object.buffer = await object.blob.arrayBuffer();
+  return object
 };
 
 const main = async () => {
@@ -556,8 +556,8 @@ const main = async () => {
 
   await setCurrentArtObject();
 
-  if (window.onApplicationReady !== undefined) {
-    window.onApplicationReady({
+  if (window.galeri !== undefined) {
+    window.galeri.ready({
       replaceArtObject,
       getCurrentArtObject,
       setCurrentArtObject,

@@ -3,8 +3,10 @@ import { dom } from './dom.js'
 import { setCurrentArtObject, replaceArtObject } from './art-object.js'
 import { setFullscreenMode } from './fullscreen.js'
 
-const getCurrentArtObject = () => {
-  return store.state.currentArtObject
+const getCurrentArtObject = async () => {
+  const object = store.state.currentArtObject
+  object.buffer = await object.blob.arrayBuffer()
+  return object
 }
 
 const main = async () => {
@@ -16,8 +18,8 @@ const main = async () => {
 
   await setCurrentArtObject()
 
-  if (window.onApplicationReady !== undefined) {
-    window.onApplicationReady({
+  if (window.galeri !== undefined) {
+    window.galeri.ready({
       replaceArtObject,
       getCurrentArtObject,
       setCurrentArtObject,

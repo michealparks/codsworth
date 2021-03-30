@@ -1,43 +1,48 @@
 const path = require('path')
-const { BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 const constructBackground = (screen) => {
   let readyResolver
+  let primary
 
-  const readyPromise = new Promise((resolve) => { readyResolver = resolve })
-  const windows = []
+  const readyPromise = new Promise((resolve) => {
+    readyResolver = resolve
+  })
+  const windows = new Set()
 
   ipcMain.once('backgroundReady', (ev, arg) => {
+    console.log(arg)
     readyResolver(arg)
   })
 
   for (const display of screen.getAllDisplays()) {
     // Create the browser window.
     const win = new BrowserWindow({
-      type: 'desktop',
       width: display.size.width,
-      height: display.size.height + 20,
+      height: display.size.height,
       x: display.bounds.x,
-      y: display.bounds.y - 10,
+      y: display.bounds.y,
       enableLargerThanScreen: true,
       center: true,
       show: false,
       frame: false,
       transparent: true,
       webPreferences: {
-        preload: path.resolve('./electron/preload.js')
+        preload: path.join(app.getAppPath(), 'preload.js')
       }
     })
 
-    win.loadFile(path.resolve('./dist/index.html'))
+    win.loadFile('../dist/index.html')
 
     win.once('closed', () => {
-      windows.splice(windows.indexOf(win), 1)
+      windows.delete(win)
     })
 
     win.openDevTools({ mode: 'detach' })
 
-    windows.push(win)
+    windows.add(win)
+
+    if (primary === undefined) primary = win
   }
 
   const ready = () => {
@@ -46,9 +51,9 @@ const constructBackground = (screen) => {
 
   const next = () => {
     return new Promise((resolve) => {
-      windows[0].webContents.send('replaceArtObject')
+      primary.webContents.send('replaceArtObject')
 
-      ipcMain.once('artworkReplaced', (ev, arg) => {
+      ipcMain.once('artworkReplaced', (e, arg) => {
         resolve(arg)
       })
     })
@@ -56,15 +61,16 @@ const constructBackground = (screen) => {
 
   const getArtObject = async () => {
     return new Promise((resolve) => {
-      windows[0].webContents.send('getArtObject')
+      primary.webContents.send('getArtObject')
 
-      ipcMain.once('sendArtObject', (ev, arg) => {
+      ipcMain.once('sendArtObject', (e, arg) => {
         resolve(arg)
       })
     })
   }
 
   return {
+    windows,
     ready,
     next,
     getArtObject
